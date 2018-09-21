@@ -4,7 +4,7 @@ setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Ana
 data <- read.table('masterPADElarvae.txt', header = TRUE)
 
 # Read in otolith microchemistry data
-setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/Otolith microchemistry")
+setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/")
 otoliths <- read.table('otolith_data.txt', header = TRUE, sep = "\t")
 
 # Read in available genetic data
@@ -571,9 +571,21 @@ library(caret)
 library(MASS)
 library(ggplot2)
 
-# Split data into training (80%) and test sets (20%)
-training.samples <- otoliths$Location %>%
-  createDataPartition(p = 0.8, list = FALSE)
+otoliths$Index <- rownames(otoliths)
+
+# Split data into training (40%) and test sets (60%) 
+nc.index <- which(otoliths$Location == "NC") %>% createDataPartition(p=0.4, list = FALSE)
+roosevelt.index <- which(otoliths$Location == "Roosevelt") %>% createDataPartition(p=0.4, list = FALSE)
+rumfs.index <- which(otoliths$Location == "RUMFS") %>% createDataPartition(p=0.4, list = FALSE)
+york.index <- which(otoliths$Location == "York") %>% createDataPartition(p=0.4, list = FALSE)
+
+nc.training <- otoliths[which(otoliths$Location == "NC"), "Index"][nc.index]
+roosevelt.training <- otoliths[which(otoliths$Location == "Roosevelt"), "Index"][roosevelt.index]
+rumfs.training <- otoliths[which(otoliths$Location == "RUMFS"), "Index"][rumfs.index]
+york.training <- otoliths[which(otoliths$Location == "York"), "Index"][roosevelt.index]
+
+training.samples <- sort(as.numeric(c(nc.training, roosevelt.training, rumfs.training, york.training)), decreasing = FALSE)
+
 train.data <- otoliths[training.samples, c(4,12:21)]
 test.data <- otoliths[-training.samples, c(4,12:21)]
 
@@ -591,7 +603,7 @@ plot(model)
 # Make predictions
 predictions <- model %>% predict(test.transformed)
 # Model accuracy
-mean(predictions$class==test.transformed$Location)
+mean(predictions$class==test.transformed$Location) # LDA (64%) seems to be slightly more accurate than QDA (57%)
 
 lda.data <- cbind(train.transformed, predict(model)$x)
 ggplot(lda.data, aes(LD1, LD2)) +
