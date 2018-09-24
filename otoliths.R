@@ -565,7 +565,8 @@ legend("bottomright",
        pch=c(1, 1),
        col=c("blue", "tomato"))
 
-#########
+###############################################################################################
+#### LDA based on ingress site ####
 library(tidyverse)
 library(caret)
 library(MASS)
@@ -603,11 +604,44 @@ plot(model)
 # Make predictions
 predictions <- model %>% predict(test.transformed)
 # Model accuracy
-mean(predictions$class==test.transformed$Location) # LDA (64%) seems to be slightly more accurate than QDA (57%)
+mean(predictions$class==test.transformed$Location) # Assignment accuracy to ingress site: LDA (64%) seems to be slightly more accurate than QDA (57%)
+table(predictions$class, test.transformed$Location)
 
 lda.data <- cbind(train.transformed, predict(model)$x)
 ggplot(lda.data, aes(LD1, LD2)) +
   geom_point(aes(color = Location))
+
+# Match predicted class with index
+cbind(otoliths$Index[-training.samples], as.character(predictions$class))
+
+#### LDA based on ingress region ####
+region1 <- gsub("NC", "South", otoliths$Location) # create region (north or south) column based on ingress site
+region2 <- gsub("York", "South", region1)
+region3 <- gsub("RUMFS", "North", region2)
+region4 <- gsub("Roosevelt", "North", region3)
+otoliths$region <- as.factor(region4)
+
+train.data2 <- otoliths[training.samples, c(23,12:21)]
+test.data2 <- otoliths[-training.samples, c(23,12:21)]
+
+# Normalize the data
+# Estimate preprocessing parameters
+preproc.param <- train.data2 %>% 
+  preProcess(method = c("center", "scale"))
+# Transform data using estimated parameters
+train.transformed2 <- preproc.param %>% predict(train.data2)
+test.transformed2 <- preproc.param %>% predict(test.data2)
+
+# Fit the model
+model2 <- lda(region~., data = train.transformed2)
+plot(model2)
+# Make predictions
+predictions2 <- model2 %>% predict(test.transformed2)
+# Model accuracy
+mean(predictions2$class==test.transformed2$region) # Assignment accuracy to ingress site: LDA (77%)
+table(predictions2$class,test.transformed2$region) 
+
+
 
 
 #########################################################
