@@ -393,6 +393,9 @@ sum(diag(prop.table(ct1)))
 #### Add predicted sites to the otolith data ####
 otoliths$predicted <- dfa1$class
 
+rownames(otoliths)==lda.class.ordered[,1] # should be in same order
+otoliths$predicted <- lda.class.ordered[,2] # from LDA using random 40% from each ingress site as test dataset
+
 # Read in dataset containing outlier loci
 gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
 
@@ -419,7 +422,7 @@ south.allele.freqs <- colSums(south.counts, na.rm = TRUE)/(2*colSums(!is.na(sout
 
 regional.allele.freqs <- rbind(north.allele.freqs, south.allele.freqs)
 
-# Read in allele frequencies of 10 adult spatial outliers that exist in the larvae. These will be used to calculate population likelihoods of the otolith populations.
+#### Read in allele frequencies of 10 adult spatial outliers that exist in the larvae. These will be used to calculate population likelihoods of the otolith populations ####
 pop.allele.freqs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/regional.adult.outs.freqs10.txt')
 
 # Do these calculated frequencies match?
@@ -557,7 +560,7 @@ colnames(pops.likelihood) <- c("n.likes", "s.likes")
 pops.likelihood$oto.pop <- c('north', 'south')
 
 # Plot population likelihoods of otolith populations
-plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-230,-200), ylim = c(-230,-200))
+plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
 points(pops.likelihood[2,'n.likes'], pops.likelihood[2,'s.likes'], col = 'tomato')
 abline(a=0,b=1)
 legend("bottomright",
@@ -641,7 +644,13 @@ predictions2 <- model2 %>% predict(test.transformed2)
 mean(predictions2$class==test.transformed2$region) # Assignment accuracy to ingress site: LDA (77%)
 table(predictions2$class,test.transformed2$region) 
 
+# Match predicted class with index
+test.predicted.regions <- cbind(otoliths$Index[-training.samples], as.character(predictions2$class)) # test data, regions
+training.regions <- cbind(otoliths$Index[training.samples],as.character(otoliths$region[training.samples])) # training data, regions
 
+lda.class <- as.data.frame(rbind(test.predicted.regions, training.regions))
+lda.class[,1] <- as.numeric(lda.class[,1])
+lda.class.ordered <- lda.class[order(lda.class[,1]),]
 
 
 #########################################################
