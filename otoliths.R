@@ -79,17 +79,86 @@ otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")
 
 locations <- factor(otoliths.sub$Location, c("RUMFS", "Roosevelt", "York", "NC"))
 
-boxplot(otoliths.sub$Mg ~ locations, ylab = "Mg")
-boxplot(otoliths.sub$Mn ~ locations, ylab = "Mn")
-boxplot(otoliths.sub$Fe ~ locations, ylab = "Fe")
-boxplot(otoliths.sub$Cu ~ locations, ylab = "Cu")
-boxplot(otoliths.sub$Sr ~ locations, ylab = "Sr")
-boxplot(otoliths.sub$Cd ~ locations, ylab = "Cd")
-boxplot(otoliths.sub$Ba ~ locations, ylab = "Ba")
-boxplot(otoliths.sub$Sn ~ locations, ylab = "Sn")
-boxplot(otoliths.sub$Pb ~ locations, ylab = "Pb")
-boxplot(otoliths.sub$U ~ locations, ylab = "U")
+boxplot(otoliths.sub$Mg ~ locations, ylab = "Mg:Ca")
+boxplot(otoliths.sub$Mn ~ locations, ylab = "Mn:Ca")
+boxplot(otoliths.sub$Fe ~ locations, ylab = "Fe:Ca")
+boxplot(otoliths.sub$Cu ~ locations, ylab = "Cu:Ca")
+boxplot(otoliths.sub$Sr ~ locations, ylab = "Sr:Ca")
+boxplot(otoliths.sub$Cd ~ locations, ylab = "Cd:Ca")
+boxplot(otoliths.sub$Ba ~ locations, ylab = "Ba:Ca")
+boxplot(otoliths.sub$Sn ~ locations, ylab = "Sn:Ca")
+boxplot(otoliths.sub$Pb ~ locations, ylab = "Pb:Ca")
+boxplot(otoliths.sub$U ~ locations, ylab = "U:Ca")
 
+#### Plotting & ANOVAs for each element ####
+library(lsmeans)
+library(multcompView)
+lsmeans = lsmeans::lsmeans
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_boxplots.png", width=8.5, height=11, res=300, units="in")
+par(
+  mar=c(4, 4, 1, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  mfrow = c(5,2)
+)
+
+boxplot(otoliths.sub.log$Mg ~ locations, ylab = "Mg:Ca")
+mg.anova <- aov(otoliths.sub.log$Mg ~ locations)
+leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Mn ~ locations, ylab = "Mn:Ca")
+mn.anova <- aov(otoliths.sub$Mn ~ locations)
+leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Fe ~ locations, ylab = "Fe:Ca")
+fe.anova <- aov(otoliths.sub$Fe ~ locations)
+leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Cu ~ locations, ylab = "Cu:Ca")
+cu.anova <- aov(otoliths.sub$Cu ~ locations)
+leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Sr ~ locations, ylab = "Sr:Ca")
+sr.anova <- aov(otoliths.sub$Sr ~ locations)
+leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Cd ~ locations, ylab = "Cd:Ca")
+cd.anova <- aov(otoliths.sub$Cd ~ locations)
+leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Ba ~ locations, ylab = "Ba:Ca")
+ba.anova <- aov(otoliths.sub$Ba ~ locations)
+leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Sn ~ locations, ylab = "Sn:Ca")
+sn.anova <- aov(otoliths.sub$Sn ~ locations)
+leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Pb ~ locations, ylab = "Pb:Ca")
+mtext("Ingress site",1, line = 3)
+pb.anova <- aov(otoliths.sub$Pb ~ locations)
+leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$U ~ locations, ylab = "U:Ca")
+mtext("Ingress site",1, line = 3)
+u.anova <- aov(otoliths.sub$U ~ locations)
+leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+dev.off()
+    
 # Microchemistry by time period
 period <- factor(otoliths.sub$Period, c("Early", "Mid", "Late"))
 
