@@ -105,54 +105,54 @@ par(
   mfrow = c(5,2)
 )
 
-boxplot(otoliths.sub.log$Mg ~ locations, ylab = "Mg:Ca")
+boxplot(otoliths.sub.log$Mg ~ locations, ylab = "Mg:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(otoliths.sub.log$Mg ~ locations)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Mn ~ locations, ylab = "Mn:Ca")
+boxplot(otoliths.sub.log$Mn ~ locations, ylab = "Mn:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mn.anova <- aov(otoliths.sub$Mn ~ locations)
 leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Fe ~ locations, ylab = "Fe:Ca")
+boxplot(otoliths.sub.log$Fe ~ locations, ylab = "Fe:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 fe.anova <- aov(otoliths.sub$Fe ~ locations)
 leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cu ~ locations, ylab = "Cu:Ca")
+boxplot(otoliths.sub.log$Cu ~ locations, ylab = "Cu:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cu.anova <- aov(otoliths.sub$Cu ~ locations)
 leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sr ~ locations, ylab = "Sr:Ca")
+boxplot(otoliths.sub.log$Sr ~ locations, ylab = "Sr:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sr.anova <- aov(otoliths.sub$Sr ~ locations)
 leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cd ~ locations, ylab = "Cd:Ca")
+boxplot(otoliths.sub.log$Cd ~ locations, ylab = "Cd:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cd.anova <- aov(otoliths.sub$Cd ~ locations)
 leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Ba ~ locations, ylab = "Ba:Ca")
+boxplot(otoliths.sub.log$Ba ~ locations, ylab = "Ba:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 ba.anova <- aov(otoliths.sub$Ba ~ locations)
 leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sn ~ locations, ylab = "Sn:Ca")
+boxplot(otoliths.sub.log$Sn ~ locations, ylab = "Sn:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sn.anova <- aov(otoliths.sub$Sn ~ locations)
 leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Pb ~ locations, ylab = "Pb:Ca")
-mtext("Ingress site",1, line = 3)
+boxplot(otoliths.sub.log$Pb ~ locations, ylab = "Pb:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mtext("Ingress site",1, line = 2.5)
 pb.anova <- aov(otoliths.sub$Pb ~ locations)
 leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$U ~ locations, ylab = "U:Ca")
-mtext("Ingress site",1, line = 3)
+boxplot(otoliths.sub.log$U ~ locations, ylab = "U:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mtext("Ingress site",1, line = 2.5)
 u.anova <- aov(otoliths.sub$U ~ locations)
 leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
@@ -162,19 +162,73 @@ dev.off()
 # Microchemistry by time period
 period <- factor(otoliths.sub$Period, c("Early", "Mid", "Late"))
 
-boxplot(otoliths.sub$Mg ~ period, ylab = "Mg")
-boxplot(otoliths.sub$Mn ~ period, ylab = "Mn")
-boxplot(otoliths.sub$Fe ~ period, ylab = "Fe")
-boxplot(otoliths.sub$Cu ~ period, ylab = "Cu")
-boxplot(otoliths.sub$Sr ~ period, ylab = "Sr")
-boxplot(otoliths.sub$Cd ~ period, ylab = "Cd")
-boxplot(otoliths.sub$Ba ~ period, ylab = "Ba")
-boxplot(otoliths.sub$Sn ~ period, ylab = "Sn")
-boxplot(otoliths.sub$Pb ~ period, ylab = "Pb")
-boxplot(otoliths.sub$U ~ period, ylab = "U")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_overtime_boxplots.png", width=8.5, height=11, res=300, units="in")
+par(
+  mar=c(4, 4, 1, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  mfrow = c(5,2)
+)
+
+boxplot(otoliths.sub.log$Mg ~ period, ylab = "Mg:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Mg ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Mn ~ period, ylab = "Mn:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Mn ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Fe ~ period, ylab = "Fe:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Fe ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Cu ~ period, ylab = "Cu:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Cu ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Sr ~ period, ylab = "Sr:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Sr ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Cd ~ period, ylab = "Cd:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Cd ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Ba ~ period, ylab = "Ba:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Ba ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Sn ~ period, ylab = "Sn:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mg.anova <- aov(otoliths.sub.log$Sn ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$Pb ~ period, ylab = "Pb:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mtext("Time period",1, line = 2.5)
+mg.anova <- aov(otoliths.sub.log$Pb ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+boxplot(otoliths.sub.log$U ~ period, ylab = "U:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mtext("Time period",1, line = 2.5)
+mg.anova <- aov(otoliths.sub.log$U ~ period)
+leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+cld(leastsquare, alpha = 0.05, Letters = letters)
+
+dev.off()
 
 #### Multidimensional scaling ####
-oto.chem <- otoliths[-28,c("Fish.ID", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
+# oto.chem <- otoliths[-28,c("Fish.ID", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
+oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
 
 # Scatter plot matrix
@@ -196,7 +250,23 @@ oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE) # How many dimensi
 
 plot(oto.fit$eig[1:10]) # scree plot
 
-# Plot
+# Histograms of MDS axis - unimodal or multimodal?
+hist(x, xlab = "MDS 1", main = "") # all unimodal
+hist(y, xlab = "MDS 2", main = "")
+hist(z, xlab = "MDS 3", main = "")
+
+# By ingress site?
+hist(x[which(otoliths$Location == "NC")], xlab = "MDS 1", main = "NC")
+hist(x[which(otoliths$Location == "York")], xlab = "MDS 1", main = "York")
+hist(x[which(otoliths$Location == "Roosevelt")], xlab = "MDS 1", main = "Roosevelt")
+hist(x[which(otoliths$Location == "RUMFS")], xlab = "MDS 1", main = "RUMFS")
+
+hist(y[which(otoliths$Location == "NC")], xlab = "MDS 2", main = "NC")
+hist(y[which(otoliths$Location == "York")], xlab = "MDS 2", main = "York")
+hist(y[which(otoliths$Location == "Roosevelt")], xlab = "MDS 2", main = "Roosevelt")
+hist(y[which(otoliths$Location == "RUMFS")], xlab = "MDS 2", main = "RUMFS")
+
+# Plot MDS
 x <- oto.fit$points[,1]
 y <- oto.fit$points[,2]
 z <- oto.fit$points[,3]
@@ -211,27 +281,31 @@ library(wesanderson)
 par(mfrow = c(1,2))
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 legend("bottomleft",
        legend = levels(otoliths$Location),
        pch=19,
        col = col.palette)
 
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
-legend("bottomleft",
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend("topright",
        legend = levels(otoliths$Location),
        pch=19,
        col = col.palette)
 
 # Plot points by time period
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period, pch = 19) # mds using Mg, Mn, Fe & Sn
 legend("bottomleft",
        legend = levels(otoliths$Period),
        pch=19,
        col = col.palette)
 
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
-legend("topleft",
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Period, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend("topright",
        legend = levels(otoliths$Period),
        pch=19,
        col = col.palette)
@@ -239,14 +313,16 @@ legend("topleft",
 # Plot by year
 col.palette <- rainbow(14)
 palette(col.palette)
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = as.factor(otoliths$Year[-28]), pch = 19, xlim = c(-4,6), ylim = c(-5,4)) # without NCPD 074 (28); Year needs to be a factor in order for colors to match properly!
-legend("bottomright",
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = as.factor(otoliths$Year[-28]), pch = 19, xlim = c(-4,6), ylim = c(-5,4)) # without NCPD 074 (28); Year needs to be a factor in order for colors to match properly!
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = as.factor(otoliths$Year), pch = 19, xlim = c(-4,6), ylim = c(-5,4)) # # mds using Mg, Mn, Fe & Sn
+legend("topright",
         legend = levels(as.factor(otoliths$Year)),
         pch=19,
         col = col.palette,
        cex = 0.8)
 
-cbind(x,y,otoliths$Year[-28])
+# cbind(x,y,otoliths$Year[-28])
+cbind(x,y,otoliths$Year)
 plot(x[1:6], y[1:6], xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = '#FF0000FF', pch = 19, xlim = c(-4,10), ylim = c(-5,4)) #1989
 points(x[124:125], y[124:125], col = "#FF6D00FF", pch = 19) #1990
 points(x[c(7:15,126)], y[c(7:15,126)], col = "#FFDB00FF", pch = 19) #1991
