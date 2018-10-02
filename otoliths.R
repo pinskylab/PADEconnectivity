@@ -462,10 +462,12 @@ axis(4)
 # fit <- hclust((oto.dist)^2, method = "ward.D")
 fit <- hclust(oto.dist, method = "ward.D2") # seems this is the correct method to use
 plot(fit, cex = 0.5)
-plot(fit, cex = 0.5, labels = otoliths$Location[-28])
+plot(fit, cex = 0.5, labels = otoliths$Location)
 rect.hclust(fit, k=4)
 
 # Nicer plot
+library(ape)
+library(dendextend)
 dend <- as.dendrogram(fit)
 dend <- rotate(dend, 1:197)
 
