@@ -457,13 +457,47 @@ axis(4)
 
 
 #### Clustering ####
+# Code to calculate and plot elbow method of deciding how many K's
+wss <- (nrow(oto.chem)-1)*sum(apply(oto.chem,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(oto.chem, 
+                                     centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+     ylab="Within groups sum of squares")
+
+#### Determining optimal number of clusters ####
+library(factoextra)
+fviz_nbclust(oto.chem, FUN = hcut, method = "wss")
+fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+library(NbClust)
+nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+
+# k-means clustering
+library(cluster)
+kmean.cls <- kmeans(oto.chem, centers = 5, nstart = 50, iter.max = 10)
+class.table.km <- table(otoliths$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette)
+
+fviz_cluster(kmean.cls, oto.chem, 
+             palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), 
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point"
+             )
+
+#### Plotting ####
 # Hierarchical clustering
 # fit <- hclust(oto.dist, method = "complete") # default
 # fit <- hclust((oto.dist)^2, method = "ward.D")
 fit <- hclust(oto.dist, method = "ward.D2") # seems this is the correct method to use
 plot(fit, cex = 0.5)
 plot(fit, cex = 0.5, labels = otoliths$Location)
-rect.hclust(fit, k=4)
+rect.hclust(fit, k=5)
 
 # Nicer plot
 library(ape)
@@ -472,70 +506,28 @@ dend <- as.dendrogram(fit)
 dend <- rotate(dend, 1:197)
 
 # Color branches based on clusters
-dend <- color_branches(dend, k = 2)
+dend <- color_branches(dend, k = 5)
 labels_colors(dend) <- col.palette[sort_levels_values(as.numeric(oto.chem)[order.dendrogram(dend)])]
-
-
 plot(dend)
 circlize_dendrogram(dend)
 
-
-# Assess different methods
-m <- c("ward", "single", "complete", "average")
-names(m) <- c("ward", "single", "complete", "average")
-
-ac <- function(x) {
-  agnes(oto.chem, method = x)$ac
-}
-
-map_dbl(m, ac)
-
-hc.agnes <- agnes(oto.chem, method = "ward")
-pltree(hc.agnes, cex = 0.6, hang = -1, main = "Dendrogram of agnes")
-
-
-
-
-
-
-
-
-# Cut dendrogram based on number of sites
-nclust <- 1
+# Cut dendrogram based on number of clusters from heirarchical clustering
+nclust <- 5
 clusternum <- cutree(fit, k=nclust)
 # clusternum <- cutree(as.hclust(hc.agnes), k=nclust)
 table(clusternum)
-class.table.hier <- table(otoliths$Location[-28], clusternum)
+# class.table.hier <- table(otoliths$Location[-28], clusternum)
+class.table.hier <- table(otoliths$Location, clusternum)
 mosaicplot(class.table.hier, color = col.palette)
 
 fviz_cluster(list(data=oto.chem, cluster = clusternum))
 
-
 # hierarchical with bootstrapped p-values
-library(pvclust)
-fit2 <- pvclust(t(oto.chem), method.hclust = "ward.D2", method.dist = "euclidean")
-plot(fit2)
-pvrect(fit2, alpha = 0.95)
+# library(pvclust)
+# fit2 <- pvclust(t(oto.chem), method.hclust = "ward.D2", method.dist = "euclidean")
+# plot(fit2)
+# pvrect(fit2, alpha = 0.95) # something not working
 
-
-# k-means clustering
-library(cluster)
-kmean.cls <- kmeans(oto.chem, centers = 2)
-class.table.km <- table(otoliths$Location, kmean.cls$cluster)
-mosaicplot(class.table.km, color = col.palette)
-
-wss <- (nrow(oto.chem)-1)*sum(apply(oto.chem,2,var))
-for (i in 2:15) wss[i] <- sum(kmeans(oto.chem, 
-                                     centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
-     ylab="Within groups sum of squares")
-
-
-#### Determining optimal number of clusters ####
-fviz_nbclust(oto.chem, FUN = hcut, method = "wss")
-fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
-gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
-fviz_gap_stat(gap_stat)
 
 ################################################################################
 #### Discriminant Function Analysis ####
