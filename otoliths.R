@@ -466,6 +466,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 
 #### Determining optimal number of clusters ####
 library(factoextra)
+library(cluster)
 fviz_nbclust(oto.chem, FUN = hcut, method = "wss")
 fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
@@ -474,9 +475,11 @@ fviz_gap_stat(gap_stat)
 library(NbClust)
 nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
 fviz_nbclust(nb)
+dev.off()
 
 # k-means clustering
-library(cluster)
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
 kmean.cls <- kmeans(oto.chem, centers = 5, nstart = 50, iter.max = 10)
 class.table.km <- table(otoliths$Location, kmean.cls$cluster)
 mosaicplot(class.table.km, color = col.palette)
@@ -535,31 +538,42 @@ library(MASS)
 library(car)
 
 # transform to normal if necessary and standardize
-otoliths.sub <- otoliths[,c(1,4,5,12:21)]
+# otoliths.sub <- otoliths[,c(1,4,5,12:21)]
+otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn")]
 rownames(otoliths.sub) <- otoliths.sub[,1]
-otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
+# otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Ba', 'Sn')]), log10(otoliths.sub[,c('Fe', 'Cu', 'Cd', 'Pb', 'U')]+1) ) # log transform, adding 1 to elements with zero values
-otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn')]+0.00000001) ) # log transform
+# otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
+otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:7]))
 pairs(otoliths.sub.log.trans)
 scatterplotMatrix(otoliths.sub.log.trans)
-Location <- otoliths.sub.log$Location
-otoliths.sub.log.trans2 <- cbind(Location, otoliths.sub.log.trans)
+# Location <- otoliths.sub.log$Location
+# otoliths.sub.log.trans2 <- cbind(Location, otoliths.sub.log.trans)
 
-dfa1 <- lda(Location ~ Mg + Mn + Fe + Cu + Cd + Sr + Ba + Sn + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE) #Cd, Pb and U apprently too similar between groups when data not transformed and standardized; but not so when they are
+# dfa1 <- lda(Location ~ Mg + Mn + Fe + Cu + Cd + Sr + Ba + Sn + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE) #Cd, Pb and U apprently too similar between groups when data not transformed and standardized; but not so when they are
+
+Cluster <- as.factor(kmean.cls$cluster)
+names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
+otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
+dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE) 
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
-ct1 <- table(otoliths.sub.log.trans2$Location, dfa1$class)
+# ct1 <- table(otoliths.sub.log.trans2$Location, dfa1$class)
+ct1 <- table(otoliths.sub.log.trans2$Cluster, dfa1$class)
 diag(prop.table(ct1,1))
 
 # total percent correct
 sum(diag(prop.table(ct1)))
 
 #### Add predicted sites to the otolith data ####
-otoliths$predicted <- dfa1$class
+# otoliths$predicted <- dfa1$class # using DFA classes
+otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
 
-rownames(otoliths)==lda.class.ordered[,1] # should be in same order
-otoliths$predicted <- lda.class.ordered[,2] # from LDA using random 40% from each ingress site as test dataset
+names(kmean.cls$cluster) == otoliths$Fish.ID
+# rownames(otoliths)==lda.class.ordered[,1] # should be in same order
+# otoliths$predicted <- lda.class.ordered[,2] # from LDA using random 40% from each ingress site as test dataset
 
 # Read in dataset containing outlier loci
 gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
@@ -571,8 +585,8 @@ gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == F
 oto.gen.merge2 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 
 # Make some plots
-plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
-
+# plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
+plot(oto.gen.merge2$assignment ~ oto.gen.merge2$cluster, xlab = "Cluster based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
 
 #### Validating regional adult allele frequencies ####
 # Read in allele counts of 15 spatial outliers in adults
@@ -598,27 +612,6 @@ as.data.frame(regional.allele.freqs) == pop.allele.freqs
 pop.allele.freqs
 odds <- seq(1,20,2) # odd indicies to keep
 pop.allele.freqs.odds <- pop.allele.freqs[,odds]
-
-
-
-
-# Calculate population allele frequencies based on predicted otolith populations
-# pop.allele.counts <- aggregate(oto.gen.merge2[,c(16:35)], by = list(oto.gen.merge2$predicted), FUN = sum, na.rm = TRUE)
-
-# pull out even and odd indicies of allele counts
-# odd.indices <- seq(2,20,2)
-# even.indices <- seq(3,21,2)
-# 
-# odds <- pop.allele.counts[,odd.indices]
-# evens <- pop.allele.counts[,even.indices]
-# 
-# total.allele.counts <- odds + evens
-# odds.pop.allele.frequencies <- odds/total.allele.counts
-# evens.pop.allele.frequencies <- evens/total.allele.counts # sums to 1
-# 
-# north.odds.pop.allele.frequencies <- colSums(odds[c(2,3),])/colSums(total.allele.counts[c(2,3),])
-# south.odds.pop.allele.frequencies <- colSums(odds[c(1,4),])/colSums(total.allele.counts[c(1,4),])
-# regional.freqs.odds <- rbind (north.odds.pop.allele.frequencies, south.odds.pop.allele.frequencies)
 
 #### Population assignment using allele frequencies of otolith populations ####
 indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
@@ -699,39 +692,42 @@ for (l in 1:length(south.likelihoods[,1])){
 # north.log <- log10(north.vector[-c(which(north.vector == 1))]) # Remove individuals who are missing genetic data
 # south.log <- log10(south.vector[-c(which(south.vector == 1))])
 
-region1 <- gsub("NC", "South", oto.gen.merge2$predicted) # create otolith population with region (north or south)
+region1 <- gsub("NC", "South", oto.gen.merge2$predicted) # create otolith population with region (north or south); this is likely wrong approach because based on LDA using ingress sites rather than clustering
 region2 <- gsub("York", "South", region1)
 region3 <- gsub("RUMFS", "North", region2)
 region4 <- gsub("Roosevelt", "North", region3)
 oto.gen.merge2$predicted.region <- as.factor(region4)
 # geo.color <- as.numeric(oto.gen.merge2$predicted.region)
 
-# plot(south.log ~ north.log, xlab = 'log likelihood (north)', ylab = 'log likelihood (south)', col=ifelse(geo.color == 1, 'blue', 'tomato')) # blue is north, red is south
-# abline(a = 0,b=1)
-# legend("topleft",
-       # legend=c("Northern otolith populations", "Southern otolith populations"),
-       # pch=c(1, 1),
-       # col=c("blue", "tomato"))
+#### Group likelihoods by otolith population/cluster & take the product ####
+# north.pop <- aggregate(north.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # northern likelihoods for north and south otolith pops
+# south.pop <- aggregate(south.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # southern likelihoods for north and south otolith pops
 
-# plot(as.factor(assignment[-c(which(south.vector == 1))]) ~ oto.gen.merge2$predicted[-c(which(south.vector == 1))], xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
+north.pop <- aggregate(north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # northern likelihoods for 5 otolith clusters
+south.pop <- aggregate(south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # southern likelihoods for 5 otolith clusters
 
-#### Group likelihoods by otolith population & take the product ####
-north.pop <- aggregate(north.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # northern likelihoods for north and south otolith pops
-south.pop <- aggregate(south.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # southern likelihoods for north and south otolith pops
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
-rownames(pops.likelihood) <- c("n.oto", "s.oto")
 colnames(pops.likelihood) <- c("n.likes", "s.likes")
-pops.likelihood$oto.pop <- c('north', 'south')
+rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5")
 
-# Plot population likelihoods of otolith populations
-plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
-points(pops.likelihood[2,'n.likes'], pops.likelihood[2,'s.likes'], col = 'tomato')
+# pops.likelihood$oto.pop <- c('north', 'south')
+
+# Plot population likelihoods of otolith populations/clusters
+# plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
+# points(pops.likelihood[2,'n.likes'], pops.likelihood[2,'s.likes'], col = 'tomato')
+# abline(a=0,b=1)
+# legend("bottomright",
+#        legend=c("Northern otolith pop", "Southern otolith pop"),
+#        pch=c(1, 1),
+#        col=c("blue", "tomato"))
+
+plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = as.factor(rownames(pops.likelihood)), xlim = c(-135,-20), ylim = c(-135,-20), pch = 19)
 abline(a=0,b=1)
 legend("bottomright",
-       legend=c("Northern otolith pop", "Southern otolith pop"),
-       pch=c(1, 1),
-       col=c("blue", "tomato"))
+       legend=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"),
+       pch=c(19, 19, 19, 19, 19),
+       col=as.factor(rownames(pops.likelihood)))
 
 ###############################################################################################
 #### LDA based on ingress site ####
@@ -846,3 +842,30 @@ legend("topleft",
        pch=19,
        col = col.palette)
 
+#### Code I previously tried, but now is probably the wrong approach/obscure ####
+# Calculate population allele frequencies based on predicted otolith populations
+# pop.allele.counts <- aggregate(oto.gen.merge2[,c(16:35)], by = list(oto.gen.merge2$predicted), FUN = sum, na.rm = TRUE)
+
+# pull out even and odd indicies of allele counts
+# odd.indices <- seq(2,20,2)
+# even.indices <- seq(3,21,2)
+# 
+# odds <- pop.allele.counts[,odd.indices]
+# evens <- pop.allele.counts[,even.indices]
+# 
+# total.allele.counts <- odds + evens
+# odds.pop.allele.frequencies <- odds/total.allele.counts
+# evens.pop.allele.frequencies <- evens/total.allele.counts # sums to 1
+# 
+# north.odds.pop.allele.frequencies <- colSums(odds[c(2,3),])/colSums(total.allele.counts[c(2,3),])
+# south.odds.pop.allele.frequencies <- colSums(odds[c(1,4),])/colSums(total.allele.counts[c(1,4),])
+# regional.freqs.odds <- rbind (north.odds.pop.allele.frequencies, south.odds.pop.allele.frequencies)
+
+# plot(south.log ~ north.log, xlab = 'log likelihood (north)', ylab = 'log likelihood (south)', col=ifelse(geo.color == 1, 'blue', 'tomato')) # blue is north, red is south
+# abline(a = 0,b=1)
+# legend("topleft",
+# legend=c("Northern otolith populations", "Southern otolith populations"),
+# pch=c(1, 1),
+# col=c("blue", "tomato"))
+
+# plot(as.factor(assignment[-c(which(south.vector == 1))]) ~ oto.gen.merge2$predicted[-c(which(south.vector == 1))], xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
