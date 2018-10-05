@@ -763,6 +763,21 @@ legend(-8, -3,
        bty = "n",
        y.intersp = 1)
 
+# Plotting PC1 and PC3
+s.class(pca1$li, pop(gen.data), xax=1,yax=3, col = transp(col,0.7), axesell=TRUE, cellipse=1.5, cstar=1,cpoint=1.75, grid=FALSE, addaxes = FALSE, xlim = c(-11,6), ylim = c(-5,4), clabel = 0)
+axis(1, at=seq(-9,5, by=1), labels=seq(-9,5, by= 1), line = 0)
+axis(2, at=seq(-6,5, by = 1), labels=seq(-6,5, by= 1), line = 0.5, las = 2)
+mtext("PC1 (14.6%)", side = 1, line = 3)
+mtext("PC2 (12.1%)", side = 2, line = 3)
+title("PCA of summer flounder dataset\naxes 1-2")
+
+legend(-8, -3,
+       legend=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5"),
+       pch=c(19, 19, 19, 19, 19),
+       col=col,
+       bty = "n",
+       y.intersp = 1)
+
 
 ###############################################################################################
 #### LDA based on ingress site ####
