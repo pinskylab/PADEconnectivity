@@ -477,6 +477,11 @@ nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method 
 fviz_nbclust(nb)
 dev.off()
 
+library(mclust) 
+mclust.fit <- Mclust(oto.chem)
+plot(mclust.fit)
+summary(mclust.fit)
+
 # k-means clustering
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
@@ -583,6 +588,7 @@ gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == F
 
 # Merge otolith data with predicted sites with genetic data containing outliers
 oto.gen.merge2 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+write.table(oto.gen.merge2, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
 
 # Make some plots
 # plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
@@ -778,6 +784,25 @@ legend(-8, -3,
        bty = "n",
        y.intersp = 1)
 
+#### Trying to calculate confidence intervals ####
+adults10_counts <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.counts10.txt', header = TRUE)
+
+adults10_counts_north <- adults10_counts[which(adults10_counts$regions == 'north'), -c(1:2)]
+adults10_counts_south <- adults10_counts[which(adults10_counts$regions == 'south'), -c(1:2)]
+
+colSums(adults10_counts_north, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_north)))
+colSums(adults10_counts_south, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_south)))
+
+sample(adults10_counts_north[,1], 2)
+
+# Mean absolute difference between 10 outlier loci in the north and south is ~10%
+n.simulated <- rbinom(n = 90, size = 135, 0.8)/135 # north adults
+s.simulated <- rbinom(n = 90, size = 97, 0.7)/97 # south adults
+both.simulated <- rbind(n.simulated, s.simulated)
+loci100 <- cbind(pop.allele.freqs.odds, both.simulated) # cbind these simulated allele frequencies to the 10 real adult ones
+
+# Sample from each regional allele frequency distribution to create larval allele counts
+
 
 ###############################################################################################
 #### LDA based on ingress site ####
@@ -891,6 +916,96 @@ legend("topleft",
        legend = levels(oto.gen.merge2$assignment),
        pch=19,
        col = col.palette)
+
+#### Back of the envelope calculations regarding power (# of loci) ####
+# Read in dataset containing outlier loci and otolith data
+oto.gen.merge2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
+
+oto.gen.merge2
+
+colSums(oto.gen.merge2[,16:35], na.rm = TRUE)/(2*colSums(!is.na(oto.gen.merge2[,16:35]))) 
+
+# Sample 90 more adult allele frequencies based on the regional allele frequencies
+# Mean absolute difference between 10 outlier loci in the north and south is ~10%
+n.simulated <- rbinom(n = 90, size = 135, 0.8)/135 # north adults
+s.simulated <- rbinom(n = 90, size = 97, 0.7)/97 # south adults
+both.simulated <- rbind(n.simulated, s.simulated)
+loci100 <- cbind(pop.allele.freqs.odds, both.simulated) # cbind these simulated allele frequencies to the 10 real adult ones
+
+# Sample from each regional allele frequency distribution to create larval allele counts
+
+
+
+# Then randomly draw 0, 1 or 2 for each of 10 loci for each larvae in each cluster
+simulated.counts <- sample(0:2,13590, replace = TRUE) # 90*151
+simulated.counts.matrix <- matrix(simulated.counts, nrow = 151, ncol = 90)
+counts100 <- cbind(indiv.allele.counts.odds, simulated.counts.matrix) # cbind these simulated counts to the 10 real ones for 151 larval fish
+
+# For loop to loop through each of 100 loci & multiply by the adult allele frequency, and then do this for all 151 larvae. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+north.likelihoods.100loci <- data.frame()
+south.likelihoods.100loci <- data.frame()
+
+for (j in 1:length(rownames(counts100))){
+  
+  for (i in 1:length(colnames(counts100))){
+    if(counts100[j,i] == 2) {
+      north.likelihoods.100loci[j,i] <- loci100[1,i]^2
+    } else if (counts100[j,i] == 1) {
+      north.likelihoods.100loci[j,i] <- 2*(loci100[1,i] * (1-loci100[1,i]))
+    } else if (counts100[j,i] == 0) {
+      north.likelihoods.100loci[j,i] <- ( 1-loci100[1,i])^2 
+    } else {
+      north.likelihoods.100loci[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(counts100))){
+    if(counts100[j,i] == 2){
+      south.likelihoods.100loci[j,i] <- loci100[2,i]^2
+    } else if (counts100[j,i] == 1) {
+      south.likelihoods.100loci[j,i] <- 2*(loci100[2,i] * (1-loci100[2,i]))
+    } else  if (counts100[j,i] == 0) {
+      south.likelihoods.100loci[j,i] <- (1-loci100[2,i])^2
+    } else {
+      south.likelihoods.100loci[j,i] <- 1
+    }
+  }
+}
+
+# Multiply everything together
+north.vector.100loci <- vector()
+south.vector.100loci <- vector()
+
+for (k in 1:length(north.likelihoods.100loci[,1])){
+  north.vector.100loci[k] <- prod(north.likelihoods.100loci[k,])
+}
+
+for (l in 1:length(south.likelihoods.100loci[,1])){
+  south.vector.100loci[l] <- prod(south.likelihoods.100loci[l,])
+}
+
+# Aggregate by k-means clustering groups
+# Remember log10(M*N) = log10(M) + log10(N)
+north.vector.100loci.log <- log10(north.vector.100loci)
+south.vector.100loci.log <- log10(south.vector.100loci)
+
+north.pop.100loci <- aggregate(north.vector.100loci.log, by = list(oto.gen.merge2$cluster), FUN = sum) # northern likelihoods for 5 otolith clusters using 100 loci
+south.pop.100loci <- aggregate(south.vector.100loci.log, by = list(oto.gen.merge2$cluster), FUN = sum) # southern likelihoods for 5 otolith clusters using 100 loci
+
+pops.likelihood.100loci <- as.data.frame(cbind(as.numeric(north.pop.100loci[,2]), as.numeric(south.pop.100loci[,2])))
+colnames(pops.likelihood.100loci) <- c("n.likes", "s.likes")
+rownames(pops.likelihood.100loci) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5")
+
+# Plot likelihoods for region/season combos
+library(wesanderson)
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+plot(pops.likelihood.100loci[,'s.likes'] ~ pops.likelihood.100loci[,'n.likes'], ylab = 'Southern log likelihood', xlab = 'Northern log likelihood', col = as.factor(rownames(pops.likelihood.100loci)), pch = 19)
+abline(a=0,b=1)
+legend("bottomright",
+       legend=c("Cluster1", "Cluster2", "Cluster3", "Cluster4", "Cluster5"),
+       pch=c(19),
+       col=as.factor(rownames(pops.likelihood.100loci)))
 
 #### Code I previously tried, but now is probably the wrong approach/obscure ####
 # Calculate population allele frequencies based on predicted otolith populations
