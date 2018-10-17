@@ -785,15 +785,135 @@ legend(-8, -3,
        y.intersp = 1)
 
 #### Trying to calculate confidence intervals ####
-adults10_counts <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.counts10.txt', header = TRUE)
+# adults10_counts <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.counts10.txt', header = TRUE)
+# 
+# adults10_counts_north <- adults10_counts[which(adults10_counts$regions == 'north'), -c(1:2)]
+# adults10_counts_south <- adults10_counts[which(adults10_counts$regions == 'south'), -c(1:2)]
+# 
+# colSums(adults10_counts_north, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_north)))
+# colSums(adults10_counts_south, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_south)))
 
-adults10_counts_north <- adults10_counts[which(adults10_counts$regions == 'north'), -c(1:2)]
-adults10_counts_south <- adults10_counts[which(adults10_counts$regions == 'south'), -c(1:2)]
+# Read in adult outlier allele frequencies
+pop.allele.freqs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/regional.adult.outs.freqs10.txt')
 
-colSums(adults10_counts_north, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_north)))
-colSums(adults10_counts_south, na.rm = TRUE)/(2*colSums(!is.na(adults10_counts_south)))
+# Keep only one allele per locus
+odds <- seq(1,20,2) # odd indicies to keep
+pop.allele.freqs.odds <- pop.allele.freqs[,odds]
+pop.allele.freqs.odds.north <- pop.allele.freqs.odds[1,] # north allele frequency
+pop.allele.freqs.odds.south <- pop.allele.freqs.odds[2,] # south allele frequency
 
-sample(adults10_counts_north[,1], 2)
+# Sample one allele per locus many times
+n.alleles <- sapply(pop.allele.freqs.odds.north,function(z){rbinom(2000,1,z)})
+
+# Do this for the southern distribution too
+s.alleles <- sapply(pop.allele.freqs.odds.south,function(z){rbinom(2000,1,z)})
+
+# Then create the genotype for each individual by separating even and odd rows, then adding them together to get allele count
+odds <- seq(1,2000,2) # odd indicies
+evens <- seq(2,2000,2) # even indicies
+
+n.alleles.odds <- n.alleles[odds,]
+n.alleles.evens <- n.alleles[evens,]
+n.alleles.sum <- n.alleles[odds,] + n.alleles[evens,]
+
+s.alleles.odds <- s.alleles[odds,]
+s.alleles.evens <- s.alleles[evens,]
+s.alleles.sum <- s.alleles[odds,] + s.alleles[evens,]
+
+# Use adult allele frequencies to calculate likelihoods
+colnames(pop.allele.freqs.odds) == colnames(n.alleles.sum) # check to make sure column names are the same
+colnames(pop.allele.freqs.odds) == colnames(s.alleles.sum)
+
+# For loop to loop through each of 10 loci & multiply by the adult allele frequency, and then do this for all 1000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+north.likelihoods.ndist <- data.frame()
+south.likelihoods.ndist <- data.frame()
+
+for (j in 1:nrow(n.alleles.sum)){
+  
+  for (i in 1:length(colnames(n.alleles.sum))){
+    if(n.alleles.sum[j,i] == 2) {
+      north.likelihoods.ndist[j,i] <- pop.allele.freqs.odds[1,i]^2
+    } else if (n.alleles.sum[j,i] == 1) {
+      north.likelihoods.ndist[j,i] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+    } else if (n.alleles.sum[j,i] == 0) {
+      north.likelihoods.ndist[j,i] <- ( 1-pop.allele.freqs.odds[1,i])^2 
+    } else {
+      north.likelihoods.ndist[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(n.alleles.sum))){
+    if(n.alleles.sum[j,i] == 2){
+      south.likelihoods.ndist[j,i] <- pop.allele.freqs.odds[2,i]^2
+    } else if (n.alleles.sum[j,i] == 1) {
+      south.likelihoods.ndist[j,i] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+    } else  if (n.alleles.sum[j,i] == 0) {
+      south.likelihoods.ndist[j,i] <- (1-pop.allele.freqs.odds[2,i])^2
+    } else {
+      south.likelihoods.ndist[j,i] <- 1
+    }
+  }
+}
+
+north.likelihoods.sdist <- data.frame()
+south.likelihoods.sdist <- data.frame()
+
+for (j in 1:nrow(s.alleles.sum)){
+  
+  for (i in 1:length(colnames(s.alleles.sum))){
+    if(s.alleles.sum[j,i] == 2) {
+      north.likelihoods.sdist[j,i] <- pop.allele.freqs.odds[1,i]^2
+    } else if (s.alleles.sum[j,i] == 1) {
+      north.likelihoods.sdist[j,i] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+    } else if (s.alleles.sum[j,i] == 0) {
+      north.likelihoods.sdist[j,i] <- ( 1-pop.allele.freqs.odds[1,i])^2 
+    } else {
+      north.likelihoods.sdist[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(s.alleles.sum))){
+    if(s.alleles.sum[j,i] == 2){
+      south.likelihoods.sdist[j,i] <- pop.allele.freqs.odds[2,i]^2
+    } else if (s.alleles.sum[j,i] == 1) {
+      south.likelihoods.sdist[j,i] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+    } else  if (s.alleles.sum[j,i] == 0) {
+      south.likelihoods.sdist[j,i] <- (1-pop.allele.freqs.odds[2,i])^2
+    } else {
+      south.likelihoods.sdist[j,i] <- 1
+    }
+  }
+}
+
+# Multiply everything together
+north.vector.ndist <- vector()
+south.vector.ndist <- vector()
+
+for (k in 1:length(north.likelihoods.ndist[,1])){
+  north.vector.ndist[k] <- prod(north.likelihoods.ndist[k,])
+}
+
+for (l in 1:length(south.likelihoods.ndist[,1])){
+  south.vector.ndist[l] <- prod(south.likelihoods.ndist[l,])
+}
+
+north.vector.sdist <- vector()
+south.vector.sdist <- vector()
+
+for (k in 1:length(north.likelihoods.sdist[,1])){
+  north.vector.sdist[k] <- prod(north.likelihoods.sdist[k,])
+}
+
+for (l in 1:length(south.likelihoods.sdist[,1])){
+  south.vector.sdist[l] <- prod(south.likelihoods.sdist[l,])
+}
+
+# Create ratio & plot
+hist(log10(north.vector.ndist/south.vector.ndist), xlab = "log10(north likelihood/south likelihood)", main = "", col = rgb(1,0,0,0.5), xlim = c(-4,4), ylim = c(0,400))
+hist(log10(north.vector.sdist/south.vector.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+
+
+
 
 # Mean absolute difference between 10 outlier loci in the north and south is ~10%
 n.simulated <- rbinom(n = 90, size = 135, 0.8)/135 # north adults
