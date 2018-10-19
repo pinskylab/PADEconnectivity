@@ -911,7 +911,52 @@ for (l in 1:length(south.likelihoods.sdist[,1])){
 # Create ratio & plot
 hist(log10(north.vector.ndist/south.vector.ndist), xlab = "log10(north likelihood/south likelihood)", main = "", col = rgb(1,0,0,0.5), xlim = c(-4,4), ylim = c(0,400))
 hist(log10(north.vector.sdist/south.vector.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
 
+# Read in assignments
+larvs.assign <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/results/larval_assignment.txt", header = TRUE)
+
+# Calculate likelihood ratio for each of 293 individuals
+ndist.ratio <- log10(north.vector.ndist/south.vector.ndist)
+sdist.ratio <- log10(north.vector.sdist/south.vector.sdist)
+ass.ratio <- log10(larvs.assign$north.vector/larvs.assign$south.vector)
+
+sapply(ass.ratio,function(z){abline(v=z)})
+
+# P-values given northern distribution
+ndist.pvalues <- matrix(nrow = 293, ncol = 1)
+for (b in 1:length(ass.ratio)){
+  if(ass.ratio[b] > median(ndist.ratio)){
+    ndist.pvalues[b] <- round((length(which(ndist.ratio > ass.ratio[b]))+1)/(length(ndist.ratio)+1), 5)
+  } else{
+    ndist.pvalues[b] <- round((length(which(ndist.ratio < ass.ratio[b]))+1)/(length(ndist.ratio)+1), 5)
+  }
+}
+
+# How many p-values are < 0.05? Expect 0.05 * 293 = 15
+length(which(ndist.pvalues < 0.05)) # 66 for 1000 simulations
+larvs.assign[which(ndist.pvalues < 0.05),] # which larvae are these that are unlikely to come from 'northern' parents?
+
+# P-values given southern distribution
+sdist.pvalues <- matrix(nrow = 293, ncol = 1)
+for (b in 1:length(ass.ratio)){
+  if(ass.ratio[b] > median(sdist.ratio)){
+    sdist.pvalues[b] <- round((length(which(sdist.ratio > ass.ratio[b]))+1)/(length(sdist.ratio)+1), 5)
+  } else {
+    sdist.pvalues[b] <- round((length(which(sdist.ratio < ass.ratio[b]))+1)/(length(sdist.ratio)+1), 5)
+  }
+}
+
+# How many p-values are < 0.05? Expect 0.05 * 293 = 15
+length(which(sdist.pvalues < 0.05)) # 36 for 1000 simulations
+larvs.assign[which(sdist.pvalues < 0.05),] # which larvae are these that are unlikely to come from 'southern' parents?
+
+# Adjusted p-values: none after adjustment at alpha = 0.05!! Some at alpha = 0.2 though.
+ndist.pvalues.adj <- round(p.adjust(ndist.pvalues, method = "BH"), 3)
+which(ndist.pvalues.adj < 0.20)
+
+sdist.pvalues.adj <- round(p.adjust(sdist.pvalues, method = "BH"), 3)
+which(sdist.pvalues.adj < 0.05)
 
 
 
