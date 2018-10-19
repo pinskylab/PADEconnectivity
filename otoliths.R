@@ -966,7 +966,6 @@ s.simulated <- rbinom(n = 90, size = 97, 0.7)/97 # south adults
 both.simulated <- rbind(n.simulated, s.simulated)
 loci100 <- cbind(pop.allele.freqs.odds, both.simulated) # cbind these simulated allele frequencies to the 10 real adult ones
 
-# Sample from each regional allele frequency distribution to create larval allele counts
 
 
 ###############################################################################################
@@ -1083,94 +1082,128 @@ legend("topleft",
        col = col.palette)
 
 #### Back of the envelope calculations regarding power (# of loci) ####
-# Read in dataset containing outlier loci and otolith data
-oto.gen.merge2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
+# Read in adult outlier allele frequencies
+pop.allele.freqs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/regional.adult.outs.freqs10.txt')
 
-oto.gen.merge2
+# Keep only one allele per locus
+odds <- seq(1,20,2) # odd indicies to keep
+pop.allele.freqs.odds <- pop.allele.freqs[,odds]
+pop.allele.freqs.odds.100 <- do.call("cbind", replicate(10, pop.allele.freqs.odds, simplify = FALSE)) # replicate these allele frequencies 10 times
+colnames(pop.allele.freqs.odds.100) <- 1:100 # rename the columns so it doesn't get super confusing
+pop.allele.freqs.odds.100.north <- pop.allele.freqs.odds.100[1,] # north allele frequency
+pop.allele.freqs.odds.100.south <- pop.allele.freqs.odds.100[2,] # south allele frequency
 
-colSums(oto.gen.merge2[,16:35], na.rm = TRUE)/(2*colSums(!is.na(oto.gen.merge2[,16:35]))) 
+# Sample one allele per locus many times
+n.alleles <- sapply(pop.allele.freqs.odds.100.north,function(z){rbinom(2000,1,z)})
 
-# Sample 90 more adult allele frequencies based on the regional allele frequencies
-# Mean absolute difference between 10 outlier loci in the north and south is ~10%
-n.simulated <- rbinom(n = 90, size = 135, 0.8)/135 # north adults
-s.simulated <- rbinom(n = 90, size = 97, 0.7)/97 # south adults
-both.simulated <- rbind(n.simulated, s.simulated)
-loci100 <- cbind(pop.allele.freqs.odds, both.simulated) # cbind these simulated allele frequencies to the 10 real adult ones
+# Do this for the southern distribution too
+s.alleles <- sapply(pop.allele.freqs.odds.100.south,function(z){rbinom(2000,1,z)})
 
-# Sample from each regional allele frequency distribution to create larval allele counts
+# Then create the genotype for each individual by separating even and odd rows, then adding them together to get allele count
+odds <- seq(1,2000,2) # odd indicies
+evens <- seq(2,2000,2) # even indicies
 
+n.alleles.odds <- n.alleles[odds,]
+n.alleles.evens <- n.alleles[evens,]
+n.alleles.sum.100 <- n.alleles[odds,] + n.alleles[evens,]
 
+s.alleles.odds <- s.alleles[odds,]
+s.alleles.evens <- s.alleles[evens,]
+s.alleles.sum.100 <- s.alleles[odds,] + s.alleles[evens,]
 
-# Then randomly draw 0, 1 or 2 for each of 10 loci for each larvae in each cluster
-simulated.counts <- sample(0:2,13590, replace = TRUE) # 90*151
-simulated.counts.matrix <- matrix(simulated.counts, nrow = 151, ncol = 90)
-counts100 <- cbind(indiv.allele.counts.odds, simulated.counts.matrix) # cbind these simulated counts to the 10 real ones for 151 larval fish
+# Use adult allele frequencies to calculate likelihoods
+colnames(pop.allele.freqs.odds.100) == colnames(n.alleles.sum.100) # check to make sure column names are the same
+colnames(pop.allele.freqs.odds.100) == colnames(s.alleles.sum.100)
 
-# For loop to loop through each of 100 loci & multiply by the adult allele frequency, and then do this for all 151 larvae. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
-north.likelihoods.100loci <- data.frame()
-south.likelihoods.100loci <- data.frame()
+# For loop to loop through each of 10 loci & multiply by the adult allele frequency, and then do this for all 1000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+north.likelihoods.ndist.100 <- data.frame()
+south.likelihoods.ndist.100 <- data.frame()
 
-for (j in 1:length(rownames(counts100))){
+for (j in 1:nrow(n.alleles.sum.100)){
   
-  for (i in 1:length(colnames(counts100))){
-    if(counts100[j,i] == 2) {
-      north.likelihoods.100loci[j,i] <- loci100[1,i]^2
-    } else if (counts100[j,i] == 1) {
-      north.likelihoods.100loci[j,i] <- 2*(loci100[1,i] * (1-loci100[1,i]))
-    } else if (counts100[j,i] == 0) {
-      north.likelihoods.100loci[j,i] <- ( 1-loci100[1,i])^2 
+  for (i in 1:length(colnames(n.alleles.sum.100))){
+    if(n.alleles.sum.100[j,i] == 2) {
+      north.likelihoods.ndist.100[j,i] <- pop.allele.freqs.odds.100[1,i]^2
+    } else if (n.alleles.sum.100[j,i] == 1) {
+      north.likelihoods.ndist.100[j,i] <- 2*(pop.allele.freqs.odds.100[1,i] * (1-pop.allele.freqs.odds.100[1,i]))
+    } else if (n.alleles.sum.100[j,i] == 0) {
+      north.likelihoods.ndist.100[j,i] <- ( 1-pop.allele.freqs.odds.100[1,i])^2 
     } else {
-      north.likelihoods.100loci[j,i] <- 1
+      north.likelihoods.ndist.100[j,i] <- 1
     }
   }
   
-  for (i in 1:length(colnames(counts100))){
-    if(counts100[j,i] == 2){
-      south.likelihoods.100loci[j,i] <- loci100[2,i]^2
-    } else if (counts100[j,i] == 1) {
-      south.likelihoods.100loci[j,i] <- 2*(loci100[2,i] * (1-loci100[2,i]))
-    } else  if (counts100[j,i] == 0) {
-      south.likelihoods.100loci[j,i] <- (1-loci100[2,i])^2
+  for (i in 1:length(colnames(n.alleles.sum.100))){
+    if(n.alleles.sum.100[j,i] == 2){
+      south.likelihoods.ndist.100[j,i] <- pop.allele.freqs.odds.100[2,i]^2
+    } else if (n.alleles.sum.100[j,i] == 1) {
+      south.likelihoods.ndist.100[j,i] <- 2*(pop.allele.freqs.odds.100[2,i] * (1-pop.allele.freqs.odds.100[2,i]))
+    } else  if (n.alleles.sum.100[j,i] == 0) {
+      south.likelihoods.ndist.100[j,i] <- (1-pop.allele.freqs.odds.100[2,i])^2
     } else {
-      south.likelihoods.100loci[j,i] <- 1
+      south.likelihoods.ndist.100[j,i] <- 1
+    }
+  }
+}
+
+north.likelihoods.sdist.100 <- data.frame()
+south.likelihoods.sdist.100 <- data.frame()
+
+for (j in 1:nrow(s.alleles.sum.100)){
+  
+  for (i in 1:length(colnames(s.alleles.sum.100))){
+    if(s.alleles.sum.100[j,i] == 2) {
+      north.likelihoods.sdist.100[j,i] <- pop.allele.freqs.odds.100[1,i]^2
+    } else if (s.alleles.sum.100[j,i] == 1) {
+      north.likelihoods.sdist.100[j,i] <- 2*(pop.allele.freqs.odds.100[1,i] * (1-pop.allele.freqs.odds.100[1,i]))
+    } else if (s.alleles.sum.100[j,i] == 0) {
+      north.likelihoods.sdist.100[j,i] <- ( 1-pop.allele.freqs.odds.100[1,i])^2 
+    } else {
+      north.likelihoods.sdist.100[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(s.alleles.sum.100))){
+    if(s.alleles.sum.100[j,i] == 2){
+      south.likelihoods.sdist.100[j,i] <- pop.allele.freqs.odds.100[2,i]^2
+    } else if (s.alleles.sum.100[j,i] == 1) {
+      south.likelihoods.sdist.100[j,i] <- 2*(pop.allele.freqs.odds.100[2,i] * (1-pop.allele.freqs.odds.100[2,i]))
+    } else  if (s.alleles.sum.100[j,i] == 0) {
+      south.likelihoods.sdist.100[j,i] <- (1-pop.allele.freqs.odds.100[2,i])^2
+    } else {
+      south.likelihoods.sdist.100[j,i] <- 1
     }
   }
 }
 
 # Multiply everything together
-north.vector.100loci <- vector()
-south.vector.100loci <- vector()
+north.vector.ndist.100 <- vector()
+south.vector.ndist.100 <- vector()
 
-for (k in 1:length(north.likelihoods.100loci[,1])){
-  north.vector.100loci[k] <- prod(north.likelihoods.100loci[k,])
+for (k in 1:length(north.likelihoods.ndist.100[,1])){
+  north.vector.ndist.100[k] <- prod(north.likelihoods.ndist.100[k,])
 }
 
-for (l in 1:length(south.likelihoods.100loci[,1])){
-  south.vector.100loci[l] <- prod(south.likelihoods.100loci[l,])
+for (l in 1:length(south.likelihoods.ndist.100[,1])){
+  south.vector.ndist.100[l] <- prod(south.likelihoods.ndist.100[l,])
 }
 
-# Aggregate by k-means clustering groups
-# Remember log10(M*N) = log10(M) + log10(N)
-north.vector.100loci.log <- log10(north.vector.100loci)
-south.vector.100loci.log <- log10(south.vector.100loci)
+north.vector.sdist.100 <- vector()
+south.vector.sdist.100 <- vector()
 
-north.pop.100loci <- aggregate(north.vector.100loci.log, by = list(oto.gen.merge2$cluster), FUN = sum) # northern likelihoods for 5 otolith clusters using 100 loci
-south.pop.100loci <- aggregate(south.vector.100loci.log, by = list(oto.gen.merge2$cluster), FUN = sum) # southern likelihoods for 5 otolith clusters using 100 loci
+for (k in 1:length(north.likelihoods.sdist.100[,1])){
+  north.vector.sdist.100[k] <- prod(north.likelihoods.sdist.100[k,])
+}
 
-pops.likelihood.100loci <- as.data.frame(cbind(as.numeric(north.pop.100loci[,2]), as.numeric(south.pop.100loci[,2])))
-colnames(pops.likelihood.100loci) <- c("n.likes", "s.likes")
-rownames(pops.likelihood.100loci) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5")
+for (l in 1:length(south.likelihoods.sdist.100[,1])){
+  south.vector.sdist.100[l] <- prod(south.likelihoods.sdist.100[l,])
+}
 
-# Plot likelihoods for region/season combos
-library(wesanderson)
-col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
-palette(col.palette)
-plot(pops.likelihood.100loci[,'s.likes'] ~ pops.likelihood.100loci[,'n.likes'], ylab = 'Southern log likelihood', xlab = 'Northern log likelihood', col = as.factor(rownames(pops.likelihood.100loci)), pch = 19)
-abline(a=0,b=1)
-legend("bottomright",
-       legend=c("Cluster1", "Cluster2", "Cluster3", "Cluster4", "Cluster5"),
-       pch=c(19),
-       col=as.factor(rownames(pops.likelihood.100loci)))
+# Create ratio & plot
+hist(log10(north.vector.ndist.100/south.vector.ndist.100), xlab = "log10(north likelihood/south likelihood)", col = rgb(1,0,0,0.5), main = "100 loci", xlim = c(-12,12), ylim = c(0,250))
+hist(log10(north.vector.sdist.100/south.vector.sdist.100), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
 
 #### Code I previously tried, but now is probably the wrong approach/obscure ####
 # Calculate population allele frequencies based on predicted otolith populations
