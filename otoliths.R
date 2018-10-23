@@ -913,6 +913,20 @@ hist(log10(north.vector.ndist/south.vector.ndist), xlab = "log10(north likelihoo
 hist(log10(north.vector.sdist/south.vector.sdist), col = rgb(0,0,1,0.5), add = TRUE)
 legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
 
+# Power test
+log10(north.vector.ndist/south.vector.ndist)[order(log10(north.vector.ndist/south.vector.ndist))][50] #5% of 1000 is 50
+length(which(log10(north.vector.sdist/south.vector.sdist) < -0.5864056))
+
+library(pwr)
+library(lsr)
+pwr.2p.test(abs(mean(log10(north.vector.ndist/south.vector.ndist))-mean(log10(north.vector.sdist/south.vector.sdist))), 1000, 0.05)
+
+cohen <- cohensD(log10(north.vector.ndist/south.vector.ndist), log10(north.vector.sdist/south.vector.sdist))
+cohen <- cohensD(north.vector.ndist/south.vector.ndist, north.vector.sdist/south.vector.sdist)
+cohen.larvs <- cohensD(ndist.ratio, sdist.ratio)
+pwr.t.test(1000, d = cohen, type = "two.sample")
+pwr.t2n.test(n1 = 97, n2 = 135, d = cohen.larvs)
+
 # Read in assignments
 larvs.assign <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/results/larval_assignment.txt", header = TRUE)
 
@@ -1203,6 +1217,18 @@ for (l in 1:length(south.likelihoods.sdist.100[,1])){
 hist(log10(north.vector.ndist.100/south.vector.ndist.100), xlab = "log10(north likelihood/south likelihood)", col = rgb(1,0,0,0.5), main = "100 loci", xlim = c(-12,12), ylim = c(0,250))
 hist(log10(north.vector.sdist.100/south.vector.sdist.100), col = rgb(0,0,1,0.5), add = TRUE)
 legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
+# Power test
+log10(north.vector.ndist.100/south.vector.ndist.100)[order(log10(north.vector.ndist.100/south.vector.ndist.100))][50] # 5% of 1000 is 50
+length(which(log10(north.vector.sdist.100/south.vector.sdist.100) < 0.39798))
+
+library(pwr)
+library(lsr)
+pwr.2p.test(mean(log10(north.vector.ndist.100/south.vector.ndist.100))-mean(log10(north.vector.sdist.100/south.vector.sdist.100)), 1000, 0.05)
+
+cohen <- cohensD(log10(north.vector.ndist.100/south.vector.ndist.100), log10(north.vector.sdist.100/south.vector.sdist.100))
+pwr.t.test(1000, d = cohen, type = "two.sample")
+
 
 
 #### Code I previously tried, but now is probably the wrong approach/obscure ####
