@@ -392,5 +392,198 @@ legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)),
 log10(north30.ndist/south30.ndist)[order(log10(north30.ndist/south30.ndist))][50] #5% of 1000 is 50
 p30 <- length(which(log10(north30.sdist/south30.sdist) < 5.351101))/1000
 
+###############################################################################################################
+# Sample one allele per locus many times, with the z dimension being the number of individuals in a population
+# Population = 45
+n.alleles.45 <- array(dim = c(1000,10,45))
+for (i in 1:45){
+  n.alleles.45[,,i] <- sapply(pop.allele.freqs.odds.north,function(z){rbinom(1000,2,z)})
+}
+
+# Do this for the southern distribution too
+s.alleles.45 <- array(dim = c(1000,10,45))
+for (i in 1:45){
+  s.alleles.45[,,i] <- sapply(pop.allele.freqs.odds.south,function(z){rbinom(1000,2,z)})
+}
+
+# Use adult allele frequencies to calculate likelihoods
+# For loop to loop through each of 10 loci & multiply by the adult allele frequency, and then do this for all 1000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+north.likelihoods.ndist.45 <- array(dim = c(1000,10,45))
+south.likelihoods.ndist.45 <- array(dim = c(1000,10,45))
+
+north.likelihoods.sdist.45 <- array(dim = c(1000,10,45))
+south.likelihoods.sdist.45 <- array(dim = c(1000,10,45))
+
+for (h in 1:45){
+  
+  for (j in 1:nrow(n.alleles.45)){
+    
+    for (i in 1:ncol(n.alleles.45)){
+      if(n.alleles.45[j,i,h] == 2) {
+        north.likelihoods.ndist.45[j,i,h] <- pop.allele.freqs.odds[1,i]^2
+      } else if (n.alleles.45[j,i,h] == 1) {
+        north.likelihoods.ndist.45[j,i,h] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+      } else if (n.alleles.45[j,i,h] == 0) {
+        north.likelihoods.ndist.45[j,i,h] <- ( 1-pop.allele.freqs.odds[1,i])^2 
+      } else {
+        north.likelihoods.ndist.45[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(n.alleles.45)){
+      if(n.alleles.45[j,i,h] == 2){
+        south.likelihoods.ndist.45[j,i,h] <- pop.allele.freqs.odds[2,i]^2
+      } else if (n.alleles.45[j,i,h] == 1) {
+        south.likelihoods.ndist.45[j,i,h] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+      } else  if (n.alleles.45[j,i,h] == 0) {
+        south.likelihoods.ndist.45[j,i,h] <- (1-pop.allele.freqs.odds[2,i])^2
+      } else {
+        south.likelihoods.ndist.45[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(s.alleles.45)){
+    
+    for (i in 1:ncol(s.alleles.45)){
+      if(s.alleles.45[j,i,h] == 2) {
+        north.likelihoods.sdist.45[j,i,h] <- pop.allele.freqs.odds[1,i]^2
+      } else if (s.alleles.45[j,i,h] == 1) {
+        north.likelihoods.sdist.45[j,i,h] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+      } else if (s.alleles.45[j,i,h] == 0) {
+        north.likelihoods.sdist.45[j,i,h] <- (1-pop.allele.freqs.odds[1,i])^2 
+      } else {
+        north.likelihoods.sdist.45[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(s.alleles.45)){
+      if(s.alleles.45[j,i,h] == 2){
+        south.likelihoods.sdist.45[j,i,h] <- pop.allele.freqs.odds[2,i]^2
+      } else if (s.alleles.45[j,i,h] == 1) {
+        south.likelihoods.sdist.45[j,i,h] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+      } else  if (s.alleles.45[j,i,h] == 0) {
+        south.likelihoods.sdist.45[j,i,h] <- (1-pop.allele.freqs.odds[2,i])^2
+      } else {
+        south.likelihoods.sdist.45[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together
+north45.ndist <- apply(north.likelihoods.ndist.45, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south45.ndist <- apply(south.likelihoods.ndist.45, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+north45.sdist <- apply(north.likelihoods.sdist.45, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south45.sdist <- apply(south.likelihoods.sdist.45, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Create ratio & plot
+hist(log10(north45.ndist/south45.ndist), xlab = "log10(north likelihood/south likelihood)", main = "Population = 45", col = rgb(1,0,0,0.5), xlim = c(-30,30), ylim = c(0,220))
+hist(log10(north45.sdist/south45.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
+# Power test
+log10(north45.ndist/south45.ndist)[order(log10(north45.ndist/south45.ndist))][50] #5% of 1000 is 50
+p45 <- length(which(log10(north45.sdist/south45.sdist) < 9.584772))/1000
+
+###############################################################################################################
+# Sample one allele per locus many times, with the z dimension being the number of individuals in a population
+# Population = 80
+n.alleles.80 <- array(dim = c(1000,10,80))
+for (i in 1:80){
+  n.alleles.80[,,i] <- sapply(pop.allele.freqs.odds.north,function(z){rbinom(1000,2,z)})
+}
+
+# Do this for the southern distribution too
+s.alleles.80 <- array(dim = c(1000,10,80))
+for (i in 1:80){
+  s.alleles.80[,,i] <- sapply(pop.allele.freqs.odds.south,function(z){rbinom(1000,2,z)})
+}
+
+# Use adult allele frequencies to calculate likelihoods
+# For loop to loop through each of 10 loci & multiply by the adult allele frequency, and then do this for all 1000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+north.likelihoods.ndist.80 <- array(dim = c(1000,10,80))
+south.likelihoods.ndist.80 <- array(dim = c(1000,10,80))
+
+north.likelihoods.sdist.80 <- array(dim = c(1000,10,80))
+south.likelihoods.sdist.80 <- array(dim = c(1000,10,80))
+
+for (h in 1:80){
+  
+  for (j in 1:nrow(n.alleles.80)){
+    
+    for (i in 1:ncol(n.alleles.80)){
+      if(n.alleles.80[j,i,h] == 2) {
+        north.likelihoods.ndist.80[j,i,h] <- pop.allele.freqs.odds[1,i]^2
+      } else if (n.alleles.80[j,i,h] == 1) {
+        north.likelihoods.ndist.80[j,i,h] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+      } else if (n.alleles.80[j,i,h] == 0) {
+        north.likelihoods.ndist.80[j,i,h] <- ( 1-pop.allele.freqs.odds[1,i])^2 
+      } else {
+        north.likelihoods.ndist.80[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(n.alleles.80)){
+      if(n.alleles.80[j,i,h] == 2){
+        south.likelihoods.ndist.80[j,i,h] <- pop.allele.freqs.odds[2,i]^2
+      } else if (n.alleles.80[j,i,h] == 1) {
+        south.likelihoods.ndist.80[j,i,h] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+      } else  if (n.alleles.80[j,i,h] == 0) {
+        south.likelihoods.ndist.80[j,i,h] <- (1-pop.allele.freqs.odds[2,i])^2
+      } else {
+        south.likelihoods.ndist.80[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(s.alleles.80)){
+    
+    for (i in 1:ncol(s.alleles.80)){
+      if(s.alleles.80[j,i,h] == 2) {
+        north.likelihoods.sdist.80[j,i,h] <- pop.allele.freqs.odds[1,i]^2
+      } else if (s.alleles.80[j,i,h] == 1) {
+        north.likelihoods.sdist.80[j,i,h] <- 2*(pop.allele.freqs.odds[1,i] * (1-pop.allele.freqs.odds[1,i]))
+      } else if (s.alleles.80[j,i,h] == 0) {
+        north.likelihoods.sdist.80[j,i,h] <- (1-pop.allele.freqs.odds[1,i])^2 
+      } else {
+        north.likelihoods.sdist.80[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(s.alleles.80)){
+      if(s.alleles.80[j,i,h] == 2){
+        south.likelihoods.sdist.80[j,i,h] <- pop.allele.freqs.odds[2,i]^2
+      } else if (s.alleles.80[j,i,h] == 1) {
+        south.likelihoods.sdist.80[j,i,h] <- 2*(pop.allele.freqs.odds[2,i] * (1-pop.allele.freqs.odds[2,i]))
+      } else  if (s.alleles.80[j,i,h] == 0) {
+        south.likelihoods.sdist.80[j,i,h] <- (1-pop.allele.freqs.odds[2,i])^2
+      } else {
+        south.likelihoods.sdist.80[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together
+north80.ndist <- apply(north.likelihoods.ndist.80, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south80.ndist <- apply(south.likelihoods.ndist.80, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+north80.sdist <- apply(north.likelihoods.sdist.80, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south80.sdist <- apply(south.likelihoods.sdist.80, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Create ratio & plot
+hist(log10(north80.ndist/south80.ndist), xlab = "log10(north likelihood/south likelihood)", main = "Population = 80", col = rgb(1,0,0,0.5), xlim = c(-50,45), ylim = c(0,400))
+hist(log10(north80.sdist/south80.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
+# Power test
+log10(north80.ndist/south80.ndist)[order(log10(north80.ndist/south80.ndist))][50] #5% of 1000 is 50
+p80 <- length(which(log10(north80.sdist/south80.sdist) < 19.88935))/1000
+
+
+
 # Plot power curve
-plot(c(p5, p8, p10, p30) ~ c(5,8,10,30), xlab = 'Population size', ylab = 'Power', pch = 19, col = 'darkslategray4')
+# code to generate distributions of population size 1 is in otoliths.R
+plot(c(p1, p5, p8, p10, p30, p45, p80) ~ c(1, 5,8,10,30,45,80), xlab = 'Population size', ylab = 'Power', pch = 19, col = 'darkslategray4')
