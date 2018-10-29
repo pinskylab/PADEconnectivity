@@ -230,6 +230,12 @@ dev.off()
 # oto.chem <- otoliths[-28,c("Fish.ID", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
 oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
+oto.chem2 <- otoliths[,c("Fish.ID", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
+rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
+oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
+oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
+oto.chem2$Period <- gsub("Late", "3", oto.chem2$Period)
+oto.chem2$Period <- as.numeric(oto.chem2$Period) # convert time period to numeric for scaling later
 
 # Scatter plot matrix
 loc.cols <- col.palette[as.numeric(otoliths$Location)]
@@ -241,14 +247,18 @@ legend(x = 0.05, y = 0.35, cex = 2,
 par(xpd = NA)
 
 oto.chem <- scale(oto.chem[, -1]) # scaling probably a good idea since there is a big range of values for each elemental ratio
+oto.chem2 <- scale(oto.chem2[,-1])
 
 # Euclidian distance between rows
 oto.dist <- dist(oto.chem)
+oto.dist2 <- dist(oto.chem2)
 
 # Fit model
 oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE) # How many dimensions?
+oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 3, add = FALSE)
 
 plot(oto.fit$eig[1:10]) # scree plot
+plot(oto.fit2$eig[1:10])
 
 # Histograms of MDS axis - unimodal or multimodal?
 hist(x, xlab = "MDS 1", main = "") # all unimodal
@@ -267,13 +277,13 @@ hist(y[which(otoliths$Location == "Roosevelt")], xlab = "MDS 2", main = "Rooseve
 hist(y[which(otoliths$Location == "RUMFS")], xlab = "MDS 2", main = "RUMFS")
 
 # Plot MDS
-x <- oto.fit$points[,1]
-y <- oto.fit$points[,2]
-z <- oto.fit$points[,3]
+x <- oto.fit2$points[,1]
+y <- oto.fit2$points[,2]
+z <- oto.fit2$points[,3]
 plot(x, y, xlab = "Coordinate 1", ylab = "Coordinate 2", main = "Otolith microchemistry")
-text(x, y, labels = row.names(oto.chem), pos = 3)
+text(x, y, labels = row.names(oto.chem2), pos = 3)
 plot(x, z, xlab = "Coordinate 1", ylab = "Coordinate 3", main = "Otolith microchemistry")
-text(x, z, labels = row.names(oto.chem), pos = 2)
+text(x, z, labels = row.names(oto.chem2), pos = 2)
 
 # Plot locations in color
 library(wesanderson)
@@ -283,14 +293,14 @@ col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 # plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
 plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("bottomleft",
+legend("topleft",
        legend = levels(otoliths$Location),
        pch=19,
        col = col.palette)
 
 # plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
 plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topright",
+legend("topleft",
        legend = levels(otoliths$Location),
        pch=19,
        col = col.palette)
@@ -298,14 +308,14 @@ legend("topright",
 # Plot points by time period
 # plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
 plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("bottomleft",
+legend("topleft",
        legend = levels(otoliths$Period),
        pch=19,
        col = col.palette)
 
 # plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
 plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Period, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topright",
+legend("topleft",
        legend = levels(otoliths$Period),
        pch=19,
        col = col.palette)
@@ -467,30 +477,32 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 #### Determining optimal number of clusters ####
 library(factoextra)
 library(cluster)
-fviz_nbclust(oto.chem, FUN = hcut, method = "wss")
-fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
-gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_nbclust(oto.chem2, FUN = hcut, method = "wss")
+fviz_nbclust(oto.chem2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
 
 library(NbClust)
-nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+nb <- NbClust(oto.chem2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
 fviz_nbclust(nb)
 dev.off()
 
 library(mclust) 
-mclust.fit <- Mclust(oto.chem)
+mclust.fit <- Mclust(oto.chem2)
 plot(mclust.fit)
 summary(mclust.fit)
 
 # k-means clustering
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
-kmean.cls <- kmeans(oto.chem, centers = 5, nstart = 50, iter.max = 10)
+kmean.cls <- kmeans(oto.chem2, centers = 8, nstart = 50, iter.max = 10)
 class.table.km <- table(otoliths$Location, kmean.cls$cluster)
+class.table.km2 <- table(otoliths$Period, kmean.cls$cluster)
 mosaicplot(class.table.km, color = col.palette)
 
-fviz_cluster(kmean.cls, oto.chem, 
-             palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), 
+fviz_cluster(kmean.cls, oto.chem2, 
+             # palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), # for oto.chem
+             palette = c("#FF0000FF", "#FFBF00FF", "#80FF00FF", "#00FF40FF", "#00FFFFFF", "#0040FFFF", "#8000FFFF", "#FF00BFFF"), # for oto.chem2
              ellipse.type = "euclid", # Concentration ellipse
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
@@ -575,6 +587,7 @@ sum(diag(prop.table(ct1)))
 #### Add predicted sites to the otolith data ####
 # otoliths$predicted <- dfa1$class # using DFA classes
 otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
+otoliths$cluster8 <- kmean.cls$cluster
 
 names(kmean.cls$cluster) == otoliths$Fish.ID
 # rownames(otoliths)==lda.class.ordered[,1] # should be in same order
@@ -588,11 +601,17 @@ gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == F
 
 # Merge otolith data with predicted sites with genetic data containing outliers
 oto.gen.merge2 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
-write.table(oto.gen.merge2, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
+# write.table(oto.gen.merge2, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
+oto.gen.merge2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
+
+oto.gen.merge3 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+# write.table(oto.gen.merge3, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", col.names = TRUE, row.names = FALSE)
+oto.gen.merge3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", header = TRUE)
 
 # Make some plots
 # plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
 plot(oto.gen.merge2$assignment ~ oto.gen.merge2$cluster, xlab = "Cluster based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
+plot(oto.gen.merge3$assignment ~ oto.gen.merge3$cluster8, xlab = "Cluster based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
 
 #### Validating regional adult allele frequencies ####
 # Read in allele counts of 15 spatial outliers in adults
@@ -709,8 +728,11 @@ oto.gen.merge2$predicted.region <- as.factor(region4)
 # north.pop <- aggregate(north.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # northern likelihoods for north and south otolith pops
 # south.pop <- aggregate(south.vector, by = list(oto.gen.merge2$predicted.region), FUN = prod) # southern likelihoods for north and south otolith pops
 
-north.pop <- aggregate(north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # northern likelihoods for 5 otolith clusters
-south.pop <- aggregate(south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # southern likelihoods for 5 otolith clusters
+north.pop <- aggregate(oto.gen.merge2$north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # northern likelihoods for 5 otolith clusters
+south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # southern likelihoods for 5 otolith clusters
+
+north.pop <- aggregate(oto.gen.merge2$north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # same as above, but data may be coming from different places (read in vs. already stored as an object)
+south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) 
 
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
@@ -915,7 +937,7 @@ legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)),
 
 # Power test
 log10(north.vector.ndist/south.vector.ndist)[order(log10(north.vector.ndist/south.vector.ndist))][50] #5% of 1000 is 50
-length(which(log10(north.vector.sdist/south.vector.sdist) < -0.5864056))
+p1 <- length(which(log10(north.vector.sdist/south.vector.sdist) < -0.5864056))/1000
 
 library(pwr)
 library(lsr)
