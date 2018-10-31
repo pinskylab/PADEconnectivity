@@ -582,8 +582,422 @@ legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)),
 log10(north80.ndist/south80.ndist)[order(log10(north80.ndist/south80.ndist))][50] #5% of 1000 is 50
 p80 <- length(which(log10(north80.sdist/south80.sdist) < 19.88935))/1000
 
-
-
 # Plot power curve
 # code to generate distributions of population size 1 is in otoliths.R
 plot(c(p1, p5, p8, p10, p30, p45, p80) ~ c(1, 5,8,10,30,45,80), xlab = 'Population size', ylab = 'Power', pch = 19, col = 'darkslategray4')
+
+#######################################################################################################
+#### Power analysis using the five BayEnv populations ####
+
+# Read in adult outlier allele frequencies
+pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
+
+# Keep only one allele per locus
+odds <- seq(1,20,2) # odd indicies to keep
+pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
+
+# Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
+# Population = 5
+Pop1.alleles.5 <- array(dim = c(10000,10,5))
+for (i in 1:5){
+  Pop1.alleles.5[,,i] <- sapply(pop.allele.freqs5.odds[1,],function(z){rbinom(10000,2,z)})
+}
+
+# Do this for the rest of the BayEnv populations too
+Pop2.alleles.5 <- array(dim = c(10000,10,5))
+for (i in 1:5){
+  Pop2.alleles.5[,,i] <- sapply(pop.allele.freqs5.odds[2,],function(z){rbinom(10000,2,z)})
+}
+
+Pop3.alleles.5 <- array(dim = c(10000,10,5))
+for (i in 1:5){
+  Pop3.alleles.5[,,i] <- sapply(pop.allele.freqs5.odds[3,],function(z){rbinom(10000,2,z)})
+}
+
+Pop4.alleles.5 <- array(dim = c(10000,10,5))
+for (i in 1:5){
+  Pop4.alleles.5[,,i] <- sapply(pop.allele.freqs5.odds[4,],function(z){rbinom(10000,2,z)})
+}
+
+Pop5.alleles.5 <- array(dim = c(10000,10,5))
+for (i in 1:5){
+  Pop5.alleles.5[,,i] <- sapply(pop.allele.freqs5.odds[5,],function(z){rbinom(10000,2,z)})
+}
+
+# Use adult allele frequencies to calculate likelihoods
+# For loop to loop through each of 10 loci & multiply by the adult allele frequency, and then do this for all 1000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+Pop1.likelihoods.pop1dist.5 <- array(dim = c(10000,10,5))
+Pop2.likelihoods.pop1dist.5 <- array(dim = c(10000,10,5))
+Pop3.likelihoods.pop1dist.5 <- array(dim = c(10000,10,5))
+Pop4.likelihoods.pop1dist.5 <- array(dim = c(10000,10,5))
+Pop5.likelihoods.pop1dist.5 <- array(dim = c(10000,10,5))
+
+Pop1.likelihoods.pop2dist.5 <- array(dim = c(10000,10,5))
+Pop2.likelihoods.pop2dist.5 <- array(dim = c(10000,10,5))
+Pop3.likelihoods.pop2dist.5 <- array(dim = c(10000,10,5))
+Pop4.likelihoods.pop2dist.5 <- array(dim = c(10000,10,5))
+Pop5.likelihoods.pop2dist.5 <- array(dim = c(10000,10,5))
+
+Pop1.likelihoods.pop3dist.5 <- array(dim = c(10000,10,5))
+Pop2.likelihoods.pop3dist.5 <- array(dim = c(10000,10,5))
+Pop3.likelihoods.pop3dist.5 <- array(dim = c(10000,10,5))
+Pop4.likelihoods.pop3dist.5 <- array(dim = c(10000,10,5))
+Pop5.likelihoods.pop3dist.5 <- array(dim = c(10000,10,5))
+
+Pop1.likelihoods.pop4dist.5 <- array(dim = c(10000,10,5))
+Pop2.likelihoods.pop4dist.5 <- array(dim = c(10000,10,5))
+Pop3.likelihoods.pop4dist.5 <- array(dim = c(10000,10,5))
+Pop4.likelihoods.pop4dist.5 <- array(dim = c(10000,10,5))
+Pop5.likelihoods.pop4dist.5 <- array(dim = c(10000,10,5))
+
+Pop1.likelihoods.pop5dist.5 <- array(dim = c(10000,10,5))
+Pop2.likelihoods.pop5dist.5 <- array(dim = c(10000,10,5))
+Pop3.likelihoods.pop5dist.5 <- array(dim = c(10000,10,5))
+Pop4.likelihoods.pop5dist.5 <- array(dim = c(10000,10,5))
+Pop5.likelihoods.pop5dist.5 <- array(dim = c(10000,10,5))
+
+for (h in 1:5){
+  
+  for (j in 1:nrow(Pop1.alleles.5)){
+    
+    for (i in 1:ncol(Pop1.alleles.5)){
+      if(Pop1.alleles.5[j,i,h] == 2) {
+        Pop1.likelihoods.pop1dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop1.likelihoods.pop1dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop1.likelihoods.pop1dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+      } else {
+        Pop1.likelihoods.pop1dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop1.alleles.5)){
+      if(Pop1.alleles.5[j,i,h] == 2) {
+        Pop2.likelihoods.pop1dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop2.likelihoods.pop1dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop2.likelihoods.pop1dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+      } else {
+        Pop2.likelihoods.pop1dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop1.alleles.5)){
+      if(Pop1.alleles.5[j,i,h] == 2) {
+        Pop3.likelihoods.pop1dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop3.likelihoods.pop1dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop3.likelihoods.pop1dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+      } else {
+        Pop3.likelihoods.pop1dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop1.alleles.5)){
+      if(Pop1.alleles.5[j,i,h] == 2) {
+        Pop4.likelihoods.pop1dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop4.likelihoods.pop1dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop4.likelihoods.pop1dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+      } else {
+        Pop4.likelihoods.pop1dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop1.alleles.5)){
+      if(Pop1.alleles.5[j,i,h] == 2) {
+        Pop5.likelihoods.pop1dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop5.likelihoods.pop1dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop5.likelihoods.pop1dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+      } else {
+        Pop5.likelihoods.pop1dist.5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop2.alleles.5)){
+    
+    for (i in 1:ncol(Pop2.alleles.5)){
+      if(Pop2.alleles.5[j,i,h] == 2) {
+        Pop1.likelihoods.pop2dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+      } else if (Pop2.alleles.5[j,i,h] == 1) {
+        Pop1.likelihoods.pop2dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+      } else if (Pop2.alleles.5[j,i,h] == 0) {
+        Pop1.likelihoods.pop2dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+      } else {
+        Pop1.likelihoods.pop2dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop2.alleles.5)){
+      if(Pop2.alleles.5[j,i,h] == 2) {
+        Pop2.likelihoods.pop2dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+      } else if (Pop2.alleles.5[j,i,h] == 1) {
+        Pop2.likelihoods.pop2dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+      } else if (Pop2.alleles.5[j,i,h] == 0) {
+        Pop2.likelihoods.pop2dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+      } else {
+        Pop2.likelihoods.pop2dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop2.alleles.5)){
+      if(Pop2.alleles.5[j,i,h] == 2) {
+        Pop3.likelihoods.pop2dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop3.likelihoods.pop2dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop3.likelihoods.pop2dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+      } else {
+        Pop3.likelihoods.pop2dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop2.alleles.5)){
+      if(Pop2.alleles.5[j,i,h] == 2) {
+        Pop4.likelihoods.pop2dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop4.likelihoods.pop2dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop4.likelihoods.pop2dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+      } else {
+        Pop4.likelihoods.pop2dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop2.alleles.5)){
+      if(Pop2.alleles.5[j,i,h] == 2) {
+        Pop5.likelihoods.pop2dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop5.likelihoods.pop2dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop5.likelihoods.pop2dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+      } else {
+        Pop5.likelihoods.pop2dist.5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop3.alleles.5)){
+    
+    for (i in 1:ncol(Pop3.alleles.5)){
+      if(Pop3.alleles.5[j,i,h] == 2) {
+        Pop1.likelihoods.pop3dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop1.likelihoods.pop3dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop1.likelihoods.pop3dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+      } else {
+        Pop1.likelihoods.pop3dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop3.alleles.5)){
+      if(Pop3.alleles.5[j,i,h] == 2) {
+        Pop2.likelihoods.pop3dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop2.likelihoods.pop3dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop2.likelihoods.pop3dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+      } else {
+        Pop2.likelihoods.pop3dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop3.alleles.5)){
+      if(Pop3.alleles.5[j,i,h] == 2) {
+        Pop3.likelihoods.pop3dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop3.likelihoods.pop3dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop3.likelihoods.pop3dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+      } else {
+        Pop3.likelihoods.pop3dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop3.alleles.5)){
+      if(Pop3.alleles.5[j,i,h] == 2) {
+        Pop4.likelihoods.pop3dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop4.likelihoods.pop3dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop4.likelihoods.pop3dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+      } else {
+        Pop4.likelihoods.pop3dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop3.alleles.5)){
+      if(Pop3.alleles.5[j,i,h] == 2) {
+        Pop5.likelihoods.pop3dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop5.likelihoods.pop3dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop5.likelihoods.pop3dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+      } else {
+        Pop5.likelihoods.pop3dist.5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop4.alleles.5)){
+    
+    for (i in 1:ncol(Pop4.alleles.5)){
+      if(Pop4.alleles.5[j,i,h] == 2) {
+        Pop1.likelihoods.pop4dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop1.likelihoods.pop4dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop1.likelihoods.pop4dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+      } else {
+        Pop1.likelihoods.pop4dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop4.alleles.5)){
+      if(Pop4.alleles.5[j,i,h] == 2) {
+        Pop2.likelihoods.pop4dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop2.likelihoods.pop4dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop2.likelihoods.pop4dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+      } else {
+        Pop2.likelihoods.pop4dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop4.alleles.5)){
+      if(Pop4.alleles.5[j,i,h] == 2) {
+        Pop3.likelihoods.pop4dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop3.likelihoods.pop4dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop3.likelihoods.pop4dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+      } else {
+        Pop3.likelihoods.pop4dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop4.alleles.5)){
+      if(Pop4.alleles.5[j,i,h] == 2) {
+        Pop4.likelihoods.pop4dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop4.likelihoods.pop4dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop4.likelihoods.pop4dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+      } else {
+        Pop4.likelihoods.pop4dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop4.alleles.5)){
+      if(Pop4.alleles.5[j,i,h] == 2) {
+        Pop5.likelihoods.pop4dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop5.likelihoods.pop4dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop5.likelihoods.pop4dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+      } else {
+        Pop5.likelihoods.pop4dist.5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles.5)){
+    
+    for (i in 1:ncol(Pop5.alleles.5)){
+      if(Pop5.alleles.5[j,i,h] == 2) {
+        Pop1.likelihoods.pop5dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop1.likelihoods.pop5dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop1.likelihoods.pop5dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+      } else {
+        Pop1.likelihoods.pop5dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop5.alleles.5)){
+      if(Pop5.alleles.5[j,i,h] == 2) {
+        Pop2.likelihoods.pop5dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop2.likelihoods.pop5dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop2.likelihoods.pop5dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+      } else {
+        Pop2.likelihoods.pop5dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop5.alleles.5)){
+      if(Pop5.alleles.5[j,i,h] == 2) {
+        Pop3.likelihoods.pop5dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop3.likelihoods.pop5dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop3.likelihoods.pop5dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+      } else {
+        Pop3.likelihoods.pop5dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop5.alleles.5)){
+      if(Pop5.alleles.5[j,i,h] == 2) {
+        Pop4.likelihoods.pop5dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop4.likelihoods.pop5dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop4.likelihoods.pop5dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+      } else {
+        Pop4.likelihoods.pop5dist.5[j,i,h] <- 1
+      }
+    }
+    
+    for (i in 1:ncol(Pop5.alleles.5)){
+      if(Pop5.alleles.5[j,i,h] == 2) {
+        Pop5.likelihoods.pop5dist.5[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+      } else if (Pop1.alleles.5[j,i,h] == 1) {
+        Pop5.likelihoods.pop5dist.5[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+      } else if (Pop1.alleles.5[j,i,h] == 0) {
+        Pop5.likelihoods.pop5dist.5[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+      } else {
+        Pop5.likelihoods.pop5dist.5[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+# Multiply everything together
+north5.ndist <- apply(north.likelihoods.ndist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south5.ndist <- apply(south.likelihoods.ndist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+north5.sdist <- apply(north.likelihoods.sdist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+south5.sdist <- apply(south.likelihoods.sdist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Create ratio & plot
+hist(log10(north5.ndist/south5.ndist), xlab = "log10(north likelihood/south likelihood)", main = "Population = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,325))
+hist(log10(north5.sdist/south5.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
+# Power test
+log10(north5.ndist/south5.ndist)[order(log10(north5.ndist/south5.ndist))][50] #5% of 1000 is 50
+p5 <- length(which(log10(north5.sdist/south5.sdist) < -0.3087461))/1000
+
