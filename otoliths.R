@@ -627,7 +627,9 @@ south.allele.freqs <- colSums(south.counts, na.rm = TRUE)/(2*colSums(!is.na(sout
 regional.allele.freqs <- rbind(north.allele.freqs, south.allele.freqs)
 
 #### Read in allele frequencies of 10 adult spatial outliers that exist in the larvae. These will be used to calculate population likelihoods of the otolith populations ####
-pop.allele.freqs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/regional.adult.outs.freqs10.txt')
+# pop.allele.freqs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/regional.adult.outs.freqs10.txt')
+
+pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
 
 # Do these calculated frequencies match?
 colnames(regional.allele.freqs) == colnames(pop.allele.freqs) # alleles for one locus are flipped, numbers seem same, but not TRUE for some reason....?
@@ -636,17 +638,24 @@ as.data.frame(regional.allele.freqs) == pop.allele.freqs
 # Pull out odd indicies
 pop.allele.freqs
 odds <- seq(1,20,2) # odd indicies to keep
-pop.allele.freqs.odds <- pop.allele.freqs[,odds]
+# pop.allele.freqs.odds <- pop.allele.freqs[,odds] # north & south allele frequencies
+pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bayenv populations
 
 #### Population assignment using allele frequencies of otolith populations ####
-indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
+indiv.allele.counts <- oto.gen.merge3[,c(16:35)] # Just genetic data
 
-indiv.allele.counts.odds <- indiv.allele.counts[,odds]
+# Two ways to do this:
+indiv.allele.counts.odds <- indiv.allele.counts[,odds] # first way, but this requires the column names in the count data and the allele frequency data to be the same
 indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's with 9's to make the ifelse statements easier
 
-colnames(indiv.allele.counts.odds) == colnames(pop.allele.freqs.odds) # column names match? yay!
+indiv.allele.counts.odds <- indiv.allele.counts[, colnames(indiv.allele.counts) %in% colnames(pop.allele.freqs5.odds)] # probably the better way to do this
+indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's with 9's to make the ifelse statements easier
 
+colnames(indiv.allele.counts.odds) == colnames(pop.allele.freqs5.odds) # column names match? yay!
+
+#### Calculating likelihoods for each individual. First part assumes two populations (north and south). Second assumes five BayEnv populations.
 # For loop to loop through each locus & multiply by the otolith allele frequency, and then do this for all 151 larvae. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
+# Just north and south likelihood calculations
 north.likelihoods <- data.frame()
 south.likelihoods <- data.frame()
 
@@ -677,7 +686,78 @@ for (j in 1:length(rownames(indiv.allele.counts.odds))){
   }
 }
 
-# Multiply everything together
+# Five BayEnv population likelihoods
+pop1.likelihoods <- data.frame()
+pop2.likelihoods <- data.frame()
+pop3.likelihoods <- data.frame()
+pop4.likelihoods <- data.frame()
+pop5.likelihoods <- data.frame()
+
+for (j in 1:length(rownames(indiv.allele.counts.odds))){
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop1.likelihoods[j,i] <- pop.allele.freqs5.odds["Pop1",i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop1.likelihoods[j,i] <- 2*(pop.allele.freqs5.odds["Pop1",i] * (1-pop.allele.freqs5.odds["Pop1",i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop1.likelihoods[j,i] <- ( 1-pop.allele.freqs5.odds["Pop1",i])^2 
+    } else {
+      pop1.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2){
+      pop2.likelihoods[j,i] <- pop.allele.freqs5.odds["Pop2",i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop2.likelihoods[j,i] <- 2*(pop.allele.freqs5.odds["Pop2",i] * (1-pop.allele.freqs5.odds["Pop2",i]))
+    } else  if (indiv.allele.counts.odds[j,i] == 0) {
+      pop2.likelihoods[j,i] <- (1-pop.allele.freqs5.odds["Pop2",i])^2
+    } else {
+      pop2.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop3.likelihoods[j,i] <- pop.allele.freqs5.odds["Pop3",i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop3.likelihoods[j,i] <- 2*(pop.allele.freqs5.odds["Pop3",i] * (1-pop.allele.freqs5.odds["Pop3",i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop3.likelihoods[j,i] <- ( 1-pop.allele.freqs5.odds["Pop3",i])^2 
+    } else {
+      pop3.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop4.likelihoods[j,i] <- pop.allele.freqs5.odds["Pop4",i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop4.likelihoods[j,i] <- 2*(pop.allele.freqs5.odds["Pop4",i] * (1-pop.allele.freqs5.odds["Pop4",i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop4.likelihoods[j,i] <- ( 1-pop.allele.freqs5.odds["Pop4",i])^2 
+    } else {
+      pop4.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop5.likelihoods[j,i] <- pop.allele.freqs5.odds["Pop5",i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop5.likelihoods[j,i] <- 2*(pop.allele.freqs5.odds["Pop5",i] * (1-pop.allele.freqs5.odds["Pop5",i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop5.likelihoods[j,i] <- ( 1-pop.allele.freqs5.odds["Pop5",i])^2 
+    } else {
+      pop5.likelihoods[j,i] <- 1
+    }
+  }
+}
+
+#### Multiply everything together now. First part is assuming 2 regions. Second is assuming five BayEnv regions ###
+# Two regions
 north.vector <- vector()
 south.vector <- vector()
 
@@ -688,6 +768,13 @@ for (k in 1:length(north.likelihoods[,1])){
 for (l in 1:length(south.likelihoods[,1])){
   south.vector[l] <- prod(south.likelihoods[l,])
 }
+
+# Five BayEnv regions
+pop1.vector <- apply(pop1.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop2.vector <- apply(pop2.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop3.vector <- apply(pop3.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop4.vector <- apply(pop4.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop5.vector <- apply(pop5.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 
 # Check a few fish by hand
 # (0.8092105^2)*(2*0.8421053*(1-0.8421053))*(0.9078947^2)*(2*0.4934211*(1-0.4934211))*(2*0.7697368*(1-0.7697368))*(0.9276316^2)*((1-0.6447368)^2)*(0.9539474^2)*(0.9276316^2)*(0.9637681^2) #north fish1
@@ -734,14 +821,23 @@ south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$clu
 north.pop <- aggregate(oto.gen.merge2$north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # same as above, but data may be coming from different places (read in vs. already stored as an object)
 south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) 
 
+bayenv1.likes <- aggregate(pop1.vector, by = list(oto.gen.merge3$cluster8), FUN = prod) # likelihoods for BayEnv groupings
+bayenv2.likes <- aggregate(pop2.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
+bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
+bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
+bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge3$cluster8), FUN = prod) 
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
 colnames(pops.likelihood) <- c("n.likes", "s.likes")
 rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5")
 
+bayenv.likelihoods <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes[,2])), log10(as.numeric(bayenv2.likes[,2])), log10(as.numeric(bayenv3.likes[,2])), log10(as.numeric(bayenv4.likes[,2])), log10(as.numeric(bayenv5.likes[,2]))))
+colnames(bayenv.likelihoods) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
+rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6", "cluster7", "cluster8")
+
 # pops.likelihood$oto.pop <- c('north', 'south')
 
-# Plot population likelihoods of otolith populations/clusters
+#### Plot population likelihoods of otolith populations/clusters ####
 # plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
 # points(pops.likelihood[2,'n.likes'], pops.likelihood[2,'s.likes'], col = 'tomato')
 # abline(a=0,b=1)
