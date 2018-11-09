@@ -198,6 +198,14 @@ hist(log10(north8.ndist/south8.ndist), xlab = "log10(north likelihood/south like
 hist(log10(north8.sdist/south8.sdist), col = rgb(0,0,1,0.5), add = TRUE)
 legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
 
+hist(log10(south8.sdist/north8.sdist), xlab = "log10(south likelihood/north likelihood)", main = "Population = 8", col = rgb(0,0,1,0.5), xlim = c(-10,10), ylim = c(0,270))
+hist(log10(south8.ndist/north8.ndist), col = rgb(1,0,0,0.5), add = TRUE)
+legend("topright", c("South", "North"), col = c(rgb(0,0,1,0.5), rgb(1,0,0,0.5)), pch = 15)
+
+hist(log10(north8.ndist/north8.sdist), xlab = "log10(likelihood ratio)", main = "Population = 8", col = rgb(1,0,0,0.5), xlim = c(-15,25), ylim = c(0,250))
+hist(log10(south8.sdist/south8.ndist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
 # Power test
 log10(north8.ndist/south8.ndist)[order(log10(north8.ndist/south8.ndist))][50] #5% of 1000 is 50
 p8 <- length(which(log10(north8.sdist/south8.sdist) < 0.2317728))/1000
@@ -483,6 +491,10 @@ hist(log10(north45.ndist/south45.ndist), xlab = "log10(north likelihood/south li
 hist(log10(north45.sdist/south45.sdist), col = rgb(0,0,1,0.5), add = TRUE)
 legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
 
+hist(log10(north45.ndist/north45.sdist), xlab = "log10(likelihood not immigrant/likelihood immigrant)", main = "Population = 45", col = rgb(1,0,0,0.5), xlim = c(-30,70), ylim = c(0,220))
+hist(log10(south45.sdist/south45.ndist), col = rgb(0,0,1,0.5), add = TRUE)
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
 # Power test
 log10(north45.ndist/south45.ndist)[order(log10(north45.ndist/south45.ndist))][50] #5% of 1000 is 50
 p45 <- length(which(log10(north45.sdist/south45.sdist) < 9.584772))/1000
@@ -585,6 +597,55 @@ p80 <- length(which(log10(north80.sdist/south80.sdist) < 19.88935))/1000
 # Plot power curve
 # code to generate distributions of population size 1 is in otoliths.R
 plot(c(p1, p5, p8, p10, p30, p45, p80) ~ c(1, 5,8,10,30,45,80), xlab = 'Population size', ylab = 'Power', pch = 19, col = 'darkslategray4')
+
+#### Plot genotype likelihoods (not ratio) & power acoss sample size ####
+par(mfrow = c(3,2))
+hist(-log10(north5.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 5", xlim = c(6, 23))
+hist(-log10(south5.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+
+hist(-log10(north8.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 8", xlim = c(10, 36))
+hist(-log10(south8.sdist), col = rgb(0,0,1,0.5), add = TRUE, breaks = 20)
+abline(v=22.92214, col = 'red')
+abline(v=24.36825, col = 'blue')
+legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
+
+hist(-log10(north10.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 10", xlim = c(20, 45))
+hist(-log10(south10.sdist), col = rgb(0,0,1,0.5), add = TRUE, breaks = 20)
+
+hist(-log10(north30.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 30", xlim = c(60, 140))
+hist(-log10(south30.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+abline(v=134.31524, col = 'red')
+abline(v=127.64186, col = 'blue')
+
+hist(-log10(north30.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 30", xlim = c(60, 115))
+hist(-log10(south30.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+abline(v=110.37714, col = 'red')
+abline(v=107.99428, col = 'blue')
+
+hist(-log10(north45.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 45", xlim = c(70, 170))
+hist(-log10(south45.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+abline(v=73.32391, col = 'red')
+abline(v=71.78187, col = 'blue')
+
+hist(-log10(north80.ndist), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Cluster size = 80", xlim = c(85, 280))
+hist(-log10(south80.sdist), col = rgb(0,0,1,0.5), add = TRUE)
+abline(v=92.32112, col = 'red')
+abline(v=90.48334, col = 'blue')
+
+# Plot power
+(-log10(north8.ndist))[order(-log10(north8.ndist))][50] #5% of 1000 is 50
+p8 <- length(which(-log10(south8.sdist) < 21.13079))/1000
+
+(-log10(north30.ndist))[order(-log10(north30.ndist))][50] #5% of 1000 is 50
+p30 <- length(which(-log10(south30.sdist) < 85.15595))/1000
+
+(-log10(north45.ndist))[order(-log10(north45.ndist))][50] #5% of 1000 is 50
+p45 <- length(which(-log10(south45.sdist) < 128.9849))/1000
+
+(-log10(north80.ndist))[order(-log10(north80.ndist))][50] #5% of 1000 is 50
+p80 <- length(which(-log10(south80.sdist) < 232.9383))/1000
+
+plot(c(p8, p30, p45, p80) ~ c(8, 30,45,80), ylab = 'Power', xlab = 'Cluster size', pch = 19, col = 'darkslategray4')
 
 #######################################################################################################
 #### Power analysis using the five BayEnv populations ####
@@ -975,16 +1036,6 @@ for (h in 1:5){
 }
 
 
-
-
-
-
-
-
-
-
-
-
 # Multiply everything together
 Pop1.pop1dist5 <- apply(Pop1.likelihoods.pop1dist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
 Pop2.pop1dist5 <- apply(Pop2.likelihoods.pop1dist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
@@ -1017,27 +1068,15 @@ Pop4.pop5dist5 <- apply(Pop4.likelihoods.pop5dist.5, FUN = prod, MARGIN = 1, na.
 Pop5.pop5dist5 <- apply(Pop5.likelihoods.pop5dist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
 
 
-
-north5.sdist <- apply(north.likelihoods.sdist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
-south5.sdist <- apply(south.likelihoods.sdist.5, FUN = prod, MARGIN = 1, na.rm = TRUE)
-
-
-
-
-
-
-
-# Create ratio & plot
-hist(log10(Pop1.pop1dist5/Pop1.pop2dist5), xlab = "log10(Pop1 likelihood/Pop2 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,3000))
-hist(log10(Pop2.pop1dist5/Pop2.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
-
-
+# Calculate different likelihood ratios & plot
+par(mfrow = c(2,2))
 hist(log10(Pop1.pop1dist5/Pop2.pop1dist5), xlab = "log10(Pop1 likelihood/Pop2 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-5,5), ylim = c(0,3000)) # I think this is the correct way to calculate likelihood ratio
 hist(log10(Pop1.pop2dist5/Pop2.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
 hist(log10(Pop1.pop3dist5/Pop2.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
 hist(log10(Pop1.pop4dist5/Pop2.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
 hist(log10(Pop1.pop5dist5/Pop2.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
 legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -12.971968--13.340985)
 
 hist(log10(Pop1.pop1dist5/Pop3.pop1dist5), xlab = "log10(Pop1 likelihood/Pop3 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-5,5), ylim = c(0,3250)) 
 hist(log10(Pop1.pop2dist5/Pop3.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
@@ -1045,6 +1084,7 @@ hist(log10(Pop1.pop3dist5/Pop3.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
 hist(log10(Pop1.pop4dist5/Pop3.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
 hist(log10(Pop1.pop5dist5/Pop3.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
 legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -12.971968--13.709382)
 
 hist(log10(Pop1.pop1dist5/Pop4.pop1dist5), xlab = "log10(Pop1 likelihood/Pop4 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-7,8), ylim = c(0,2250)) 
 hist(log10(Pop1.pop2dist5/Pop4.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
@@ -1052,6 +1092,7 @@ hist(log10(Pop1.pop3dist5/Pop4.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
 hist(log10(Pop1.pop4dist5/Pop4.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
 hist(log10(Pop1.pop5dist5/Pop4.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
 legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -12.971968--14.325089)
 
 hist(log10(Pop1.pop1dist5/Pop5.pop1dist5), xlab = "log10(Pop1 likelihood/Pop5 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-12,12), ylim = c(0,2500)) 
 hist(log10(Pop1.pop2dist5/Pop5.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
@@ -1059,6 +1100,55 @@ hist(log10(Pop1.pop3dist5/Pop5.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
 hist(log10(Pop1.pop4dist5/Pop5.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
 hist(log10(Pop1.pop5dist5/Pop5.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
 legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -12.971968--17.771144)
+
+hist(log10(Pop2.pop1dist5/Pop3.pop1dist5), xlab = "log10(Pop2 likelihood/Pop3 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-5,5), ylim = c(0,2800)) 
+hist(log10(Pop2.pop2dist5/Pop3.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop3dist5/Pop3.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop4dist5/Pop3.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
+hist(log10(Pop2.pop5dist5/Pop3.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -13.340985--13.709382)
+
+hist(log10(Pop2.pop1dist5/Pop4.pop1dist5), xlab = "log10(Pop2 likelihood/Pop4 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-8,8), ylim = c(0,1800), breaks = 20) 
+hist(log10(Pop2.pop2dist5/Pop4.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop3dist5/Pop4.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop4dist5/Pop4.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
+hist(log10(Pop2.pop5dist5/Pop4.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE, breaks = 20)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -13.340985--14.325089)
+
+hist(log10(Pop2.pop1dist5/Pop5.pop1dist5), xlab = "log10(Pop2 likelihood/Pop5 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-15,15), ylim = c(0,2800)) 
+hist(log10(Pop2.pop2dist5/Pop5.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop3dist5/Pop5.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop2.pop4dist5/Pop5.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE)
+hist(log10(Pop2.pop5dist5/Pop5.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -13.340985--17.771144)
+
+hist(log10(Pop3.pop1dist5/Pop4.pop1dist5), xlab = "log10(Pop3 likelihood/Pop4 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,3000)) 
+hist(log10(Pop3.pop2dist5/Pop4.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop3.pop3dist5/Pop4.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop3.pop4dist5/Pop4.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE, breaks = 12)
+hist(log10(Pop3.pop5dist5/Pop4.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -13.709382--14.325089)
+
+hist(log10(Pop3.pop1dist5/Pop5.pop1dist5), xlab = "log10(Pop3 likelihood/Pop5 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,2500)) 
+hist(log10(Pop3.pop2dist5/Pop5.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop3.pop3dist5/Pop5.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop3.pop4dist5/Pop5.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE, breaks = 12)
+hist(log10(Pop3.pop5dist5/Pop5.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -13.709382--17.771144)
+
+hist(log10(Pop4.pop1dist5/Pop5.pop1dist5), xlab = "log10(Pop4 likelihood/Pop5 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,3200)) 
+hist(log10(Pop4.pop2dist5/Pop5.pop2dist5), col = rgb(0,0,1,0.5), add = TRUE)
+hist(log10(Pop4.pop3dist5/Pop5.pop3dist5), col = rgb(1,0,1,0.5), add = TRUE)
+hist(log10(Pop4.pop4dist5/Pop5.pop4dist5), col = rgb(1,1,0.5,0.5), add = TRUE, breaks = 12)
+hist(log10(Pop4.pop5dist5/Pop5.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE, breaks = 12)
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = -14.325089--17.771144)
 
 # Test statistic as -log10(genotype likelihood) vs a ratio
 hist(-log10(Pop1.pop2dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 3000), xlab = "-log10(genotype likelihood)", main = "")
@@ -1067,13 +1157,56 @@ hist(-log10(Pop3.pop2dist5), add = TRUE, col = rgb(1,0,1,0.5))
 hist(-log10(Pop4.pop2dist5), add = TRUE, col = rgb(1,1,0.5,0.5))
 hist(-log10(Pop5.pop2dist5), add = TRUE, col = rgb(0,1,0,0.5))
 
-hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 3000), xlab = "-log10(genotype likelihood)", main = "")
+hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 2500), xlab = "-log10(genotype likelihood)", main = "")
 hist(-log10(Pop1.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
 hist(-log10(Pop1.pop3dist5), add = TRUE, col = rgb(1,0,1,0.5))
 hist(-log10(Pop1.pop4dist5), add = TRUE, col = rgb(1,1,0.5,0.5))
 hist(-log10(Pop1.pop5dist5), add = TRUE, col = rgb(0,1,0,0.5))
+abline(v = 12.971968)
+
+hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 2500), xlab = "-log10(genotype likelihood)", main = "")
+hist(-log10(Pop2.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(-log10(Pop3.pop3dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(-log10(Pop4.pop4dist5), add = TRUE, col = rgb(1,1,0.5,0.5))
+hist(-log10(Pop5.pop5dist5), add = TRUE, col = rgb(0,1,0,0.5))
+legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
 
 
+# Calculate p-values
+# Read in the likelihoods for each cluster
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_8clusters.txt")
+
+unlist(obs.likes)
+
+length(which(-log10(Pop1.pop1dist5) < -1*obs.likes[2,1]))/length(Pop1.pop1dist5) #0.0636
+length(which(-log10(Pop1.pop2dist5) < -1*obs.likes[2,1]))/length(Pop1.pop2dist5) #0.078
+length(which(-log10(Pop1.pop3dist5) < -1*obs.likes[2,1]))/length(Pop1.pop3dist5) #0.0471
+length(which(-log10(Pop1.pop4dist5) < -1*obs.likes[2,1]))/length(Pop1.pop4dist5) #0.1451
+length(which(-log10(Pop1.pop5dist5) < -1*obs.likes[2,1]))/length(Pop1.pop5dist5) #0.0094
+
+length(which(-log10(Pop2.pop1dist5) < -1*obs.likes[2,2]))/length(Pop2.pop1dist5) #0.0866
+length(which(-log10(Pop2.pop2dist5) < -1*obs.likes[2,2]))/length(Pop2.pop2dist5) #0.2193
+length(which(-log10(Pop2.pop3dist5) < -1*obs.likes[2,2]))/length(Pop2.pop3dist5) #0.082
+length(which(-log10(Pop2.pop4dist5) < -1*obs.likes[2,2]))/length(Pop2.pop4dist5) #0.2292
+length(which(-log10(Pop2.pop5dist5) < -1*obs.likes[2,2]))/length(Pop2.pop5dist5) #0.0256
+
+length(which(-log10(Pop3.pop1dist5) < -1*obs.likes[2,3]))/length(Pop3.pop1dist5) #0.116
+length(which(-log10(Pop3.pop2dist5) < -1*obs.likes[2,3]))/length(Pop3.pop2dist5) #0.1688
+length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5) #0.1827
+length(which(-log10(Pop3.pop4dist5) < -1*obs.likes[2,3]))/length(Pop3.pop4dist5) #0.2319
+length(which(-log10(Pop3.pop5dist5) < -1*obs.likes[2,3]))/length(Pop3.pop5dist5) #0.0412
+
+length(which(-log10(Pop4.pop1dist5) < -1*obs.likes[2,4]))/length(Pop4.pop1dist5) #0.1221
+length(which(-log10(Pop4.pop2dist5) < -1*obs.likes[2,4]))/length(Pop4.pop2dist5) #0.2048
+length(which(-log10(Pop4.pop3dist5) < -1*obs.likes[2,4]))/length(Pop4.pop3dist5) #0.1146
+length(which(-log10(Pop4.pop4dist5) < -1*obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
+length(which(-log10(Pop4.pop5dist5) < -1*obs.likes[2,4]))/length(Pop4.pop5dist5) #0.2275
+
+length(which(-log10(Pop1.pop1dist5) < -1*obs.likes[2,1]))/length(Pop1.pop1dist5) #0.0636
+length(which(-log10(Pop2.pop2dist5) < -1*obs.likes[2,2]))/length(Pop2.pop2dist5) #0.2193
+length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5) #0.1827
+length(which(-log10(Pop4.pop4dist5) < -1*obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
+length(which(-log10(Pop5.pop5dist5) < -1*obs.likes[2,5]))/length(Pop5.pop5dist5) #0.9465
 
 
 
@@ -1082,6 +1215,31 @@ hist(log10(north5.sdist/south5.sdist), col = rgb(0,0,1,0.5), add = TRUE)
 legend("topright", c("North", "South"), col = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), pch = 15)
 
 # Power test
-log10(north5.ndist/south5.ndist)[order(log10(north5.ndist/south5.ndist))][50] #5% of 1000 is 50
-p5 <- length(which(log10(north5.sdist/south5.sdist) < -0.3087461))/1000
+# Cluster size = 5
+layout(matrix(c(1,1,2,3), 2,2, byrow = TRUE))
+hist(log10(Pop1.pop1dist5/Pop5.pop1dist5), xlab = "log10(Pop1 likelihood/Pop5 likelihood)", main = "Cluster size = 5", col = rgb(1,0,0,0.5), xlim = c(-12,12), ylim = c(0,2500))
+hist(log10(Pop1.pop5dist5/Pop5.pop5dist5), col = rgb(0,1,0,0.5), add = TRUE)
+legend("topright", c("Pop1", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,1,0,0.5)))
+abline(v = -12.971968--17.771144)
+hist(log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), main = "")
+abline(v = -12.971968)
+hist(log10(Pop5.pop5dist5), col = rgb(0,1,0,0.5), main = "")
+abline(v = -17.771144)
 
+log10(Pop1.pop1dist5/Pop5.pop1dist5)[order(log10(Pop1.pop1dist5/Pop5.pop1dist5))] [500]#5% of 10000 is 500
+p5 <- length(which(log10(Pop1.pop5dist5/Pop5.pop5dist5) < 0.6617893))/10000
+
+log10(Pop5.pop5dist5)[order(log10(Pop5.pop5dist5))] [500]#5% of 10000 is 500
+power5 <- length(which(log10(Pop1.pop1dist5) < -17.84669))/10000
+
+# Plot mean likelihoods for each BayEnv population
+par(mfrow=c(3,2))
+plot(c(mean(log10(Pop1.pop1dist5)), mean(log10(Pop2.pop1dist5)), mean(log10(Pop3.pop1dist5)), mean(log10(Pop4.pop1dist5)), mean(log10(Pop5.pop1dist5))) ~ c(1,2,3,4,5), main = 'BayEnv1', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+plot(c(mean(log10(Pop1.pop2dist5)), mean(log10(Pop2.pop2dist5)), mean(log10(Pop3.pop2dist5)), mean(log10(Pop4.pop2dist5)), mean(log10(Pop5.pop2dist5))) ~ c(1,2,3,4,5), main = 'BayEnv2', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+plot(c(mean(log10(Pop1.pop3dist5)), mean(log10(Pop2.pop3dist5)), mean(log10(Pop3.pop3dist5)), mean(log10(Pop4.pop3dist5)), mean(log10(Pop5.pop3dist5))) ~ c(1,2,3,4,5), main = 'BayEnv3', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+plot(c(mean(log10(Pop1.pop4dist5)), mean(log10(Pop2.pop4dist5)), mean(log10(Pop3.pop4dist5)), mean(log10(Pop4.pop4dist5)), mean(log10(Pop5.pop4dist5))) ~ c(1,2,3,4,5), main = 'BayEnv4', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+plot(c(mean(log10(Pop1.pop5dist5)), mean(log10(Pop2.pop5dist5)), mean(log10(Pop3.pop5dist5)), mean(log10(Pop4.pop5dist5)), mean(log10(Pop5.pop5dist5))) ~ c(1,2,3,4,5), main = 'BayEnv5', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+
+plot(c(mean(log10(Pop1.pop1dist5)), mean(log10(Pop2.pop2dist5)), mean(log10(Pop3.pop3dist5)), mean(log10(Pop4.pop4dist5)), mean(log10(Pop5.pop5dist5))) ~ c(1,2,3,4,5), main = 'Likelihood of given pop', xlab = 'BayEnv pop', ylab = 'log10(genotype likelihood)')
+boxplot(log10(Pop1.pop1dist5))
+        
