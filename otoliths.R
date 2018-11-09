@@ -642,6 +642,7 @@ odds <- seq(1,20,2) # odd indicies to keep
 pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bayenv populations
 
 #### Population assignment using allele frequencies of otolith populations ####
+indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge3[,c(16:35)] # Just genetic data
 
 # Two ways to do this:
@@ -776,6 +777,17 @@ pop3.vector <- apply(pop3.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 pop4.vector <- apply(pop4.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 pop5.vector <- apply(pop5.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 
+# Individual likelihoods for each BayEnv region
+bayenv.likelihoods.indivs <- data.frame(oto.gen.merge3$PinskyID, oto.gen.merge3$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector)
+colnames(bayenv.likelihoods.indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3", "Pop4", "Pop5")
+write.table(bayenv.likelihoods.indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", row.names = FALSE, col.names = TRUE)
+
+# Which BayEnv population is each individual most likely from?
+bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE)
+
+most.like <- colnames(bayenv.likelihoods.indivs[,-c(1:2)])[apply(bayenv.likelihoods.indivs[,-c(1:2)],1, which.max)]
+t(table(most.like,bayenv.likelihoods.indivs$Place))
+
 # Check a few fish by hand
 # (0.8092105^2)*(2*0.8421053*(1-0.8421053))*(0.9078947^2)*(2*0.4934211*(1-0.4934211))*(2*0.7697368*(1-0.7697368))*(0.9276316^2)*((1-0.6447368)^2)*(0.9539474^2)*(0.9276316^2)*(0.9637681^2) #north fish1
 # (0.7933333^2)*(2*0.8000000*(1-0.8000000))*(0.9133333^2)*(2*0.5533333*(1-0.5533333))*(2*0.7666667*(1-0.7666667))*(0.9533333^2)*((1-0.5866667)^2)*(0.9533333^2)*(0.9466667^2)*(0.9657534^2) #south
@@ -834,6 +846,7 @@ rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "
 bayenv.likelihoods <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes[,2])), log10(as.numeric(bayenv2.likes[,2])), log10(as.numeric(bayenv3.likes[,2])), log10(as.numeric(bayenv4.likes[,2])), log10(as.numeric(bayenv5.likes[,2]))))
 colnames(bayenv.likelihoods) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
 rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6", "cluster7", "cluster8")
+write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_8clusters.txt", row.names = TRUE, col.names = TRUE)
 
 # pops.likelihood$oto.pop <- c('north', 'south')
 
