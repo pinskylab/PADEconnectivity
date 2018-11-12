@@ -1208,6 +1208,27 @@ length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5)
 length(which(-log10(Pop4.pop4dist5) < -1*obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
 length(which(-log10(Pop5.pop5dist5) < -1*obs.likes[2,5]))/length(Pop5.pop5dist5) #0.9465
 
+# Plot histogram with observed value and calculated p-value
+par(mfrow = c(3,2))
+hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlab = "-log10(genotype likelihood)", main = "Pop1")
+abline(v=-obs.likes[2,1])
+text(22,1000, paste0("p =", length(which(-log10(Pop1.pop1dist5) < -1*obs.likes[2,1]))/length(Pop1.pop1dist5)))
+
+hist(-log10(Pop2.pop2dist5), col = rgb(0,0,1,0.5), xlab = "-log10(genotype likelihood)", main = "Pop2")
+abline(v=-obs.likes[2,2])
+text(22,1000, paste0("p =", length(which(-log10(Pop2.pop2dist5) < -1*obs.likes[2,2]))/length(Pop2.pop2dist5)))
+
+hist(-log10(Pop3.pop3dist5), col = rgb(1,0,1,0.5), xlab = "-log10(genotype likelihood)", main = "Pop3")
+abline(v=-obs.likes[2,3])
+text(21,1000, paste0("p =", length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5)))
+
+hist(-log10(Pop4.pop4dist5), col = rgb(1,1,0.5,0.5), xlab = "-log10(genotype likelihood)", main = "Pop4")
+abline(v=-obs.likes[2,4])
+text(20,1000, paste0("p =", length(which(-log10(Pop4.pop4dist5) > -1*obs.likes[2,4]))/length(Pop4.pop4dist5)))
+
+hist(-log10(Pop5.pop5dist5), col = rgb(0,1,0,0.5), xlab = "-log10(genotype likelihood)", main = "Pop5")
+abline(v=-obs.likes[2,5])
+text(20,1000, paste0("p =", length(which(-log10(Pop5.pop5dist5) > -1*obs.likes[2,5]))/length(Pop5.pop5dist5)))
 
 
 hist(log10(north5.ndist/south5.ndist), xlab = "log10(north likelihood/south likelihood)", main = "Population = 5", col = rgb(1,0,0,0.5), xlim = c(-10,10), ylim = c(0,325))
