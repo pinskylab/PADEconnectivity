@@ -1151,18 +1151,49 @@ legend("topright", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "b
 abline(v = -14.325089--17.771144)
 
 # Test statistic as -log10(genotype likelihood) vs a ratio
-hist(-log10(Pop1.pop2dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 3000), xlab = "-log10(genotype likelihood)", main = "")
-hist(-log10(Pop2.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
-hist(-log10(Pop3.pop2dist5), add = TRUE, col = rgb(1,0,1,0.5))
-hist(-log10(Pop4.pop2dist5), add = TRUE, col = rgb(1,1,0.5,0.5))
-hist(-log10(Pop5.pop2dist5), add = TRUE, col = rgb(0,1,0,0.5))
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_8clusters.txt") # Read in observed likelihoods
 
-hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 2500), xlab = "-log10(genotype likelihood)", main = "")
-hist(-log10(Pop1.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
-hist(-log10(Pop1.pop3dist5), add = TRUE, col = rgb(1,0,1,0.5))
-hist(-log10(Pop1.pop4dist5), add = TRUE, col = rgb(1,1,0.5,0.5))
-hist(-log10(Pop1.pop5dist5), add = TRUE, col = rgb(0,1,0,0.5))
-abline(v = 12.971968)
+par(mfrow = c(3,2))
+hist(log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(-35,-2), ylim = c(0, 2500), xlab = "log10(genotype likelihood)", main = "Alleles drawn from Pop1")
+hist(log10(Pop2.pop1dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(log10(Pop3.pop1dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(log10(Pop4.pop1dist5), add = TRUE, col = rgb(1,1,0.5,0.5), breaks = 20)
+hist(log10(Pop5.pop1dist5), add = TRUE, col = rgb(0,1,0,0.5), breaks = 20)
+legend("topleft", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = obs.likes[2,1])
+
+hist(log10(Pop1.pop2dist5), col = rgb(1,0,0,0.5), xlim = c(-35,-2), ylim = c(0, 3000), xlab = "log10(genotype likelihood)", main = "Alleles drawn from Pop2")
+hist(log10(Pop2.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(log10(Pop3.pop2dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(log10(Pop4.pop2dist5), add = TRUE, col = rgb(1,1,0.5,0.5), breaks = 20)
+hist(log10(Pop5.pop2dist5), add = TRUE, col = rgb(0,1,0,0.5))
+legend("topleft", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = obs.likes[2,2])
+
+hist(log10(Pop1.pop3dist5), col = rgb(1,0,0,0.5), xlim = c(-35,-2), ylim = c(0, 2500), xlab = "log10(genotype likelihood)", main = "Alleles drawn from Pop3")
+hist(log10(Pop2.pop3dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(log10(Pop3.pop3dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(log10(Pop4.pop3dist5), add = TRUE, col = rgb(1,1,0.5,0.5), breaks = 20)
+hist(log10(Pop5.pop3dist5), add = TRUE, col = rgb(0,1,0,0.5))
+legend("topleft", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = obs.likes[2,3])
+
+hist(log10(Pop1.pop4dist5), col = rgb(1,0,0,0.5), xlim = c(-30,-2), ylim = c(0, 2500), xlab = "log10(genotype likelihood)", main = "Alleles drawn from Pop4")
+hist(log10(Pop2.pop4dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(log10(Pop3.pop4dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(log10(Pop4.pop4dist5), add = TRUE, col = rgb(1,1,0.5,0.5), breaks = 20)
+hist(log10(Pop5.pop4dist5), add = TRUE, col = rgb(0,1,0,0.5))
+legend("topleft", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = obs.likes[2,4])
+
+hist(log10(Pop1.pop5dist5), col = rgb(1,0,0,0.5), xlim = c(-35,-2), ylim = c(0, 2500), xlab = "log10(genotype likelihood)", main = "Alleles drawn from Pop5")
+hist(log10(Pop2.pop5dist5), add = TRUE, col = rgb(0,0,1,0.5))
+hist(log10(Pop3.pop5dist5), add = TRUE, col = rgb(1,0,1,0.5))
+hist(log10(Pop4.pop5dist5), add = TRUE, col = rgb(1,1,0.5,0.5), breaks = 20)
+hist(log10(Pop5.pop5dist5), add = TRUE, col = rgb(0,1,0,0.5))
+legend("topleft", c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"), pch = 22, col = "black", pt.bg  = c(rgb(1,0,0,0.5), rgb(0,0,1,0.5), rgb(1,0,1,0.5), rgb(1,1,0.5,0.5), rgb(0,1,0,0.5)))
+abline(v = obs.likes[2,5])
+
 
 hist(-log10(Pop1.pop1dist5), col = rgb(1,0,0,0.5), xlim = c(2,34), ylim = c(0, 2500), xlab = "-log10(genotype likelihood)", main = "")
 hist(-log10(Pop2.pop2dist5), add = TRUE, col = rgb(0,0,1,0.5))
@@ -1178,35 +1209,35 @@ obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Ana
 
 unlist(obs.likes)
 
-length(which(-log10(Pop1.pop1dist5) < -1*obs.likes[2,1]))/length(Pop1.pop1dist5) #0.0636
-length(which(-log10(Pop1.pop2dist5) < -1*obs.likes[2,1]))/length(Pop1.pop2dist5) #0.078
-length(which(-log10(Pop1.pop3dist5) < -1*obs.likes[2,1]))/length(Pop1.pop3dist5) #0.0471
-length(which(-log10(Pop1.pop4dist5) < -1*obs.likes[2,1]))/length(Pop1.pop4dist5) #0.1451
-length(which(-log10(Pop1.pop5dist5) < -1*obs.likes[2,1]))/length(Pop1.pop5dist5) #0.0094
+length(which(log10(Pop1.pop1dist5) > obs.likes[2,1]))/length(Pop1.pop1dist5) #0.0636
+length(which(log10(Pop2.pop1dist5) > obs.likes[2,1]))/length(Pop2.pop1dist5) #0.057
+length(which(log10(Pop3.pop1dist5) > obs.likes[2,1]))/length(Pop3.pop1dist5) #0.0456
+length(which(log10(Pop4.pop1dist5) > obs.likes[2,1]))/length(Pop4.pop1dist5) #0.0392
+length(which(log10(Pop5.pop1dist5) > obs.likes[2,1]))/length(Pop5.pop1dist5) #0.006
 
-length(which(-log10(Pop2.pop1dist5) < -1*obs.likes[2,2]))/length(Pop2.pop1dist5) #0.0866
-length(which(-log10(Pop2.pop2dist5) < -1*obs.likes[2,2]))/length(Pop2.pop2dist5) #0.2193
-length(which(-log10(Pop2.pop3dist5) < -1*obs.likes[2,2]))/length(Pop2.pop3dist5) #0.082
-length(which(-log10(Pop2.pop4dist5) < -1*obs.likes[2,2]))/length(Pop2.pop4dist5) #0.2292
-length(which(-log10(Pop2.pop5dist5) < -1*obs.likes[2,2]))/length(Pop2.pop5dist5) #0.0256
+length(which(log10(Pop1.pop2dist5) > obs.likes[2,2]))/length(Pop1.pop2dist5) #0.1234
+length(which(log10(Pop2.pop2dist5) > obs.likes[2,2]))/length(Pop2.pop2dist5) #0.2193
+length(which(log10(Pop3.pop2dist5) > obs.likes[2,2]))/length(Pop3.pop2dist5) #0.1149
+length(which(log10(Pop4.pop2dist5) > obs.likes[2,2]))/length(Pop4.pop2dist5) #0.0982
+length(which(log10(Pop5.pop2dist5) > obs.likes[2,2]))/length(Pop5.pop2dist5) #0.0242
 
-length(which(-log10(Pop3.pop1dist5) < -1*obs.likes[2,3]))/length(Pop3.pop1dist5) #0.116
-length(which(-log10(Pop3.pop2dist5) < -1*obs.likes[2,3]))/length(Pop3.pop2dist5) #0.1688
-length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5) #0.1827
-length(which(-log10(Pop3.pop4dist5) < -1*obs.likes[2,3]))/length(Pop3.pop4dist5) #0.2319
-length(which(-log10(Pop3.pop5dist5) < -1*obs.likes[2,3]))/length(Pop3.pop5dist5) #0.0412
+length(which(log10(Pop1.pop3dist5) > obs.likes[2,3]))/length(Pop1.pop3dist5) #0.1237
+length(which(log10(Pop2.pop3dist5) > obs.likes[2,3]))/length(Pop2.pop3dist5) #0.123
+length(which(log10(Pop3.pop3dist5) > obs.likes[2,3]))/length(Pop3.pop3dist5) #0.1827
+length(which(log10(Pop4.pop3dist5) > obs.likes[2,3]))/length(Pop4.pop3dist5) #0.0701
+length(which(log10(Pop5.pop3dist5) > obs.likes[2,3]))/length(Pop5.pop3dist5) #0.0304
 
-length(which(-log10(Pop4.pop1dist5) < -1*obs.likes[2,4]))/length(Pop4.pop1dist5) #0.1221
-length(which(-log10(Pop4.pop2dist5) < -1*obs.likes[2,4]))/length(Pop4.pop2dist5) #0.2048
-length(which(-log10(Pop4.pop3dist5) < -1*obs.likes[2,4]))/length(Pop4.pop3dist5) #0.1146
-length(which(-log10(Pop4.pop4dist5) < -1*obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
-length(which(-log10(Pop4.pop5dist5) < -1*obs.likes[2,4]))/length(Pop4.pop5dist5) #0.2275
+length(which(log10(Pop1.pop4dist5) > obs.likes[2,4]))/length(Pop1.pop4dist5) #0.4055
+length(which(log10(Pop2.pop4dist5) > obs.likes[2,4]))/length(Pop2.pop4dist5) #0.4144
+length(which(log10(Pop3.pop4dist5) > obs.likes[2,4]))/length(Pop3.pop4dist5) #0.3414
+length(which(log10(Pop4.pop4dist5) > obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
+length(which(log10(Pop5.pop4dist5) > obs.likes[2,4]))/length(Pop5.pop4dist5) #0.4039
 
-length(which(-log10(Pop1.pop1dist5) < -1*obs.likes[2,1]))/length(Pop1.pop1dist5) #0.0636
-length(which(-log10(Pop2.pop2dist5) < -1*obs.likes[2,2]))/length(Pop2.pop2dist5) #0.2193
-length(which(-log10(Pop3.pop3dist5) < -1*obs.likes[2,3]))/length(Pop3.pop3dist5) #0.1827
-length(which(-log10(Pop4.pop4dist5) < -1*obs.likes[2,4]))/length(Pop4.pop4dist5) #0.7081
-length(which(-log10(Pop5.pop5dist5) < -1*obs.likes[2,5]))/length(Pop5.pop5dist5) #0.9465
+length(which(log10(Pop1.pop5dist5) < obs.likes[2,5]))/length(Pop1.pop5dist5) #0.5161
+length(which(log10(Pop2.pop5dist5) < obs.likes[2,5]))/length(Pop2.pop5dist5) #0.519
+length(which(log10(Pop3.pop5dist5) < obs.likes[2,5]))/length(Pop3.pop5dist5) #0.4935
+length(which(log10(Pop4.pop5dist5) < obs.likes[2,5]))/length(Pop4.pop5dist5) #0.2529
+length(which(log10(Pop5.pop5dist5) < obs.likes[2,5]))/length(Pop5.pop5dist5) #0.0535
 
 # Plot histogram with observed value and calculated p-value
 par(mfrow = c(3,2))
