@@ -495,14 +495,14 @@ summary(mclust.fit)
 # k-means clustering
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
-kmean.cls <- kmeans(oto.chem2, centers = 8, nstart = 50, iter.max = 10)
+kmean.cls <- kmeans(oto.chem2, centers = 6, nstart = 50, iter.max = 10)
 class.table.km <- table(otoliths$Location, kmean.cls$cluster)
 class.table.km2 <- table(otoliths$Period, kmean.cls$cluster)
 mosaicplot(class.table.km, color = col.palette)
 
 fviz_cluster(kmean.cls, oto.chem2, 
              # palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), # for oto.chem
-             palette = c("#FF0000FF", "#FFBF00FF", "#80FF00FF", "#00FF40FF", "#00FFFFFF", "#0040FFFF", "#8000FFFF", "#FF00BFFF"), # for oto.chem2
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"), # for oto.chem2
              ellipse.type = "euclid", # Concentration ellipse
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
@@ -588,6 +588,7 @@ sum(diag(prop.table(ct1)))
 # otoliths$predicted <- dfa1$class # using DFA classes
 otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
 otoliths$cluster8 <- kmean.cls$cluster
+otoliths$cluster6 <- kmean.cls$cluster
 
 names(kmean.cls$cluster) == otoliths$Fish.ID
 # rownames(otoliths)==lda.class.ordered[,1] # should be in same order
@@ -607,6 +608,10 @@ oto.gen.merge2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounde
 oto.gen.merge3 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 # write.table(oto.gen.merge3, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", col.names = TRUE, row.names = FALSE)
 oto.gen.merge3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", header = TRUE)
+
+oto.gen.merge4 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+# write.table(oto.gen.merge4, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", col.names = TRUE, row.names = FALSE)
+oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
 
 # Make some plots
 # plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
@@ -637,6 +642,7 @@ as.data.frame(regional.allele.freqs) == pop.allele.freqs
 
 # Pull out odd indicies
 pop.allele.freqs
+pop.allele.freqs5
 odds <- seq(1,20,2) # odd indicies to keep
 # pop.allele.freqs.odds <- pop.allele.freqs[,odds] # north & south allele frequencies
 pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bayenv populations
@@ -644,6 +650,7 @@ pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bay
 #### Population assignment using allele frequencies of otolith populations ####
 indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge3[,c(16:35)] # Just genetic data
+indiv.allele.counts <- oto.gen.merge4[,c(16:35)] # Just genetic data
 
 # Two ways to do this:
 indiv.allele.counts.odds <- indiv.allele.counts[,odds] # first way, but this requires the column names in the count data and the allele frequency data to be the same
@@ -778,7 +785,7 @@ pop4.vector <- apply(pop4.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 pop5.vector <- apply(pop5.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 
 # Individual likelihoods for each BayEnv region
-bayenv.likelihoods.indivs <- data.frame(oto.gen.merge3$PinskyID, oto.gen.merge3$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector)
+bayenv.likelihoods.indivs <- data.frame(oto.gen.merge4$PinskyID, oto.gen.merge4$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector)
 colnames(bayenv.likelihoods.indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3", "Pop4", "Pop5")
 write.table(bayenv.likelihoods.indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", row.names = FALSE, col.names = TRUE)
 
@@ -833,11 +840,11 @@ south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$clu
 north.pop <- aggregate(oto.gen.merge2$north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # same as above, but data may be coming from different places (read in vs. already stored as an object)
 south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) 
 
-bayenv1.likes <- aggregate(pop1.vector, by = list(oto.gen.merge3$cluster8), FUN = prod) # likelihoods for BayEnv groupings
-bayenv2.likes <- aggregate(pop2.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
-bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
-bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge3$cluster8), FUN = prod)
-bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge3$cluster8), FUN = prod) 
+bayenv1.likes <- aggregate(pop1.vector, by = list(oto.gen.merge4$cluster6), FUN = prod) # likelihoods for BayEnv groupings
+bayenv2.likes <- aggregate(pop2.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
+bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
+bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
+bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge4$cluster6), FUN = prod) 
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
 colnames(pops.likelihood) <- c("n.likes", "s.likes")
@@ -845,10 +852,10 @@ rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "
 
 bayenv.likelihoods <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes[,2])), log10(as.numeric(bayenv2.likes[,2])), log10(as.numeric(bayenv3.likes[,2])), log10(as.numeric(bayenv4.likes[,2])), log10(as.numeric(bayenv5.likes[,2]))))
 colnames(bayenv.likelihoods) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
-rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6", "cluster7", "cluster8")
-write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_8clusters.txt", row.names = TRUE, col.names = TRUE)
+rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6")
+write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_6clusters.txt", row.names = TRUE, col.names = TRUE)
 
-# pops.likelihood$oto.pop <- c('north', 'south')
+most.like <- colnames(bayenv.likelihoods[apply(bayenv.likelihoods,1, which.max)])
 
 #### Plot population likelihoods of otolith populations/clusters ####
 # plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
