@@ -7,12 +7,12 @@
 #### of individuals in a group, which is the depth of the simulated array
 
 # Read in cluster sizes
-oto.gen.merge3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", header = TRUE)
-table(oto.gen.merge3$cluster8)
-cluster.sizes <- as.numeric(table(oto.gen.merge3$cluster8))
+oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+table(oto.gen.merge4$cluster6)
+cluster.sizes <- as.numeric(table(oto.gen.merge4$cluster6))
 
 # Read in the likelihoods for each cluster
-obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_8clusters.txt")
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_6clusters.txt")
 
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
@@ -23,8 +23,10 @@ pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
 
 # Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
 # Set group size (n)
-cluster.sizes <- c(5,1) # this is working........
-obs.likes <- obs.likes[2:3,]
+cluster.sizes <- 23 # also works
+obs.likes <- obs.likes[1,]
+# cluster.sizes <- c(5,1) # this is working........
+# obs.likes <- obs.likes[2:3,]
 # n <- 1
 
 dist.likes <- data.frame()
@@ -159,7 +161,7 @@ for (d in 1:length(distributions)){
 }
 
 rownames(dist.likes) <- rownames(obs.likes)
-colnames(dist.likes) <- rownames(obs.likes)
+colnames(dist.likes) <- c('prob_bayenv1', 'prob_bayenv2', 'prob_bayenv3', 'prob_bayenv4', 'prob_bayenv5')
 
 
 #############
@@ -191,21 +193,23 @@ for (d in 1:length(distributions)){
 # Row index of observed cluster size needs to be correct
 par(mfrow = c(3,2))
 hist(log10(Pop1.pop1dist), col = rgb(1,0,0,0.5), xlab = "log10(genotype likelihood)", main = "Pop1")
-abline(v=obs.likes[2,1])
-text(locator(1), paste0("p =", length(which(log10(Pop1.pop1dist) < obs.likes[2,1]))/length(Pop1.pop1dist)))
+abline(v=obs.likes[n,1])
+text(locator(1), paste0("p =", length(which(log10(Pop1.pop1dist) < obs.likes[n,1]))/length(Pop1.pop1dist)))
 
 hist(log10(Pop2.pop2dist), col = rgb(0,0,1,0.5), xlab = "log10(genotype likelihood)", main = "Pop2")
-abline(v=obs.likes[2,2])
-text(-22,1000, paste0("p =", length(which(log10(Pop2.pop2dist) < obs.likes[2,2]))/length(Pop2.pop2dist)))
+abline(v=obs.likes[n,2])
+text(locator(1), paste0("p =", length(which(log10(Pop2.pop2dist) < obs.likes[n,2]))/length(Pop2.pop2dist)))
 
 hist(log10(Pop3.pop3dist), col = rgb(1,0,1,0.5), xlab = "log10(genotype likelihood)", main = "Pop3")
-abline(v=obs.likes[2,3])
-text(-21,1000, paste0("p =", length(which(log10(Pop3.pop3dist) < obs.likes[2,3]))/length(Pop3.pop3dist)))
+abline(v=obs.likes[n,3])
+text(locator(1), paste0("p =", length(which(log10(Pop3.pop3dist) < obs.likes[n,3]))/length(Pop3.pop3dist)))
 
 hist(log10(Pop4.pop4dist), col = rgb(1,1,0.5,0.5), xlab = "log10(genotype likelihood)", main = "Pop4")
-abline(v=obs.likes[2,4])
-text(-20,1000, paste0("p =", length(which(log10(Pop4.pop4dist) < obs.likes[2,4]))/length(Pop4.pop4dist)))
+abline(v=obs.likes[n,4])
+text(locator(1), paste0("p =", length(which(log10(Pop4.pop4dist) < obs.likes[n,4]))/length(Pop4.pop4dist)))
 
 hist(log10(Pop5.pop5dist), col = rgb(0,1,0,0.5), xlab = "log10(genotype likelihood)", main = "Pop5")
-abline(v=obs.likes[2,5])
-text(-20,1000, paste0("p =", length(which(log10(Pop5.pop5dist) < obs.likes[2,5]))/length(Pop5.pop5dist)))
+abline(v=obs.likes[n,5])
+text(locator(1), paste0("p =", length(which(log10(Pop5.pop5dist) < obs.likes[n,5]))/length(Pop5.pop5dist)))
+
+mtext(paste0("Cluster size =", cluster.sizes[n]), outer = TRUE, line = -2)
