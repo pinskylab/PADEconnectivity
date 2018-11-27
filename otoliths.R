@@ -465,6 +465,67 @@ image(x,y,z,col=my.colors(6),axes=FALSE,xlab='', ylab='',main='')
 mtext("Standard length", side=4, line=2.5)
 axis(4)
 
+# MDS of 4 elements (Mg, Mn, Sn and Fe) & time period and colored by cluster
+oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+
+oto.chem <- oto.gen.merge4[,c("PinskyID", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
+rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
+oto.chem$Period <- gsub("Early", "1", oto.chem$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
+oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
+oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
+oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
+
+oto.chem <- scale(oto.chem[,-1]) # Scale
+oto.dist <- dist(oto.chem) # Euclidian distance between rows
+
+# Fit model
+oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE)
+
+# Plot MDS
+x <- oto.fit$points[,1]
+y <- oto.fit$points[,2]
+z <- oto.fit$points[,3]
+
+# Plot clusters in color
+par(mfrow = c(1,2))
+col.palette <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F")
+palette(col.palette)
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("topleft",
+       legend = levels(oto.gen.merge4$Location),
+       pch=19,
+       col = col.palette)
+
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("bottomright",
+       legend = levels(oto.gen.merge4$Location),
+       pch=19,
+       col = col.palette)
+
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("topleft",
+       legend = levels(oto.gen.merge4$Period),
+       pch=19,
+       col = col.palette)
+
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("bottomright",
+       legend = levels(oto.gen.merge4$Period),
+       pch=19,
+       col = col.palette)
+
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("topleft",
+       legend = levels(as.factor(oto.gen.merge4$cluster6)),
+       pch=19,
+       col = col.palette)
+
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+legend("bottomright",
+       legend = levels(as.factor(oto.gen.merge4$cluster6)),
+       pch=19,
+       col = col.palette)
+
 
 #### Clustering ####
 # Code to calculate and plot elbow method of deciding how many K's
@@ -1367,7 +1428,43 @@ pwr.2p.test(mean(log10(north.vector.ndist.100/south.vector.ndist.100))-mean(log1
 cohen <- cohensD(log10(north.vector.ndist.100/south.vector.ndist.100), log10(north.vector.sdist.100/south.vector.sdist.100))
 pwr.t.test(1000, d = cohen, type = "two.sample")
 
+#### Likelihood ratios using L(home)/L(max) or L(home)/L(max not home)
+bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE)
 
+# Create a column for the genotype likelihood of the source population
+for (i in 1:length(bayenv.likelihoods.indivs$Place)){
+  if(bayenv.likelihoods.indivs$Place[i] == "Little Egg Inlet, NJ"){
+    bayenv.likelihoods.indivs$L_home[i] <- bayenv.likelihoods.indivs$Pop3[i]
+  } else if (bayenv.likelihoods.indivs$Place[i] == "Roosevelt Inlet, DE") {
+    bayenv.likelihoods.indivs$L_home[i] <- bayenv.likelihoods.indivs$Pop3[i]
+  } else  if (bayenv.likelihoods.indivs$Place[i] == "York River, VA") {
+    bayenv.likelihoods.indivs$L_home[i] <- bayenv.likelihoods.indivs$Pop3[i]
+  } else {
+    bayenv.likelihoods.indivs$L_home[i] <- bayenv.likelihoods.indivs$Pop4[i]
+  }
+}
+
+for (i in 1:length(bayenv.likelihoods.indivs$Place)){
+  if(bayenv.likelihoods.indivs$Place[i] == "Little Egg Inlet, NJ"){
+    bayenv.likelihoods.indivs$L_home_pop[i] <- "3"
+  } else if (bayenv.likelihoods.indivs$Place[i] == "Roosevelt Inlet, DE") {
+    bayenv.likelihoods.indivs$L_home_pop[i] <- "3"
+  } else  if (bayenv.likelihoods.indivs$Place[i] == "York River, VA") {
+    bayenv.likelihoods.indivs$L_home_pop[i] <- "3"
+  } else {
+    bayenv.likelihoods.indivs$L_home_pop[i] <- "4"
+  }
+}
+
+# Check this is correct
+bayenv.likelihoods.indivs$Pop4[which(bayenv.likelihoods.indivs$Place == "Beaufort, NC")]==bayenv.likelihoods.indivs$L_home[which(bayenv.likelihoods.indivs$Place == "Beaufort, NC")]
+
+# Now create a column for the highest genotype likelihood
+bayenv.likelihoods.indivs$L_max <- apply(bayenv.likelihoods.indivs[,c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5")],1,max)
+bayenv.likelihoods.indivs$L_max_pop <- apply(bayenv.likelihoods.indivs[,c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5")],1,which.max)
+
+# Calculate L_home/L_max
+bayenv.likelihoods.indivs$L_home_L_max <- log10(bayenv.likelihoods.indivs$L_home/bayenv.likelihoods.indivs$L_max)
 
 #### Code I previously tried, but now is probably the wrong approach/obscure ####
 # Calculate population allele frequencies based on predicted otolith populations
