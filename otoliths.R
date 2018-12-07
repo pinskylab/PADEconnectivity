@@ -226,16 +226,29 @@ cld(leastsquare, alpha = 0.05, Letters = letters)
 
 dev.off()
 
+# MANOVA
+otoliths.sub.log
+oto10 <- cbind(locations, otoliths.sub.log[,-c(1:3)])
+fit <- manova(as.matrix(oto10[,-1]) ~ oto10$locations)
+summary(fit)
+summary.aov(fit) # Mg, Mn, Fe & Sn are significantly different between ingress sites
+
+
 #### Multidimensional scaling ####
 # oto.chem <- otoliths[-28,c("Fish.ID", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
 oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
-oto.chem2 <- otoliths[,c("Fish.ID", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
+oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
 rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
 oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
 oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
 oto.chem2$Period <- gsub("Late", "3", oto.chem2$Period)
 oto.chem2$Period <- as.numeric(oto.chem2$Period) # convert time period to numeric for scaling later
+
+# Separate MDS for each time period
+oto.chem.early <- oto.chem2[which(oto.chem2$Period == 1),]
+oto.chem.middle <- oto.chem2[which(oto.chem2$Period == 2),]
+oto.chem.late <- oto.chem2[which(oto.chem2$Period == 3),]
 
 # Scatter plot matrix
 loc.cols <- col.palette[as.numeric(otoliths$Location)]
@@ -249,13 +262,25 @@ par(xpd = NA)
 oto.chem <- scale(oto.chem[, -1]) # scaling probably a good idea since there is a big range of values for each elemental ratio
 oto.chem2 <- scale(oto.chem2[,-1])
 
+oto.chem.early2 <- scale(oto.chem.early[,-c(1:3)])
+oto.chem.middle2 <- scale(oto.chem.middle[,-c(1:3)])
+oto.chem.late2 <- scale(oto.chem.late[,-c(1:3)])
+
 # Euclidian distance between rows
 oto.dist <- dist(oto.chem)
 oto.dist2 <- dist(oto.chem2)
 
+oto.chem.early2 <- dist(oto.chem.early2)
+oto.chem.middle2 <- dist(oto.chem.middle2)
+oto.chem.late2 <- dist(oto.chem.late2)
+
 # Fit model
 oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE) # How many dimensions?
 oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 3, add = FALSE)
+
+oto.fit.early <- cmdscale(oto.chem.early2, eig = TRUE, k = 3, add = FALSE)
+oto.fit.middle <- cmdscale(oto.chem.middle2, eig = TRUE, k = 3, add = FALSE)
+oto.fit.late <- cmdscale(oto.chem.late2, eig = TRUE, k = 3, add = FALSE)
 
 plot(oto.fit$eig[1:10]) # scree plot
 plot(oto.fit2$eig[1:10])
@@ -280,6 +305,7 @@ hist(y[which(otoliths$Location == "RUMFS")], xlab = "MDS 2", main = "RUMFS")
 x <- oto.fit2$points[,1]
 y <- oto.fit2$points[,2]
 z <- oto.fit2$points[,3]
+
 plot(x, y, xlab = "Coordinate 1", ylab = "Coordinate 2", main = "Otolith microchemistry")
 text(x, y, labels = row.names(oto.chem2), pos = 3)
 plot(x, z, xlab = "Coordinate 1", ylab = "Coordinate 3", main = "Otolith microchemistry")
@@ -347,6 +373,49 @@ points(x[c(48:55,60:64,100:118,168:179)], y[c(48:55,60:64,100:118,168:179)], col
 points(x[c(56:57,65:72,119:123,180:185)], y[c(56:57,65:72,119:123,180:185)], col = "#B600FFFF", pch = 19) #2010
 points(x[c(73:77,186:188)], y[c(73:77,186:188)], col = "#FF00DBFF", pch = 19) #2011
 points(x[c(78:82,189:196)], y[c(78:82,189:196)], col = "#FF006DFF", pch = 19) #2012
+
+# Plot separate MDS for each time period
+library(wesanderson)
+
+par(mfrow = c(1,2))
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+
+# Early time period
+x <- oto.fit.early$points[,1]
+y <- oto.fit.early$points[,2]
+z <- oto.fit.early$points[,3]
+
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend("topleft",
+       legend = levels(oto.chem.early$Location),
+       pch=19,
+       col = col.palette)
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+
+# Middle time period
+x <- oto.fit.middle$points[,1]
+y <- oto.fit.middle$points[,2]
+z <- oto.fit.middle$points[,3]
+
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: middle", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend("topleft",
+       legend = levels(oto.chem.middle$Location),
+       pch=19,
+       col = col.palette)
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: middle", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+
+# Late time period
+x <- oto.fit.late$points[,1]
+y <- oto.fit.late$points[,2]
+z <- oto.fit.late$points[,3]
+
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend("topleft",
+       legend = levels(oto.chem.late$Location),
+       pch=19,
+       col = col.palette)
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 
 # MDMS by ingress site, colored by stage/size
 # Read in dataset containing outlier loci
@@ -578,7 +647,7 @@ fviz_cluster(kmean.cls, oto.chem2,
 fit <- hclust(oto.dist, method = "ward.D2") # seems this is the correct method to use
 plot(fit, cex = 0.5)
 plot(fit, cex = 0.5, labels = otoliths$Location)
-rect.hclust(fit, k=5)
+rect.hclust(fit, k=6)
 
 # Nicer plot
 library(ape)
