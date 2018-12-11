@@ -821,6 +821,13 @@ Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 
+# Combine Fish IDs of data that was within 67% confidence ellipses
+in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
+
+# Now subset elemental data to only these fish
+sub.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,]
+
+
 #### Add predicted sites to the otolith data ####
 # otoliths$predicted <- dfa1$class # using DFA classes
 otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
