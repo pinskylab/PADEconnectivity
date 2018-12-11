@@ -695,24 +695,131 @@ otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log
 otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:7]))
 pairs(otoliths.sub.log.trans)
 scatterplotMatrix(otoliths.sub.log.trans)
-# Location <- otoliths.sub.log$Location
-# otoliths.sub.log.trans2 <- cbind(Location, otoliths.sub.log.trans)
+Location <- otoliths.sub.log$Location
+Location.ordered <- factor(Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+otoliths.sub.log.trans2 <- cbind(Location.ordered, otoliths.sub.log.trans)
 
-# dfa1 <- lda(Location ~ Mg + Mn + Fe + Cu + Cd + Sr + Ba + Sn + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE) #Cd, Pb and U apprently too similar between groups when data not transformed and standardized; but not so when they are
+# dfa1 <- lda(Location ~ Mg + Mn + Fe + Cu + Cd + Sr + Ba + Sn + Pb + U, data = otoliths.sub.log.trans, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) #Cd, Pb and U apprently too similar between groups when data not transformed and standardized; but not so when they are
 
 Cluster <- as.factor(kmean.cls$cluster)
 names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
 otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
-dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE) 
+# dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) 
+dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
-# ct1 <- table(otoliths.sub.log.trans2$Location, dfa1$class)
-ct1 <- table(otoliths.sub.log.trans2$Cluster, dfa1$class)
+ct1 <- table(otoliths.sub.log.trans2$Location.ordered, dfa1$class)
+# ct1 <- table(otoliths.sub.log.trans2$Cluster, dfa1$class)
 diag(prop.table(ct1,1))
 
 # total percent correct
 sum(diag(prop.table(ct1)))
+
+# barplot of assignments
+props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+#### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody ####
+dfa2 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
+plot(dfa2)
+# ld1 <- dfa2$scaling[1,1]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,1]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,1]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,1]*otoliths.sub.log.trans2$Sn
+# ld2 <- dfa2$scaling[1,2]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,2]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,2]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,2]*otoliths.sub.log.trans2$Sn
+
+dfa.values <- predict(dfa2) # Calculates linear discriminants, as above
+dfa.values2 <- cbind.data.frame(dfa.values$x, Location)
+
+plot(dfa.values2$LD1, dfa.values2$LD2, col = dfa.values2$Location)
+legend("topleft",
+       legend=levels(Location),
+       pch=19,
+       col = col.palette)
+
+# Calculate center for each ingress site
+center <- aggregate(dfa.values2[,-4], by = list(dfa.values2$Location), FUN = mean) # similar but not exactly the same as center calculation below
+
+# Draw data ellipses for each ingress site
+loc.groups <- split(dfa.values2, dfa.values2$Location)
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.67, xlim = c(-3,3)) # NC
+dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.67) # York
+dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.67) # Roosevelt
+dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.67) # RUMFS
+
+# Fit ellipse for each ingress location
+eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.67, npoints = 250)
+eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.67, npoints = 250)
+eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.67, npoints = 250)
+eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.67, npoints = 250)
+
+#Calculate the center of ellipse for each location
+eli_center_nc = c(mean(eli.nc[,1]), mean(eli.nc[,2]))
+eli_center_york = c(mean(eli.york[,1]), mean(eli.york[,2]))
+eli_center_roosevelt = c(mean(eli.roosevelt[,1]), mean(eli.roosevelt[,2]))
+eli_center_rumfs = c(mean(eli.rumfs[,1]), mean(eli.rumfs[,2]))
+
+#A function to calculate distance between points 'x1' and 'x2'
+dist_2_points <- function(x1, x2) {
+  return(sqrt(sum((x1 - x2)^2)))    
+}
+
+#Compute distance of each point in ellipse from eli_center
+# NC
+distance.nc <- numeric(0)
+for (i in 1:nrow(eli.nc)){ 
+  distance.nc[i] = dist_2_points(eli_center_nc, eli.nc[i,])
+}
+
+# York
+distance.york <- numeric(0)
+for (i in 1:nrow(eli.york)){ 
+  distance.york[i] = dist_2_points(eli_center_york, eli.york[i,])
+}
+
+# Roosevelt
+distance.roosevelt <- numeric(0)
+for (i in 1:nrow(eli.roosevelt)){ 
+  distance.roosevelt[i] = dist_2_points(eli_center_roosevelt, eli.roosevelt[i,])
+}
+
+# RUMFS
+distance.rumfs <- numeric(0)
+for (i in 1:nrow(eli.rumfs)){ 
+  distance.rumfs[i] = dist_2_points(eli_center_rumfs, eli.rumfs[i,])
+}
+
+#The maximum distance from eli_center is 'a'
+a.nc <- distance.nc[which.max(distance.nc)]
+a.york <- distance.york[which.max(distance.york)]
+a.roosevelt <- distance.roosevelt[which.max(distance.roosevelt)]
+a.rumfs <- distance.rumfs[which.max(distance.rumfs)]
+
+#The minimum distance from eli_center is 'b'
+b.nc <- distance.nc[which.min(distance.nc)]
+b.york <- distance.york[which.min(distance.york)]
+b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
+b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
+
+# Figure out if points are inside or outside ellipses
+NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
+NC.in <- loc.groups$NC[-which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
+
+York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
+York.in <- loc.groups$York[-which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
+
+Roosevelt.out <- loc.groups$Roosevelt[which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
+Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
+
+RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
+RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 
 #### Add predicted sites to the otolith data ####
 # otoliths$predicted <- dfa1$class # using DFA classes
@@ -742,6 +849,75 @@ oto.gen.merge3 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounde
 oto.gen.merge4 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 # write.table(oto.gen.merge4, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", col.names = TRUE, row.names = FALSE)
 oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+
+# Pie charts of six clusters based on otolith elemental cores
+oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+
+clusters <- split(oto.gen.merge4, oto.gen.merge4$cluster6)
+
+# Plot together
+par(mfrow = c(3,2),
+    oma = c(5,4,0,1) +0.1,
+    mar = c(0,0,1,1) + 0.1)
+pie(table(clusters[[1]]$Location), col = col.palette, labels = '', main = 'cluster 1')
+pie(table(clusters[[2]]$Location), col = col.palette, labels = '', main = 'cluster 2')
+pie(table(clusters[[3]]$Location), col = col.palette, labels = '', main = 'cluster 3')
+pie(table(clusters[[4]]$Location), col = col.palette, labels = '', main = 'cluster 4')
+pie(table(clusters[[5]]$Location), col = col.palette, labels = '', main = 'cluster 5')
+pie(table(clusters[[6]]$Location), col = col.palette, labels = '', main = 'cluster 6')
+legend("bottomright",
+       legend=levels(oto.gen.merge4$Location),
+       pch=22,
+       col = 'black',
+       pt.bg= col.palette)
+
+# Plot separately
+# Cluster 1
+pie(table(clusters[[1]]$Location), col = col.palette, labels = '')
+mtext('cluster 1 (n = 23)', side = 3, line = -4.5)
+text(0,0.4, "NC")
+text(0.3,-0.4, "York")
+text(-0.55,-0.75, "Roosevelt")
+
+# Cluster 2
+pie(table(clusters[[2]]$Location), col = col.palette, labels = '')
+mtext('cluster 2 (n = 32)', side = 3, line = -4.5)
+text(0.1,0.4, "NC")
+text(-0.45, 0.05, "Roosevelt")
+text(-0.79,-0.5, "RUMFS")
+text(0.2,-0.35, "York")
+
+# Cluster 3
+pie(table(clusters[[3]]$Location), col = col.palette, labels = '')
+mtext('cluster 3 (n = 8)', side = 3, line = -4.5)
+text(0,0.4, "NC")
+text(0.1,-0.35, "York")
+
+# Cluster 4
+pie(table(clusters[[4]]$Location), col = col.palette, labels = '')
+mtext('cluster 4 (n = 46)', side = 3, line = -4.5)
+text(0.1,0.4, "NC")
+text(-0.1,-0.35, "RUMFS")
+
+# Cluster 5
+pie(table(clusters[[5]]$Location), col = col.palette, labels = '')
+mtext('cluster 5 (n = 23)', side = 3, line = -4.5)
+text(0.9,0.13, "NC")
+text(-0.3, 0.05, "Roosevelt")
+text(0.4,-0.3, "RUMFS")
+text(0.9,-0.13, "York")
+
+# Cluster 6
+pie(table(clusters[[6]]$Location), col = col.palette, labels = '')
+mtext('cluster 6 (n = 19)', side = 3, line = -4.5)
+text(-0.3, 0.1, "Roosevelt")
+text(0.4,-0.2, "RUMFS")
+
+
+
 
 # Make some plots
 # plot(oto.gen.merge2$assignment ~ oto.gen.merge2$predicted, xlab = "Predicted population based on otolith microchemistry", ylab = "Population assignment based on genetic likelihood")
