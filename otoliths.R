@@ -4,8 +4,23 @@ setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Ana
 data <- read.table('masterPADElarvae.txt', header = TRUE)
 
 # Read in otolith microchemistry data
-setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/")
-otoliths <- read.table('otolith_data.txt', header = TRUE, sep = "\t")
+# setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/")
+# otoliths <- read.table('otolith_data.txt', header = TRUE, sep = "\t")
+# 
+# # Replace zeros in otolith data with tiny value (random number between zero and lowest non-zero value). This only needs to be done once.
+# otoliths[otoliths == 0] <- NA # Replace zeros with NAs to make things easier
+# summary(otoliths)
+# 
+# otoliths$Fe[is.na(otoliths$Fe)] <- runif(n = sum(is.na(otoliths$Fe)), min = 0, max = min(otoliths$Fe, na.rm = TRUE))
+# otoliths$Cu[is.na(otoliths$Cu)] <- runif(n = sum(is.na(otoliths$Cu)), min = 0, max = min(otoliths$Cu, na.rm = TRUE))
+# otoliths$Cd[is.na(otoliths$Cd)] <- runif(n = sum(is.na(otoliths$Cd)), min = 0, max = min(otoliths$Cd, na.rm = TRUE))
+# otoliths$Pb[is.na(otoliths$Pb)] <- runif(n = sum(is.na(otoliths$Pb)), min = 0, max = min(otoliths$Pb, na.rm = TRUE))
+# otoliths$U[is.na(otoliths$U)] <- runif(n = sum(is.na(otoliths$U)), min = 0, max = min(otoliths$U, na.rm = TRUE))
+# 
+# write.table(otoliths, '/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt', row.names = FALSE, sep = "\t")
+
+# Read in non-zero otolith data
+otoliths <- read.table("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt", header = TRUE, sep = '\t')
 
 # Read in available genetic data
 setwd("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files")
@@ -690,7 +705,7 @@ otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn")]
 rownames(otoliths.sub) <- otoliths.sub[,1]
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Ba', 'Sn')]), log10(otoliths.sub[,c('Fe', 'Cu', 'Cd', 'Pb', 'U')]+1) ) # log transform, adding 1 to elements with zero values
-otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn')]+0.00000001) ) # log transform
+otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn')]+0.00000001) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
 # otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
 otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:7]))
 pairs(otoliths.sub.log.trans)
