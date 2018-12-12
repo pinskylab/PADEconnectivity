@@ -247,19 +247,19 @@ otoliths.sub.log
 oto10 <- cbind(locations, otoliths.sub.log[,-c(1:3)])
 fit <- manova(as.matrix(oto10[,-1]) ~ oto10$locations)
 summary(fit)
-summary.aov(fit) # Mg, Mn, Fe & Sn are significantly different between ingress sites
+summary.aov(fit) # Mg, Mn, Fe & Sn Ba are significantly different between ingress sites
 
 oto10 <- cbind(period, otoliths.sub.log[,-c(1:3)])
 fit <- manova(as.matrix(oto10[,-1]) ~ oto10$period)
 summary(fit)
-summary.aov(fit)
+summary.aov(fit) # Mg, Sn and Pb
 
 
 #### Multidimensional scaling ####
-# oto.chem <- otoliths[-28,c("Fish.ID", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
+# oto.chem <- otoliths[-28,c("Fish.ID", "Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
 oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
-oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
+oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
 rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
 oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
 oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
@@ -281,7 +281,7 @@ legend(x = 0.05, y = 0.35, cex = 2,
 par(xpd = NA)
 
 oto.chem <- scale(oto.chem[, -1]) # scaling probably a good idea since there is a big range of values for each elemental ratio
-oto.chem2 <- scale(oto.chem2[,-1])
+oto.chem2 <- scale(oto.chem2[,-c(1:2)])
 
 oto.chem.early2 <- scale(oto.chem.early[,-c(1:3)])
 oto.chem.middle2 <- scale(oto.chem.middle[,-c(1:3)])
@@ -337,20 +337,21 @@ library(wesanderson)
 
 par(mfrow = c(1,2))
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
-palette(col.palette)
+palette(rev(col.palette))
+locations <- factor(otoliths$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
 # plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = locations, pch = 19) # mds using Mg, Mn, Fe & Sn
 legend("topleft",
-       legend = levels(otoliths$Location),
+       legend = levels(locations),
        pch=19,
-       col = col.palette)
+       col = rev(col.palette))
 
 # plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = locations, pch = 19) # mds using Mg, Mn, Fe & Sn
 legend("topleft",
-       legend = levels(otoliths$Location),
+       legend = levels(locations),
        pch=19,
-       col = col.palette)
+       col = rev(col.palette))
 
 # Plot points by time period
 # plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Period[-28], pch = 19) # without NCPD 074 (28)
