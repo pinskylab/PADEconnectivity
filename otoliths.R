@@ -86,7 +86,8 @@ oto.gen.counts <- ddply(oto.gen.merge, .(oto.gen.merge$Period, oto.gen.merge$Loc
 # Microchemistry by location
 otoliths.sub <- otoliths[,c(1,4,5,12:21)]
 rownames(otoliths.sub) <- otoliths.sub[,1]
-otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')] +1) ) # log transform
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]) ) # log transform
+# otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')] +1) ) # log transform, I don't think necessary because there are no longer zeros in the data
 # chem1 <- aggregate(otoliths.sub[,-1], by = list(otoliths.sub$Location), FUN = mean)
 # chem1$Location <- c(4,2,1,3)
 # boxplot(chem1$Mg ~ chem1$Location, ylab = "Mg", xaxt = "n")
@@ -112,7 +113,7 @@ lsmeans = lsmeans::lsmeans
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_boxplots.png", width=8.5, height=11, res=300, units="in")
 par(
-  mar=c(4, 4, 1, 2), # panel magin size in "line number" units
+  mar=c(4, 5, 1, 2), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -120,53 +121,53 @@ par(
   mfrow = c(5,2)
 )
 
-boxplot(otoliths.sub.log$Mg ~ locations, ylab = "Mg:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(otoliths.sub.log$Mg ~ locations)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Mn ~ locations, ylab = "Mn:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Mn ~ locations, ylab = expression(log[10]*(Mn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mn.anova <- aov(otoliths.sub$Mn ~ locations)
 leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Fe ~ locations, ylab = "Fe:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Fe ~ locations, ylab = expression(log[10]*(Fe:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 fe.anova <- aov(otoliths.sub$Fe ~ locations)
 leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cu ~ locations, ylab = "Cu:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Cu ~ locations, ylab = expression(log[10]*(Cu:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cu.anova <- aov(otoliths.sub$Cu ~ locations)
 leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sr ~ locations, ylab = "Sr:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Sr ~ locations, ylab = expression(log[10]*(Sr:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sr.anova <- aov(otoliths.sub$Sr ~ locations)
 leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cd ~ locations, ylab = "Cd:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Cd ~ locations, ylab = expression(log[10]*(Cd:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cd.anova <- aov(otoliths.sub$Cd ~ locations)
 leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Ba ~ locations, ylab = "Ba:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Ba ~ locations, ylab = expression(log[10]*(Ba:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 ba.anova <- aov(otoliths.sub$Ba ~ locations)
 leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sn ~ locations, ylab = "Sn:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Sn ~ locations, ylab = expression(log[10]*(Sn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sn.anova <- aov(otoliths.sub$Sn ~ locations)
 leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Pb ~ locations, ylab = "Pb:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Pb ~ locations, ylab = expression(log[10]*(Pb:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
 pb.anova <- aov(otoliths.sub$Pb ~ locations)
 leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$U ~ locations, ylab = "U:Ca", col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$U ~ locations, ylab = expression(log[10]*(U:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
 u.anova <- aov(otoliths.sub$U ~ locations)
 leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
@@ -179,7 +180,7 @@ period <- factor(otoliths.sub$Period, c("Early", "Mid", "Late"))
 
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_overtime_boxplots.png", width=8.5, height=11, res=300, units="in")
 par(
-  mar=c(4, 4, 1, 2), # panel magin size in "line number" units
+  mar=c(4, 5, 1, 2), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -187,56 +188,56 @@ par(
   mfrow = c(5,2)
 )
 
-boxplot(otoliths.sub.log$Mg ~ period, ylab = "Mg:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Mg ~ period, ylab = expression(log[10]*(Mg:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(otoliths.sub.log$Mg ~ period)
 leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Mn ~ period, ylab = "Mn:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Mn ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Mn ~ period, ylab = expression(log[10]*(Mn:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+mn.anova <- aov(otoliths.sub.log$Mn ~ period)
+leastsquare <- lsmeans(mn.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Fe ~ period, ylab = "Fe:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Fe ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Fe ~ period, ylab = expression(log[10]*(Fe:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+fe.anova <- aov(otoliths.sub.log$Fe ~ period)
+leastsquare <- lsmeans(fe.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cu ~ period, ylab = "Cu:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Cu ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Cu ~ period, ylab = expression(log[10]*(Cu:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+cu.anova <- aov(otoliths.sub.log$Cu ~ period)
+leastsquare <- lsmeans(cu.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sr ~ period, ylab = "Sr:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Sr ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Sr ~ period, ylab = expression(log[10]*(Sr:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+sr.anova <- aov(otoliths.sub.log$Sr ~ period)
+leastsquare <- lsmeans(sr.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cd ~ period, ylab = "Cd:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Cd ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Cd ~ period, ylab = expression(log[10]*(Cd:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+cd.anova <- aov(otoliths.sub.log$Cd ~ period)
+leastsquare <- lsmeans(cd.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Ba ~ period, ylab = "Ba:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Ba ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Ba ~ period, ylab = expression(log[10]*(Ba:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+ba.anova <- aov(otoliths.sub.log$Ba ~ period)
+leastsquare <- lsmeans(ba.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sn ~ period, ylab = "Sn:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Sn ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+boxplot(otoliths.sub.log$Sn ~ period, ylab = expression(log[10]*(Sn:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+sn.anova <- aov(otoliths.sub.log$Sn ~ period)
+leastsquare <- lsmeans(sn.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Pb ~ period, ylab = "Pb:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$Pb ~ period, ylab = expression(log[10]*(Pb:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Time period",1, line = 2.5)
-mg.anova <- aov(otoliths.sub.log$Pb ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+pb.anova <- aov(otoliths.sub.log$Pb ~ period)
+leastsquare <- lsmeans(pb.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$U ~ period, ylab = "U:Ca", col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths.sub.log$U ~ period, ylab = expression(log[10]*(U:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Time period",1, line = 2.5)
-mg.anova <- aov(otoliths.sub.log$U ~ period)
-leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
+u.anova <- aov(otoliths.sub.log$U ~ period)
+leastsquare <- lsmeans(u.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 dev.off()
@@ -247,6 +248,11 @@ oto10 <- cbind(locations, otoliths.sub.log[,-c(1:3)])
 fit <- manova(as.matrix(oto10[,-1]) ~ oto10$locations)
 summary(fit)
 summary.aov(fit) # Mg, Mn, Fe & Sn are significantly different between ingress sites
+
+oto10 <- cbind(period, otoliths.sub.log[,-c(1:3)])
+fit <- manova(as.matrix(oto10[,-1]) ~ oto10$period)
+summary(fit)
+summary.aov(fit)
 
 
 #### Multidimensional scaling ####
