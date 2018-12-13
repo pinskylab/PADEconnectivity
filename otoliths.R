@@ -705,16 +705,17 @@ fviz_cluster(list(data=oto.chem, cluster = clusternum))
 #### Discriminant Function Analysis ####
 library(MASS)
 library(car)
+library(ellipse)
 
 # transform to normal if necessary and standardize
 # otoliths.sub <- otoliths[,c(1,4,5,12:21)]
-otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn")]
+otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
 rownames(otoliths.sub) <- otoliths.sub[,1]
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Ba', 'Sn')]), log10(otoliths.sub[,c('Fe', 'Cu', 'Cd', 'Pb', 'U')]+1) ) # log transform, adding 1 to elements with zero values
-otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn')]+0.00000001) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
+otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
 # otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
-otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:7]))
+otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:8]))
 pairs(otoliths.sub.log.trans)
 scatterplotMatrix(otoliths.sub.log.trans)
 Location <- otoliths.sub.log$Location
@@ -727,7 +728,7 @@ Cluster <- as.factor(kmean.cls$cluster)
 names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
 otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
 # dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) 
-dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
+dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
@@ -742,6 +743,7 @@ sum(diag(prop.table(ct1)))
 props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
 barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
@@ -752,7 +754,7 @@ legend("bottomright",
        bty = "n")
 
 #### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody ####
-dfa2 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
+dfa2 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
 plot(dfa2)
 # ld1 <- dfa2$scaling[1,1]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,1]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,1]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,1]*otoliths.sub.log.trans2$Sn
 # ld2 <- dfa2$scaling[1,2]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,2]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,2]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,2]*otoliths.sub.log.trans2$Sn
@@ -846,8 +848,43 @@ RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_cent
 # Combine Fish IDs of data that was within 67% confidence ellipses
 in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
-# Now subset elemental data to only these fish
-sub.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,]
+# Now divide elemental data to only these fish (training) and the rest are test data
+train.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,]
+train <- which(rownames(otoliths.sub.log.trans2) %in% in.67) # just need the indices
+
+test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.67),]
+
+# Use these individuals to redo LDA
+dfa3 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
+
+# And now predict everyone
+plda <- predict(dfa2, newdata = otoliths.sub.log.trans2[-train,])
+
+# Assess accuracy of the prediction
+# percent correct for each category of Location
+all.locs <- as.factor(c(as.character(test.67$Location.ordered), as.character(train.67$Location.ordered)))
+all.locs.ordered <- factor(all.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+all.predicted <- as.factor(c(as.character(plda$class), as.character(dfa3$class)))
+all.predicted.ordered <- factor(all.predicted, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+ct1 <- table(all.locs.ordered, all.predicted.ordered)
+diag(prop.table(ct1,1))
+
+# total percent correct
+sum(diag(prop.table(ct1)))
+
+# barplot of assignments
+props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
 
 
 #### Add predicted sites to the otolith data ####
