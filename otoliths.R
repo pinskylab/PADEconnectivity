@@ -822,17 +822,36 @@ for (i in 1:nrow(eli.rumfs)){
 
 #The maximum distance from eli_center is 'a'
 a.nc <- distance.nc[which.max(distance.nc)]
+a_point.nc <- eli.nc[ which.max(distance.nc), ]
+a_point2.nc <- eli.nc[30, ]
+nc.m <- (a_point2.nc[2] - a_point.nc[2])/(a_point2.nc[1] - a_point.nc[1])
+theta.nc1 <- atan(nc.m) # radians
+theta.nc2 <- pi/2 - theta.nc1
+
 a.york <- distance.york[which.max(distance.york)]
+a_point.york <- eli.york[ which.max(distance.york), ]
+a_point2.york <- eli.york[188, ]
+york.m <- (a_point2.york[2] - a_point.york[2])/(a_point2.york[1] - a_point.york[1])
+theta.york1 <- atan(york.m) # radians
+theta.york2 <- pi/2 - theta.york1
+
 a.roosevelt <- distance.roosevelt[which.max(distance.roosevelt)]
 a.rumfs <- distance.rumfs[which.max(distance.rumfs)]
 
 #The minimum distance from eli_center is 'b'
 b.nc <- distance.nc[which.min(distance.nc)]
+b_point <- eli.nc[ which.min(distance.nc), ]
 b.york <- distance.york[which.min(distance.york)]
 b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
 b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
 
-# Figure out if points are inside or outside ellipses
+# Find c. This will be too much of a pain if I need to redo analysis.
+c.nc <- sqrt(a.nc^2 - b.nc^2)
+
+# Find coordinates of each c
+nc.slope <- (a_point.nc[2] - eli_center_nc[2])/(a_point.nc[1] - eli_center_nc[1])
+
+# Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
 NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
 NC.in <- loc.groups$NC[-which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
 
@@ -845,6 +864,15 @@ Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 
+# For rotated ellipses. This is working even worse then before.
+NC.out <- loc.groups$NC[which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+NC.out2 <- loc.groups$NC[which(round((((cos(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+NC.in <- loc.groups$NC[-which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+
+York.out <- loc.groups$York[which(round((((cos(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) + (sin(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(a.york)^2) + (((sin(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) - (cos(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(b.york)^2),3) >= 1.000),]
+
+###################################################################
+# Make sure these points are actually outside of ellipses
 # Combine Fish IDs of data that was within 67% confidence ellipses
 in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
