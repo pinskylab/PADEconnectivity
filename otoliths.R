@@ -856,20 +856,23 @@ NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])
 NC.in <- loc.groups$NC[-which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
 
 York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
-York.in <- loc.groups$York[-which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
+York.out <- York.out[-2,] # Remove PADE09_067
+York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
+# York.in <- loc.groups$York[-which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
 
-Roosevelt.out <- loc.groups$Roosevelt[which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
+Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
+Roosevelt.out <- Roosevelt.out[-5,]
 Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
 
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 
 # For rotated ellipses. This is working even worse then before.
-NC.out <- loc.groups$NC[which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
-NC.out2 <- loc.groups$NC[which(round((((cos(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
-NC.in <- loc.groups$NC[-which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
-
-York.out <- loc.groups$York[which(round((((cos(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) + (sin(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(a.york)^2) + (((sin(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) - (cos(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(b.york)^2),3) >= 1.000),]
+# NC.out <- loc.groups$NC[which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+# NC.out2 <- loc.groups$NC[which(round((((cos(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc2)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc2)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+# NC.in <- loc.groups$NC[-which(round((((cos(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) + (sin(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(a.nc)^2) + (((sin(theta.nc1)*(loc.groups$NC[,"LD1"] - eli_center_nc[1])) - (cos(theta.nc1)*(loc.groups$NC[,"LD2"] - eli_center_nc[2]))^2)/(b.nc)^2),3) >= 1.000),]
+# 
+# York.out <- loc.groups$York[which(round((((cos(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) + (sin(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(a.york)^2) + (((sin(theta.york1)*(loc.groups$York[,"LD1"] - eli_center_york[1])) - (cos(theta.york1)*(loc.groups$York[,"LD2"] - eli_center_york[2]))^2)/(b.york)^2),3) >= 1.000),]
 
 ###################################################################
 # Make sure these points are actually outside of ellipses
@@ -884,9 +887,30 @@ test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.6
 
 # Use these individuals to redo LDA
 dfa3 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
+ct1 <- table(train.67$Location.ordered, dfa3$class)
+props <- prop.table(ct1,1)
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
 
 # And now predict everyone
 plda <- predict(dfa2, newdata = otoliths.sub.log.trans2[-train,])
+ct1 <- table(test.67$Location.ordered, plda$class)
+props <- prop.table(ct1,1)
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
@@ -905,7 +929,7 @@ props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingr
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test data")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
