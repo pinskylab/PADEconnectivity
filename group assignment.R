@@ -7,12 +7,12 @@
 #### of individuals in a group, which is the depth of the simulated array
 
 # Read in cluster sizes
-oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
-table(oto.gen.merge4$cluster6)
-cluster.sizes <- as.numeric(table(oto.gen.merge4$cluster6))
+oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
+table(oto.gen.merge5$cluster3)
+cluster.sizes <- as.numeric(table(oto.gen.merge5$cluster3))
 
 # Read in the likelihoods for each cluster
-obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_6clusters.txt")
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_3clusters.txt")
 
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
@@ -23,11 +23,12 @@ pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
 
 # Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
 # Set group size (n)
-cluster.sizes <- 23 # also works
-obs.likes <- obs.likes[1,]
+# cluster.sizes <- 23 # also works
+# obs.likes <- obs.likes[1,]
 # cluster.sizes <- c(5,1) # this is working........
 # obs.likes <- obs.likes[2:3,]
-# n <- 1
+cluster.sizes <- 53
+obs.likes <- obs.likes[2,]
 
 dist.likes <- data.frame()
 
@@ -212,4 +213,4 @@ hist(log10(Pop5.pop5dist), col = rgb(0,1,0,0.5), xlab = "log10(genotype likeliho
 abline(v=obs.likes[n,5])
 text(locator(1), paste0("p =", length(which(log10(Pop5.pop5dist) < obs.likes[n,5]))/length(Pop5.pop5dist)))
 
-mtext(paste0("Cluster size =", cluster.sizes[n]), outer = TRUE, line = -2)
+mtext(paste0("Cluster size = ", cluster.sizes[n]), outer = TRUE, line = -2)
