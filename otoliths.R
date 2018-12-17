@@ -257,9 +257,10 @@ summary.aov(fit) # Mg, Sn and Pb
 
 #### Multidimensional scaling ####
 # oto.chem <- otoliths[-28,c("Fish.ID", "Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
-oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
-rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
+# oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
+# rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
 oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
+oto.chem2 <- cbind.data.frame(oto.chem2[,c("Fish.ID", "Location", "Period")], log10(oto.chem2[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
 rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
 oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
 oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
@@ -348,7 +349,7 @@ legend("topleft",
 
 # plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
 plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry", col = locations, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topleft",
+legend("bottomleft",
        legend = levels(locations),
        pch=19,
        col = rev(col.palette))
@@ -629,7 +630,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 #### Determining optimal number of clusters ####
 library(factoextra)
 library(cluster)
-fviz_nbclust(oto.chem2, FUN = hcut, method = "wss")
+fviz_nbclust(oto.chem2, FUN = hcut, method = "wss") # data should be scaled/standardized
 fviz_nbclust(oto.chem2, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
@@ -647,10 +648,11 @@ summary(mclust.fit)
 # k-means clustering
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
-kmean.cls <- kmeans(oto.chem2, centers = 6, nstart = 50, iter.max = 10)
+kmean.cls <- kmeans(oto.chem2, centers = 3, nstart = 50, iter.max = 10)
 class.table.km <- table(otoliths$Location, kmean.cls$cluster)
 class.table.km2 <- table(otoliths$Period, kmean.cls$cluster)
-mosaicplot(class.table.km, color = col.palette)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+mosaicplot(class.table.km2, color = col.palette, main = 'Time period')
 
 fviz_cluster(kmean.cls, oto.chem2, 
              # palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), # for oto.chem
@@ -666,10 +668,10 @@ fviz_cluster(kmean.cls, oto.chem2,
 # Hierarchical clustering
 # fit <- hclust(oto.dist, method = "complete") # default
 # fit <- hclust((oto.dist)^2, method = "ward.D")
-fit <- hclust(oto.dist, method = "ward.D2") # seems this is the correct method to use
+fit <- hclust(oto.dist2, method = "ward.D2") # seems this is the correct method to use
 plot(fit, cex = 0.5)
 plot(fit, cex = 0.5, labels = otoliths$Location)
-rect.hclust(fit, k=6)
+rect.hclust(fit, k=3)
 
 # Nicer plot
 library(ape)
@@ -678,13 +680,13 @@ dend <- as.dendrogram(fit)
 dend <- rotate(dend, 1:197)
 
 # Color branches based on clusters
-dend <- color_branches(dend, k = 5)
-labels_colors(dend) <- col.palette[sort_levels_values(as.numeric(oto.chem)[order.dendrogram(dend)])]
+dend <- color_branches(dend, k = 3)
+labels_colors(dend) <- col.palette[sort_levels_values(as.numeric(oto.chem2)[order.dendrogram(dend)])]
 plot(dend)
 circlize_dendrogram(dend)
 
 # Cut dendrogram based on number of clusters from heirarchical clustering
-nclust <- 5
+nclust <- 3
 clusternum <- cutree(fit, k=nclust)
 # clusternum <- cutree(as.hclust(hc.agnes), k=nclust)
 table(clusternum)
@@ -692,7 +694,7 @@ table(clusternum)
 class.table.hier <- table(otoliths$Location, clusternum)
 mosaicplot(class.table.hier, color = col.palette)
 
-fviz_cluster(list(data=oto.chem, cluster = clusternum))
+fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 
 # hierarchical with bootstrapped p-values
 # library(pvclust)
@@ -944,6 +946,7 @@ legend("bottomright",
 otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
 otoliths$cluster8 <- kmean.cls$cluster
 otoliths$cluster6 <- kmean.cls$cluster
+otoliths$cluster3 <- kmean.cls$cluster
 
 names(kmean.cls$cluster) == otoliths$Fish.ID
 # rownames(otoliths)==lda.class.ordered[,1] # should be in same order
@@ -968,29 +971,37 @@ oto.gen.merge4 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y =
 # write.table(oto.gen.merge4, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", col.names = TRUE, row.names = FALSE)
 oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
 
-# Pie charts of six clusters based on otolith elemental cores
-oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+oto.gen.merge5 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+# write.table(oto.gen.merge5, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", col.names = TRUE, row.names = FALSE)
+oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
+
+# Pie charts of three clusters based on otolith elemental cores
+oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 
-clusters <- split(oto.gen.merge4, oto.gen.merge4$cluster6)
+# Change order of locations
+oto.gen.merge5$Location.ordered <- factor(oto.gen.merge5$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+
+clusters <- split(oto.gen.merge5, oto.gen.merge5$cluster3)
 
 # Plot together
-par(mfrow = c(3,2),
-    oma = c(5,4,0,1) +0.1,
-    mar = c(0,0,1,1) + 0.1)
-pie(table(clusters[[1]]$Location), col = col.palette, labels = '', main = 'cluster 1')
-pie(table(clusters[[2]]$Location), col = col.palette, labels = '', main = 'cluster 2')
-pie(table(clusters[[3]]$Location), col = col.palette, labels = '', main = 'cluster 3')
-pie(table(clusters[[4]]$Location), col = col.palette, labels = '', main = 'cluster 4')
-pie(table(clusters[[5]]$Location), col = col.palette, labels = '', main = 'cluster 5')
-pie(table(clusters[[6]]$Location), col = col.palette, labels = '', main = 'cluster 6')
+par(mfrow = c(2,2),
+    oma = c(3,3,0,1) +0.1,
+    mar = c(0,0,2,1))
+pie(table(clusters[[1]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 1 \n (n = 34)', 3, -3)
+pie(table(clusters[[2]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 2 \n (n = 53)', 3, -3)
+pie(table(clusters[[3]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 3 \n (n = 64)', 3, -3)
+
 legend("bottomright",
-       legend=levels(oto.gen.merge4$Location),
+       legend=rev(levels(Location.ordered)),
        pch=22,
        col = 'black',
-       pt.bg= col.palette)
+       pt.bg= rev(col.palette))
 
 # Plot separately
 # Cluster 1
@@ -1075,6 +1086,7 @@ pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bay
 indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge3[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge4[,c(16:35)] # Just genetic data
+indiv.allele.counts <- oto.gen.merge5[,c(16:35)] # Just genetic data
 
 # Two ways to do this:
 indiv.allele.counts.odds <- indiv.allele.counts[,odds] # first way, but this requires the column names in the count data and the allele frequency data to be the same
@@ -1264,11 +1276,17 @@ south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$clu
 north.pop <- aggregate(oto.gen.merge2$north.vector, by = list(oto.gen.merge2$cluster), FUN = prod) # same as above, but data may be coming from different places (read in vs. already stored as an object)
 south.pop <- aggregate(oto.gen.merge2$south.vector, by = list(oto.gen.merge2$cluster), FUN = prod) 
 
-bayenv1.likes <- aggregate(pop1.vector, by = list(oto.gen.merge4$cluster6), FUN = prod) # likelihoods for BayEnv groupings
-bayenv2.likes <- aggregate(pop2.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
-bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
-bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge4$cluster6), FUN = prod)
-bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge4$cluster6), FUN = prod) 
+bayenv1.likes <- aggregate(pop1.vector, by = list(oto.gen.merge5$cluster3), FUN = prod) # likelihoods for BayEnv groupings
+bayenv2.likes <- aggregate(pop2.vector, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge5$cluster3), FUN = prod) 
+
+bayenv1.likes <- aggregate(bayenv.likelihoods.indivs$Pop1, by = list(oto.gen.merge5$cluster3), FUN = prod) # likelihoods for BayEnv groupings - same as above but assumes ~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt has been read in
+bayenv2.likes <- aggregate(bayenv.likelihoods.indivs$Pop2, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv3.likes <- aggregate(bayenv.likelihoods.indivs$Pop3, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv4.likes <- aggregate(bayenv.likelihoods.indivs$Pop4, by = list(oto.gen.merge5$cluster3), FUN = prod)
+bayenv5.likes <- aggregate(bayenv.likelihoods.indivs$Pop5, by = list(oto.gen.merge5$cluster3), FUN = prod) 
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
 colnames(pops.likelihood) <- c("n.likes", "s.likes")
@@ -1276,8 +1294,8 @@ rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "
 
 bayenv.likelihoods <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes[,2])), log10(as.numeric(bayenv2.likes[,2])), log10(as.numeric(bayenv3.likes[,2])), log10(as.numeric(bayenv4.likes[,2])), log10(as.numeric(bayenv5.likes[,2]))))
 colnames(bayenv.likelihoods) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
-rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6")
-write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_6clusters.txt", row.names = TRUE, col.names = TRUE)
+rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3")
+write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_3clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods[apply(bayenv.likelihoods,1, which.max)])
 
