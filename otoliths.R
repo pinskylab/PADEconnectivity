@@ -702,6 +702,48 @@ fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 # plot(fit2)
 # pvrect(fit2, alpha = 0.95) # something not working
 
+#### Cluster only fish with otolith and genetic data ####
+oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
+
+oto.chem <- oto.gen.merge5[,c("PinskyID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
+oto.chem <- cbind.data.frame(oto.chem[,c("PinskyID", "Location", "Period")], log10(oto.chem[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
+rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
+oto.chem$Period <- gsub("Early", "1", oto.chem$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
+oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
+oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
+oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
+oto.chem <- scale(oto.chem[,-c(1:2)])
+
+library(factoextra)
+library(cluster)
+fviz_nbclust(oto.chem2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+library(NbClust)
+nb <- NbClust(oto.chem2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem2, centers = 3, nstart = 50, iter.max = 10)
+class.table.km <- table(otoliths$Location, kmean.cls$cluster)
+class.table.km2 <- table(otoliths$Period, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+mosaicplot(class.table.km2, color = col.palette, main = 'Time period')
+
+fviz_cluster(kmean.cls, oto.chem2, 
+             # palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), # for oto.chem
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"), # for oto.chem2
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point"
+)
 
 ################################################################################
 #### Discriminant Function Analysis ####
