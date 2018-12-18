@@ -7,18 +7,12 @@
 #### of individuals in a group, which is the depth of the simulated array
 
 # Read in cluster sizes
-oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
-table(oto.gen.merge5$cluster3)
-cluster.sizes <- as.numeric(table(oto.gen.merge5$cluster3))
-
-data <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.10clusters.txt", header = TRUE)
-table(data$cluster10)
-cluster.sizes <- as.numeric(table(data$cluster10))
-
+oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE)
+table(oto.gen.merge6$cluster4)
+cluster.sizes <- as.numeric(table(oto.gen.merge6$cluster4))
 
 # Read in the likelihoods for each cluster
-obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_3clusters.txt")
-obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_10clusters.txt")
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_4clusters.txt")
 
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
