@@ -11,8 +11,14 @@ oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounde
 table(oto.gen.merge5$cluster3)
 cluster.sizes <- as.numeric(table(oto.gen.merge5$cluster3))
 
+data <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.10clusters.txt", header = TRUE)
+table(data$cluster10)
+cluster.sizes <- as.numeric(table(data$cluster10))
+
+
 # Read in the likelihoods for each cluster
 obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_3clusters.txt")
+obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_10clusters.txt")
 
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')

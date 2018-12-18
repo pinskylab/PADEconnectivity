@@ -704,6 +704,7 @@ fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 
 #### Cluster only fish with otolith and genetic data ####
 oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
+oto.gen.merge6 <- oto.gen.merge5[,-59]
 
 oto.chem <- oto.gen.merge5[,c("PinskyID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
 oto.chem <- cbind.data.frame(oto.chem[,c("PinskyID", "Location", "Period")], log10(oto.chem[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
@@ -713,37 +714,41 @@ oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
 oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
 oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
 oto.chem <- scale(oto.chem[,-c(1:2)])
+oto.dist <- dist(oto.chem)
 
 library(factoextra)
 library(cluster)
-fviz_nbclust(oto.chem2, FUN = hcut, method = "wss") # data should be scaled/standardized
-fviz_nbclust(oto.chem2, FUN = hcut, method = "silhouette")
-gap_stat <- clusGap(oto.chem2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_nbclust(oto.chem, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
 
 library(NbClust)
-nb <- NbClust(oto.chem2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
 fviz_nbclust(nb)
 dev.off()
 
 # k-means clustering
+library(wesanderson)
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
-kmean.cls <- kmeans(oto.chem2, centers = 3, nstart = 50, iter.max = 10)
-class.table.km <- table(otoliths$Location, kmean.cls$cluster)
-class.table.km2 <- table(otoliths$Period, kmean.cls$cluster)
+kmean.cls <- kmeans(oto.chem, centers = 4, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.gen.merge5$Location, kmean.cls$cluster)
+class.table.km2 <- table(oto.gen.merge5$Period, kmean.cls$cluster)
 mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
 mosaicplot(class.table.km2, color = col.palette, main = 'Time period')
 
-fviz_cluster(kmean.cls, oto.chem2, 
-             # palette = c("#2E9FDF", "#00AFBB", "#E7B800", "#FC4E07", "#D8BFD8"), # for oto.chem
-             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"), # for oto.chem2
+fviz_cluster(kmean.cls, oto.chem, 
+             palette = col.palette,
              ellipse.type = "euclid", # Concentration ellipse
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
              ggtheme = theme_minimal(),
              geom = "point"
 )
+
+oto.gen.merge6$cluster4 <- kmean.cls$cluster
+write.table(oto.gen.merge6, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", col.names = TRUE, row.names = FALSE)
 
 ################################################################################
 #### Discriminant Function Analysis ####
@@ -1017,16 +1022,16 @@ oto.gen.merge5 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y =
 # write.table(oto.gen.merge5, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", col.names = TRUE, row.names = FALSE)
 oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
 
-# Pie charts of three clusters based on otolith elemental cores
-oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
+# Pie charts of four clusters based on otolith elemental cores
+oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE)
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 
 # Change order of locations
-oto.gen.merge5$Location.ordered <- factor(oto.gen.merge5$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 
-clusters <- split(oto.gen.merge5, oto.gen.merge5$cluster3)
+clusters <- split(oto.gen.merge6, oto.gen.merge6$cluster4)
 
 # Plot together
 par(mfrow = c(2,2),
@@ -1324,11 +1329,12 @@ bayenv3.likes <- aggregate(pop3.vector, by = list(oto.gen.merge5$cluster3), FUN 
 bayenv4.likes <- aggregate(pop4.vector, by = list(oto.gen.merge5$cluster3), FUN = prod)
 bayenv5.likes <- aggregate(pop5.vector, by = list(oto.gen.merge5$cluster3), FUN = prod) 
 
-bayenv1.likes <- aggregate(bayenv.likelihoods.indivs$Pop1, by = list(oto.gen.merge5$cluster3), FUN = prod) # likelihoods for BayEnv groupings - same as above but assumes ~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt has been read in
-bayenv2.likes <- aggregate(bayenv.likelihoods.indivs$Pop2, by = list(oto.gen.merge5$cluster3), FUN = prod)
-bayenv3.likes <- aggregate(bayenv.likelihoods.indivs$Pop3, by = list(oto.gen.merge5$cluster3), FUN = prod)
-bayenv4.likes <- aggregate(bayenv.likelihoods.indivs$Pop4, by = list(oto.gen.merge5$cluster3), FUN = prod)
-bayenv5.likes <- aggregate(bayenv.likelihoods.indivs$Pop5, by = list(oto.gen.merge5$cluster3), FUN = prod) 
+bayenv.likelihoods.indivs$ID == oto.gen.merge6$PinskyID # super important to check fish are in the same order
+bayenv1.likes <- aggregate(bayenv.likelihoods.indivs$Pop1, by = list(oto.gen.merge6$cluster4), FUN = prod) # likelihoods for BayEnv groupings - same as above but assumes ~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt has been read in
+bayenv2.likes <- aggregate(bayenv.likelihoods.indivs$Pop2, by = list(oto.gen.merge6$cluster4), FUN = prod)
+bayenv3.likes <- aggregate(bayenv.likelihoods.indivs$Pop3, by = list(oto.gen.merge6$cluster4), FUN = prod)
+bayenv4.likes <- aggregate(bayenv.likelihoods.indivs$Pop4, by = list(oto.gen.merge6$cluster4), FUN = prod)
+bayenv5.likes <- aggregate(bayenv.likelihoods.indivs$Pop5, by = list(oto.gen.merge6$cluster4), FUN = prod) 
 
 pops.likelihood <- as.data.frame(cbind(log10(as.numeric(north.pop[,2])), log10(as.numeric(south.pop[,2]))))
 colnames(pops.likelihood) <- c("n.likes", "s.likes")
@@ -1336,8 +1342,8 @@ rownames(pops.likelihood) <- c("cluster1", "cluster2", "cluster3", "cluster4", "
 
 bayenv.likelihoods <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes[,2])), log10(as.numeric(bayenv2.likes[,2])), log10(as.numeric(bayenv3.likes[,2])), log10(as.numeric(bayenv4.likes[,2])), log10(as.numeric(bayenv5.likes[,2]))))
 colnames(bayenv.likelihoods) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
-rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3")
-write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_3clusters.txt", row.names = TRUE, col.names = TRUE)
+rownames(bayenv.likelihoods) <- c("cluster1", "cluster2", "cluster3", "cluster4")
+write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_4clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods[apply(bayenv.likelihoods,1, which.max)])
 
