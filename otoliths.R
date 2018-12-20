@@ -753,7 +753,7 @@ write.table(oto.gen.merge6, "~/Documents/Graduate School/Rutgers/Summer Flounder
 ################################################################################
 #### Discriminant Function Analysis ####
 library(MASS)
-library(car)
+library(car) # beware, both car and ellipse have ellipse functions
 library(ellipse)
 
 # transform to normal if necessary and standardize
@@ -929,16 +929,16 @@ RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_cent
 in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-train.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,]
+train.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,] # 138 x 6
 train <- which(rownames(otoliths.sub.log.trans2) %in% in.67) # just need the indices
 
-test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.67),]
+test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.67),] # 59 x 6
 
 # Use these individuals to redo LDA
 dfa3 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
 ct1 <- table(train.67$Location.ordered, dfa3$class)
-props <- prop.table(ct1,1)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
+props1 <- prop.table(ct1,1)
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
@@ -950,8 +950,8 @@ legend("bottomright",
 # And now predict everyone
 plda <- predict(dfa2, newdata = otoliths.sub.log.trans2[-train,])
 ct1 <- table(test.67$Location.ordered, plda$class)
-props <- prop.table(ct1,1)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
+props2 <- prop.table(ct1,1)
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
@@ -974,11 +974,11 @@ diag(prop.table(ct1,1))
 sum(diag(prop.table(ct1)))
 
 # barplot of assignments
-props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
+props3 <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test data")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test sets")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
@@ -987,6 +987,30 @@ legend("bottomright",
        title = expression(bold('Collection location')), 
        bty = "n")
 
+# Makes a nice plot of training, test and combined LDA barplots
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/lda_barplots.png", width=10, height=5, res=300, units="in")
+
+par(
+  mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(1,3) # point size, which is the font size
+)
+
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set (n = 138)")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 59)")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+dev.off()
 
 #### Add predicted sites to the otolith data ####
 # otoliths$predicted <- dfa1$class # using DFA classes
@@ -1034,21 +1058,37 @@ oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("N
 clusters <- split(oto.gen.merge6, oto.gen.merge6$cluster4)
 
 # Plot together
-par(mfrow = c(2,2),
-    oma = c(3,3,0,1) +0.1,
-    mar = c(0,0,2,1))
-pie(table(clusters[[1]]$Location.ordered), col = col.palette, labels = '', main = '')
-mtext('cluster 1 \n (n = 34)', 3, -3)
-pie(table(clusters[[2]]$Location.ordered), col = col.palette, labels = '', main = '')
-mtext('cluster 2 \n (n = 53)', 3, -3)
-pie(table(clusters[[3]]$Location.ordered), col = col.palette, labels = '', main = '')
-mtext('cluster 3 \n (n = 64)', 3, -3)
+# Makes nice pie chart figure
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts.png", width=5, height=4.5, res=300, units="in")
 
-legend("bottomright",
-       legend=rev(levels(Location.ordered)),
+par(
+  mar=c(0, 0, 2, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(2,2), # point size, which is the font size
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+pie(table(clusters[[1]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 1\n (n = 44)', 3, -1)
+pie(table(clusters[[2]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 2\n (n = 23)', 3, -1)
+pie(table(clusters[[3]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 3\n (n = 35)', 3, -1)
+pie(table(clusters[[4]]$Location.ordered), col = col.palette, labels = '', main = '')
+mtext('cluster 4\n (n = 49)', 3, -1)
+
+legend(1.2,0.5,
+       legend=rev(levels(oto.gen.merge6$Location.ordered)),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette))
+
+dev.off()
 
 # Plot separately
 # Cluster 1
