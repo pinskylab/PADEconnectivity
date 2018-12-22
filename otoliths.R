@@ -256,7 +256,7 @@ summary.aov(fit) # Mg, Sn and Pb
 
 
 #### Multidimensional scaling ####
-# oto.chem <- otoliths[-28,c("Fish.ID", "Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
+# oto.chem <- otoliths[-28,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
 # oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 # rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
 oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
@@ -300,9 +300,9 @@ oto.chem.late2 <- dist(oto.chem.late2)
 oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE) # How many dimensions?
 oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 3, add = FALSE)
 
-oto.fit.early <- cmdscale(oto.chem.early2, eig = TRUE, k = 3, add = FALSE)
-oto.fit.middle <- cmdscale(oto.chem.middle2, eig = TRUE, k = 3, add = FALSE)
-oto.fit.late <- cmdscale(oto.chem.late2, eig = TRUE, k = 3, add = FALSE)
+oto.fit.early <- cmdscale(oto.chem.early2, eig = TRUE, k = 2, add = FALSE)
+oto.fit.middle <- cmdscale(oto.chem.middle2, eig = TRUE, k = 2, add = FALSE)
+oto.fit.late <- cmdscale(oto.chem.late2, eig = TRUE, k = 2, add = FALSE)
 
 plot(oto.fit$eig[1:10]) # scree plot
 plot(oto.fit2$eig[1:10])
@@ -400,45 +400,63 @@ points(x[c(78:82,189:196)], y[c(78:82,189:196)], col = "#FF006DFF", pch = 19) #2
 # Plot separate MDS for each time period
 library(wesanderson)
 
-par(mfrow = c(1,2))
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
-palette(col.palette)
+palette(rev(col.palette))
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_10elements.png", width=8, height=2.5, res=300, units="in")
+
+par(
+  mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(1,3), # point size, which is the font size
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
 
 # Early time period
 x <- oto.fit.early$points[,1]
 y <- oto.fit.early$points[,2]
-z <- oto.fit.early$points[,3]
+# z <- oto.fit.early$points[,3]
 
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topleft",
-       legend = levels(oto.chem.early$Location),
-       pch=19,
-       col = col.palette)
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+locations.early <- factor(oto.chem.early$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Early: 1989-1993", col = locations.early, pch = 19) # mds using Mg, Mn, Fe & Sn
+# legend("topleft",
+       # legend = levels(locations.early),
+       # pch=19,
+       # col = rev(col.palette))
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 
 # Middle time period
 x <- oto.fit.middle$points[,1]
 y <- oto.fit.middle$points[,2]
-z <- oto.fit.middle$points[,3]
+# z <- oto.fit.middle$points[,3]
 
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: middle", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topleft",
-       legend = levels(oto.chem.middle$Location),
-       pch=19,
-       col = col.palette)
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: middle", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+locations.middle <- factor(oto.chem.middle$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Middle: 1998-2002", col = locations.middle, pch = 19) # mds using Mg, Mn, Fe & Sn
+# legend("topleft",
+       # legend = levels(locations.middle),
+       # pch=19,
+       # col = rev(col.palette))
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Middle: 1998-2002", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 
 # Late time period
 x <- oto.fit.late$points[,1]
 y <- oto.fit.late$points[,2]
-z <- oto.fit.late$points[,3]
+# z <- oto.fit.late$points[,3]
 
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topleft",
-       legend = levels(oto.chem.late$Location),
+locations.late <- factor(oto.chem.late$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Late: 2008-2012", col = locations.late, pch = 19) # mds using Mg, Mn, Fe & Sn
+legend(4,5,
+       legend = levels(locations.late),
        pch=19,
-       col = col.palette)
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+       col = rev(col.palette))
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+
+dev.off()
 
 # MDMS by ingress site, colored by stage/size
 # Read in dataset containing outlier loci
@@ -1173,7 +1191,9 @@ pop.allele.freqs5.odds <- pop.allele.freqs5[,odds] # allele frequencies of 5 bay
 indiv.allele.counts <- oto.gen.merge2[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge3[,c(16:35)] # Just genetic data
 indiv.allele.counts <- oto.gen.merge4[,c(16:35)] # Just genetic data
-indiv.allele.counts <- oto.gen.merge5[,c(16:35)] # Just genetic data
+indiv.allele.counts <- oto.gen.merge5[,c(16:35)] # Just genetic data for fish with otolith data too
+
+indiv.allele.counts <- gen.larvae.outs2[,c(16:35)] # Genetic data for all 293 larvae
 
 # Two ways to do this:
 indiv.allele.counts.odds <- indiv.allele.counts[,odds] # first way, but this requires the column names in the count data and the allele frequency data to be the same
@@ -1308,15 +1328,32 @@ pop4.vector <- apply(pop4.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 pop5.vector <- apply(pop5.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
 
 # Individual likelihoods for each BayEnv region
-bayenv.likelihoods.indivs <- data.frame(oto.gen.merge4$PinskyID, oto.gen.merge4$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector)
+bayenv.likelihoods.indivs <- data.frame(oto.gen.merge4$PinskyID, oto.gen.merge4$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector) # this is for 151 fish for which we have genetic and otolith data
 colnames(bayenv.likelihoods.indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3", "Pop4", "Pop5")
 write.table(bayenv.likelihoods.indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", row.names = FALSE, col.names = TRUE)
+
+bayenv.likelihoods.293indivs <- data.frame(gen.larvae.outs2$PinskyID, gen.larvae.outs2$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector) # this is for all 293 fish with genetic data
+colnames(bayenv.likelihoods.293indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3", "Pop4", "Pop5")
+write.table(bayenv.likelihoods.293indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs.txt", row.names = FALSE, col.names = TRUE)
 
 # Which BayEnv population is each individual most likely from?
 bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.indivs[,-c(1:2)])[apply(bayenv.likelihoods.indivs[,-c(1:2)],1, which.max)]
 t(table(most.like,bayenv.likelihoods.indivs$Place))
+
+bayenv.likelihoods.293indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs.txt", header = TRUE)
+locations <- factor(bayenv.likelihoods.293indivs$Place, c("Little Egg Inlet, NJ", "Roosevelt Inlet, DE", "York River, VA", "Beaufort, NC", "North Inlet, SC"))
+most.like <- colnames(bayenv.likelihoods.293indivs[,-c(1:2)])[apply(bayenv.likelihoods.293indivs[,-c(1:2)],1, which.max)]
+table <- t(table(most.like,locations))
+
+# Plot to summarize individual assignments
+table2 <- prop.table(table, 1)
+library(wesanderson)
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+barplot(t(table2), ylab = 'Percent assignment', col = col.palette, xlab = 'Ingress site', axisnames = FALSE, xaxt = 'n')
+axis(1, at=c(0.7, 1.9, 3.1, 4.3, 5.5), labels = FALSE)
+text(seq(0.7, 5.5, by=1.2), -0.12, srt = 45, labels = c("RUMFS", "Roosevelt", "York", "NC", "SC"), xpd = TRUE)
 
 # Check a few fish by hand
 # (0.8092105^2)*(2*0.8421053*(1-0.8421053))*(0.9078947^2)*(2*0.4934211*(1-0.4934211))*(2*0.7697368*(1-0.7697368))*(0.9276316^2)*((1-0.6447368)^2)*(0.9539474^2)*(0.9276316^2)*(0.9637681^2) #north fish1
