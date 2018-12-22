@@ -1351,9 +1351,31 @@ table <- t(table(most.like,locations))
 table2 <- prop.table(table, 1)
 library(wesanderson)
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
-barplot(t(table2), ylab = 'Percent assignment', col = col.palette, xlab = 'Ingress site', axisnames = FALSE, xaxt = 'n')
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/indiv_assignments.png", width=8, height=4.5, res=300, units="in")
+
+par(
+  mar=c(5, 4, 2, 8), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  xpd=NA
+)
+barplot(t(table2), ylab = 'Proportion assignment', col = col.palette, axisnames = FALSE, xaxt = 'n')
 axis(1, at=c(0.7, 1.9, 3.1, 4.3, 5.5), labels = FALSE)
-text(seq(0.7, 5.5, by=1.2), -0.12, srt = 45, labels = c("RUMFS", "Roosevelt", "York", "NC", "SC"), xpd = TRUE)
+mtext("Ingress site", side = 1, line = 3.7)
+text(seq(0.7, 5.5, by=1.2), -0.135, srt = 45, labels = c("RUMFS", "Roosevelt", "York", "NC", "SC"), xpd = TRUE)
+text(seq(0.7, 5.5, by=1.2), 1.03, labels = c("n = 52", "n = 50", "n = 44", "n = 146", "n = 1"), cex = 0.8)
+
+legend(6.1,1,
+       #legend = levels(rev(locations)),
+       legend = c("RUMFS", "Roosevelt", "York", "NC", "SC"),
+       pch=22,
+       col = 'black',
+       pt.bg = col.palette)
+
+dev.off()
 
 # Check a few fish by hand
 # (0.8092105^2)*(2*0.8421053*(1-0.8421053))*(0.9078947^2)*(2*0.4934211*(1-0.4934211))*(2*0.7697368*(1-0.7697368))*(0.9276316^2)*((1-0.6447368)^2)*(0.9539474^2)*(0.9276316^2)*(0.9637681^2) #north fish1
