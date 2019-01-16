@@ -791,9 +791,9 @@ otoliths.sub.log.trans2 <- cbind(Location.ordered, otoliths.sub.log.trans)
 
 # dfa1 <- lda(Location ~ Mg + Mn + Fe + Cu + Cd + Sr + Ba + Sn + Pb + U, data = otoliths.sub.log.trans, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) #Cd, Pb and U apprently too similar between groups when data not transformed and standardized; but not so when they are
 
-Cluster <- as.factor(kmean.cls$cluster)
-names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
-otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
+# Cluster <- as.factor(kmean.cls$cluster)
+# names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
+# otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
 # dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) 
 dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
 
@@ -889,34 +889,34 @@ for (i in 1:nrow(eli.rumfs)){
 
 #The maximum distance from eli_center is 'a'
 a.nc <- distance.nc[which.max(distance.nc)]
-a_point.nc <- eli.nc[ which.max(distance.nc), ]
-a_point2.nc <- eli.nc[30, ]
-nc.m <- (a_point2.nc[2] - a_point.nc[2])/(a_point2.nc[1] - a_point.nc[1])
-theta.nc1 <- atan(nc.m) # radians
-theta.nc2 <- pi/2 - theta.nc1
+# a_point.nc <- eli.nc[ which.max(distance.nc), ]
+# a_point2.nc <- eli.nc[30, ]
+# nc.m <- (a_point2.nc[2] - a_point.nc[2])/(a_point2.nc[1] - a_point.nc[1])
+# theta.nc1 <- atan(nc.m) # radians
+# theta.nc2 <- pi/2 - theta.nc1
 
 a.york <- distance.york[which.max(distance.york)]
-a_point.york <- eli.york[ which.max(distance.york), ]
-a_point2.york <- eli.york[188, ]
-york.m <- (a_point2.york[2] - a_point.york[2])/(a_point2.york[1] - a_point.york[1])
-theta.york1 <- atan(york.m) # radians
-theta.york2 <- pi/2 - theta.york1
+# a_point.york <- eli.york[ which.max(distance.york), ]
+# a_point2.york <- eli.york[188, ]
+# york.m <- (a_point2.york[2] - a_point.york[2])/(a_point2.york[1] - a_point.york[1])
+# theta.york1 <- atan(york.m) # radians
+# theta.york2 <- pi/2 - theta.york1
 
 a.roosevelt <- distance.roosevelt[which.max(distance.roosevelt)]
 a.rumfs <- distance.rumfs[which.max(distance.rumfs)]
 
 #The minimum distance from eli_center is 'b'
 b.nc <- distance.nc[which.min(distance.nc)]
-b_point <- eli.nc[ which.min(distance.nc), ]
+# b_point <- eli.nc[ which.min(distance.nc), ]
 b.york <- distance.york[which.min(distance.york)]
 b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
 b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
 
 # Find c. This will be too much of a pain if I need to redo analysis.
-c.nc <- sqrt(a.nc^2 - b.nc^2)
+# c.nc <- sqrt(a.nc^2 - b.nc^2)
 
 # Find coordinates of each c
-nc.slope <- (a_point.nc[2] - eli_center_nc[2])/(a_point.nc[1] - eli_center_nc[1])
+# nc.slope <- (a_point.nc[2] - eli_center_nc[2])/(a_point.nc[1] - eli_center_nc[1])
 
 # Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
 NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
@@ -1029,6 +1029,230 @@ legend("bottomright",
        bty = "n")
 
 dev.off()
+
+################################################################################
+#### Discriminant Function Analysis by time period ####
+library(MASS)
+library(car) # beware, both car and ellipse have ellipse functions
+library(ellipse)
+
+#### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody. Doing this for each time period separately ####
+# Read in non-zero otolith data
+otoliths <- read.table("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt", header = TRUE, sep = '\t')
+otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
+rownames(otoliths.sub) <- otoliths.sub[,1]
+otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
+
+# Split data into three time periods
+time_period <- split(otoliths.sub.log, f = otoliths.sub.log$Period) # a list containing early, late and middle
+
+# Prepare each dataset
+# Early
+early.trans <- as.data.frame(scale(time_period[[1]][4:8]))
+early.locs <- time_period[[1]]$Location
+early.locs.ordered <- factor(early.locs, levels = c("NC", "RUMFS"))
+early.trans2 <- cbind(early.locs.ordered, early.trans)
+
+# Middle
+middle.trans <- as.data.frame(scale(time_period[[3]][4:8]))
+middle.locs <- time_period[[3]]$Location
+middle.locs.ordered <- factor(middle.locs, levels = c("NC", "RUMFS"))
+middle.trans2 <- cbind(middle.locs.ordered, middle.trans)
+
+# Late
+late.trans <- as.data.frame(scale(time_period[[2]][4:8]))
+late.locs <- time_period[[2]]$Location
+late.locs.ordered <- factor(late.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+late.trans2 <- cbind(late.locs.ordered, late.trans)
+
+
+
+
+
+
+
+
+# Plots LDA for late time period
+late.dfa <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, prior = c(1,1,1,1)/4)
+
+late.dfa.values <- predict(late.dfa) # Calculates linear discriminants, as above
+late.dfa.values2 <- cbind.data.frame(late.dfa.values$x, late.locs.ordered)
+
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+plot(late.dfa.values2$LD1, late.dfa.values2$LD2, col = late.dfa.values2$late.locs.ordered)
+legend("topleft",
+       legend=rev(levels(late.locs.ordered)),
+       pch=19,
+       col = rev(col.palette))
+
+# Draw data ellipses for each ingress site
+loc.groups <- split(late.dfa.values2, late.dfa.values2$late.locs.ordered)
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.67, xlim = c(-2,3), ylim = c(-3,2)) # NC
+dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.67, xlim = c(-1,7)) # York
+dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.67) # Roosevelt
+dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.67) # RUMFS
+
+# Fit ellipse for each ingress location
+eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.67, npoints = 250)
+eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.67, npoints = 250)
+eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.67, npoints = 250)
+eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.67, npoints = 250)
+
+#Calculate the center of ellipse for each location
+eli_center_nc = c(mean(eli.nc[,1]), mean(eli.nc[,2]))
+eli_center_york = c(mean(eli.york[,1]), mean(eli.york[,2]))
+eli_center_roosevelt = c(mean(eli.roosevelt[,1]), mean(eli.roosevelt[,2]))
+eli_center_rumfs = c(mean(eli.rumfs[,1]), mean(eli.rumfs[,2]))
+
+#A function to calculate distance between points 'x1' and 'x2'
+dist_2_points <- function(x1, x2) {
+  return(sqrt(sum((x1 - x2)^2)))    
+}
+
+#Compute distance of each point in ellipse from eli_center
+# NC
+distance.nc <- numeric(0)
+for (i in 1:nrow(eli.nc)){ 
+  distance.nc[i] = dist_2_points(eli_center_nc, eli.nc[i,])
+}
+
+# York
+distance.york <- numeric(0)
+for (i in 1:nrow(eli.york)){ 
+  distance.york[i] = dist_2_points(eli_center_york, eli.york[i,])
+}
+
+# Roosevelt
+distance.roosevelt <- numeric(0)
+for (i in 1:nrow(eli.roosevelt)){ 
+  distance.roosevelt[i] = dist_2_points(eli_center_roosevelt, eli.roosevelt[i,])
+}
+
+# RUMFS
+distance.rumfs <- numeric(0)
+for (i in 1:nrow(eli.rumfs)){ 
+  distance.rumfs[i] = dist_2_points(eli_center_rumfs, eli.rumfs[i,])
+}
+
+#The maximum distance from eli_center is 'a'
+a.nc <- distance.nc[which.max(distance.nc)]
+a.york <- distance.york[which.max(distance.york)]
+a.roosevelt <- distance.roosevelt[which.max(distance.roosevelt)]
+a.rumfs <- distance.rumfs[which.max(distance.rumfs)]
+
+#The minimum distance from eli_center is 'b'
+b.nc <- distance.nc[which.min(distance.nc)]
+b.york <- distance.york[which.min(distance.york)]
+b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
+b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
+
+# Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
+NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
+NC.out <- NC.out[-3,] # Remove NCPD 108
+NC.out <- rbind(NC.out, loc.groups$NC['NCPD 150',]) # add NCPD 150
+NC.in <- loc.groups$NC[!rownames(loc.groups$NC) %in% rownames(NC.out),]
+
+York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
+York.out <- York.out[-3,] # remove PADE09_067
+York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
+
+Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
+Roosevelt.out <- Roosevelt.out[-12,] # remove PADE10_015
+Roosevelt.in <- loc.groups$Roosevelt[!rownames(loc.groups$Roosevelt) %in% rownames(Roosevelt.out),]
+
+RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
+RUMFS.out <- RUMFS.out[-5,] # remove PADE09_014
+RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out),]
+
+# Combine Fish IDs of data that was within 67% confidence ellipses
+late.in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
+
+# Now divide elemental data to only these fish (training) and the rest are test data
+late.train.67 <- late.trans2[rownames(late.trans2) %in% late.in.67,] # 85 x 6
+late.train <- which(rownames(late.trans2) %in% late.in.67) # just need the indices
+
+late.test.67 <- late.trans2[!(rownames(late.trans2) %in% late.in.67),] # 31 x 6
+
+# Use these individuals to redo LDA
+late.dfa1 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
+late.dfa2 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
+ct1 <- table(late.train.67$late.locs.ordered, late.dfa1$class)
+props1 <- prop.table(ct1,1)
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
+legend("bottomright",
+       legend=rev(levels(late.trans2$late.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+# And now predict everyone
+plda <- predict(late.dfa2, newdata = late.trans2[-late.train,])
+ct2 <- table(late.test.67$late.locs.ordered, plda$class)
+props2 <- prop.table(ct2,1)
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
+legend("bottomright",
+       legend=rev(levels(late.trans2$late.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+# Assess accuracy of the prediction
+# percent correct for each category of Location
+all.locs <- as.factor(c(as.character(late.test.67$late.locs.ordered), as.character(late.train.67$late.locs.ordered)))
+all.locs.ordered <- factor(all.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+all.predicted <- as.factor(c(as.character(plda$class), as.character(late.dfa1$class)))
+all.predicted.ordered <- factor(all.predicted, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+ct3 <- table(all.locs.ordered, all.predicted.ordered)
+diag(prop.table(ct3,1))
+
+# total percent correct
+sum(diag(prop.table(ct3)))
+
+# barplot of assignments
+props3 <- prop.table(ct3,1) # 'origin' signature/total number of fished that ingressed at a site
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test sets")
+legend("bottomright",
+       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+# Makes a nice plot of training, test and combined LDA barplots
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/lda_barplots_late.png", width=10, height=5, res=300, units="in")
+
+par(
+  mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(1,3) # point size, which is the font size
+)
+
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set (n = 84)")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 32)")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 116)")
+legend("bottomright",
+       legend=rev(levels(late.trans2$late.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+dev.off()
+
 
 #### Add predicted sites to the otolith data ####
 # otoliths$predicted <- dfa1$class # using DFA classes
@@ -1346,6 +1570,39 @@ bayenv.likelihoods.293indivs <- read.table("~/Documents/Graduate School/Rutgers/
 locations <- factor(bayenv.likelihoods.293indivs$Place, c("Little Egg Inlet, NJ", "Roosevelt Inlet, DE", "York River, VA", "Beaufort, NC", "North Inlet, SC"))
 most.like <- colnames(bayenv.likelihoods.293indivs[,-c(1:2)])[apply(bayenv.likelihoods.293indivs[,-c(1:2)],1, which.max)]
 table <- t(table(most.like,locations))
+most.like.geno <- apply(bayenv.likelihoods.293indivs[,-c(1:2)],1,max)
+least.like.geno <- apply(bayenv.likelihoods.293indivs[,-c(1:2)],1,min)
+
+# Find second most likely geno & pop
+n <- 5
+second.most.like <- vector()
+second.most.like.geno <- vector()
+for (i in 1:nrow(bayenv.likelihoods.293indivs[,-c(1:2)])){
+  second.most.like.geno[i] <- sort(bayenv.likelihoods.293indivs[i,-c(1:2)],partial=n-1)[n-1]
+  second.most.like[i] <- colnames(sort(bayenv.likelihoods.293indivs[i,-c(1:2)],partial=n-1)[n-1])
+}
+
+second.most.like.geno <- unlist(second.most.like.geno)
+dif <- most.like.geno - second.most.like.geno
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/indiv_assignments_hists.png", width=8, height=4.5, res=300, units="in")
+
+par(
+  mar=c(5, 5, 3, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  xpd=NA,
+  mfrow = c(1,2)
+)
+
+hist(dif, xlab = '', main = '')
+mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+hist(most.like.geno - least.like.geno, xlab = '', main = "")
+mtext("Difference between highest and \nlowest genotyple likelihoods", 1, 3.7)
+
+dev.off()
 
 # Plot to summarize individual assignments
 table2 <- prop.table(table, 1)
@@ -1370,7 +1627,7 @@ text(seq(0.7, 5.5, by=1.2), 1.03, labels = c("n = 52", "n = 50", "n = 44", "n = 
 
 legend(6.1,1,
        #legend = levels(rev(locations)),
-       legend = c("RUMFS", "Roosevelt", "York", "NC", "SC"),
+       legend = c("Pop1", "Pop2", "Pop3", "Pop4", "Pop5"),
        pch=22,
        col = 'black',
        pt.bg = col.palette)
