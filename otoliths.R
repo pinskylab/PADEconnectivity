@@ -954,6 +954,7 @@ test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.6
 
 # Use these individuals to redo LDA
 dfa3 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
+dfa4 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
 ct1 <- table(train.67$Location.ordered, dfa3$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
@@ -966,7 +967,7 @@ legend("bottomright",
        bty = "n")
 
 # And now predict everyone
-plda <- predict(dfa2, newdata = otoliths.sub.log.trans2[-train,])
+plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
 ct1 <- table(test.67$Location.ordered, plda$class)
 props2 <- prop.table(ct1,1)
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
@@ -1221,7 +1222,7 @@ col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test sets")
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=rev(levels(late.trans2$late.locs.ordered)),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
