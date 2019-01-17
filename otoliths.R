@@ -1066,16 +1066,57 @@ late.locs <- time_period[[2]]$Location
 late.locs.ordered <- factor(late.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 late.trans2 <- cbind(late.locs.ordered, late.trans)
 
+# LDA for early time period
+early.dfa <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, prior = c(1,1)/2)
+early.dfa.values <- predict(early.dfa) # Calculates linear discriminants, as above
+early.dfa.values2 <- cbind.data.frame(early.dfa.values$x, early.locs.ordered)
+
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+plot(early.dfa.values2$LD1, col = early.dfa.values2$early.locs.ordered)
+legend("topleft",
+       legend=rev(levels(early.locs.ordered)),
+       pch=19,
+       col = rev(col.palette)[3:4])
+
+early.dfa1 <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2) 
+ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
+props1 <- prop.table(ct1,1)
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
+legend("bottomright",
+       legend=rev(levels(early.trans2$early.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette)[c(1,4)],
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+# LDA for middle time period
+middle.dfa <- lda(middle.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = middle.trans2, prior = c(1,1)/2)
+middle.dfa.values <- predict(middle.dfa) # Calculates linear discriminants, as above
+middle.dfa.values2 <- cbind.data.frame(middle.dfa.values$x, middle.locs.ordered)
+
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+plot(middle.dfa.values2$LD1, col = middle.dfa.values2$middle.locs.ordered)
+legend("topleft",
+       legend=rev(levels(middle.locs.ordered)),
+       pch=19,
+       col = rev(col.palette)[3:4])
+
+# 67% CI
+qnorm(.835)
+me <- qnorm(.835) * (sd(middle.dfa.values2$LD1)/sqrt(57))
+
+# Lower & upper bounds
+mean(middle.dfa.values2$LD1) - me
+mean(middle.dfa.values2$LD1) + me
 
 
-
-
-
-
-
-# Plots LDA for late time period
+# LDA for late time period
 late.dfa <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, prior = c(1,1,1,1)/4)
-
 late.dfa.values <- predict(late.dfa) # Calculates linear discriminants, as above
 late.dfa.values2 <- cbind.data.frame(late.dfa.values$x, late.locs.ordered)
 
@@ -1090,16 +1131,16 @@ legend("topleft",
 
 # Draw data ellipses for each ingress site
 loc.groups <- split(late.dfa.values2, late.dfa.values2$late.locs.ordered)
-dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.67, xlim = c(-2,3), ylim = c(-3,2)) # NC
-dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.67, xlim = c(-1,7)) # York
-dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.67) # Roosevelt
-dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.67) # RUMFS
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-2,3), ylim = c(-3,2)) # NC
+dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68, xlim = c(-1,7)) # York
+dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68) # Roosevelt
+dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68) # RUMFS
 
 # Fit ellipse for each ingress location
-eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.67, npoints = 250)
-eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.67, npoints = 250)
-eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.67, npoints = 250)
-eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.67, npoints = 250)
+eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.68, npoints = 250)
+eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.68, npoints = 250)
+eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.68, npoints = 250)
+eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.68, npoints = 250)
 
 #Calculate the center of ellipse for each location
 eli_center_nc = c(mean(eli.nc[,1]), mean(eli.nc[,2]))
@@ -1167,19 +1208,19 @@ RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_cent
 RUMFS.out <- RUMFS.out[-5,] # remove PADE09_014
 RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out),]
 
-# Combine Fish IDs of data that was within 67% confidence ellipses
-late.in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
+# Combine Fish IDs of data that was within 68% confidence ellipses
+late.in.68 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-late.train.67 <- late.trans2[rownames(late.trans2) %in% late.in.67,] # 85 x 6
-late.train <- which(rownames(late.trans2) %in% late.in.67) # just need the indices
+late.train.68 <- late.trans2[rownames(late.trans2) %in% late.in.68,] # 85 x 6
+late.train <- which(rownames(late.trans2) %in% late.in.68) # just need the indices
 
-late.test.67 <- late.trans2[!(rownames(late.trans2) %in% late.in.67),] # 31 x 6
+late.test.68 <- late.trans2[!(rownames(late.trans2) %in% late.in.68),] # 31 x 6
 
 # Use these individuals to redo LDA
 late.dfa1 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
 late.dfa2 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
-ct1 <- table(late.train.67$late.locs.ordered, late.dfa1$class)
+ct1 <- table(late.train.68$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
 legend("bottomright",
@@ -1192,7 +1233,7 @@ legend("bottomright",
 
 # And now predict everyone
 plda <- predict(late.dfa2, newdata = late.trans2[-late.train,])
-ct2 <- table(late.test.67$late.locs.ordered, plda$class)
+ct2 <- table(late.test.68$late.locs.ordered, plda$class)
 props2 <- prop.table(ct2,1)
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
 legend("bottomright",
@@ -1205,7 +1246,7 @@ legend("bottomright",
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
-all.locs <- as.factor(c(as.character(late.test.67$late.locs.ordered), as.character(late.train.67$late.locs.ordered)))
+all.locs <- as.factor(c(as.character(late.test.68$late.locs.ordered), as.character(late.train.68$late.locs.ordered)))
 all.locs.ordered <- factor(all.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 all.predicted <- as.factor(c(as.character(plda$class), as.character(late.dfa1$class)))
 all.predicted.ordered <- factor(all.predicted, levels = c("NC", "York", "Roosevelt", "RUMFS"))
