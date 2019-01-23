@@ -94,6 +94,7 @@ otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log
 # axis(1, at = 1:4, labels = c('RUMFS', 'Roosevelt Inlet', 'York River', 'Beaufort'))
 
 locations <- factor(otoliths.sub$Location, c("RUMFS", "Roosevelt", "York", "NC"))
+period <- factor(otoliths.sub$Period, c('Early', 'Mid', 'Late'))
 
 boxplot(otoliths.sub$Mg ~ locations, ylab = "Mg:Ca")
 boxplot(otoliths.sub$Mn ~ locations, ylab = "Mn:Ca")
@@ -122,54 +123,54 @@ par(
 )
 
 boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Mg ~ locations)
+mg.anova <- aov(otoliths.sub.log$Mg ~ locations*period)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Mn ~ locations, ylab = expression(log[10]*(Mn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mn.anova <- aov(otoliths.sub$Mn ~ locations)
+mn.anova <- aov(otoliths.sub$Mn ~ locations*period)
 leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Fe ~ locations, ylab = expression(log[10]*(Fe:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-fe.anova <- aov(otoliths.sub$Fe ~ locations)
+fe.anova <- aov(otoliths.sub$Fe ~ locations*period)
 leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Cu ~ locations, ylab = expression(log[10]*(Cu:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-cu.anova <- aov(otoliths.sub$Cu ~ locations)
+cu.anova <- aov(otoliths.sub$Cu ~ locations*period)
 leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Sr ~ locations, ylab = expression(log[10]*(Sr:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-sr.anova <- aov(otoliths.sub$Sr ~ locations)
+sr.anova <- aov(otoliths.sub$Sr ~ locations*period)
 leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Cd ~ locations, ylab = expression(log[10]*(Cd:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-cd.anova <- aov(otoliths.sub$Cd ~ locations)
+cd.anova <- aov(otoliths.sub$Cd ~ locations*period)
 leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Ba ~ locations, ylab = expression(log[10]*(Ba:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-ba.anova <- aov(otoliths.sub$Ba ~ locations)
+ba.anova <- aov(otoliths.sub$Ba ~ locations*period)
 leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Sn ~ locations, ylab = expression(log[10]*(Sn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-sn.anova <- aov(otoliths.sub$Sn ~ locations)
+sn.anova <- aov(otoliths.sub$Sn ~ locations*period)
 leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$Pb ~ locations, ylab = expression(log[10]*(Pb:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
-pb.anova <- aov(otoliths.sub$Pb ~ locations)
+pb.anova <- aov(otoliths.sub$Pb ~ locations*period)
 leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths.sub.log$U ~ locations, ylab = expression(log[10]*(U:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
-u.anova <- aov(otoliths.sub$U ~ locations)
+u.anova <- aov(otoliths.sub$U ~ locations*period)
 leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
@@ -820,7 +821,7 @@ legend("bottomright",
        title = expression(bold('Collection location')), 
        bty = "n")
 
-#### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody ####
+#### DFA using 68% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody ####
 dfa2 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
 plot(dfa2)
 # ld1 <- dfa2$scaling[1,1]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,1]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,1]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,1]*otoliths.sub.log.trans2$Sn
@@ -836,20 +837,20 @@ legend("topleft",
        col = col.palette)
 
 # Calculate center for each ingress site
-center <- aggregate(dfa.values2[,-4], by = list(dfa.values2$Location), FUN = mean) # similar but not exactly the same as center calculation below
+# center <- aggregate(dfa.values2[,-4], by = list(dfa.values2$Location), FUN = mean) # similar but not exactly the same as center calculation below
 
 # Draw data ellipses for each ingress site
 loc.groups <- split(dfa.values2, dfa.values2$Location)
-dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.67, xlim = c(-3,3)) # NC
-dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.67) # York
-dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.67) # Roosevelt
-dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.67) # RUMFS
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-3,3)) # NC
+dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68) # York
+dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68) # Roosevelt
+dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68) # RUMFS
 
 # Fit ellipse for each ingress location
-eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.67, npoints = 250)
-eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.67, npoints = 250)
-eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.67, npoints = 250)
-eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.67, npoints = 250)
+eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.68, npoints = 250)
+eli.york <- ellipse(cor(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"]), scale=c(sd(loc.groups$York[,"LD1"]),sd(loc.groups$York[,"LD2"])), centre=c(mean(loc.groups$York[,"LD1"]), mean(loc.groups$York[,"LD2"])), level = 0.68, npoints = 250)
+eli.roosevelt <- ellipse(cor(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"]), scale=c(sd(loc.groups$Roosevelt[,"LD1"]),sd(loc.groups$Roosevelt[,"LD2"])), centre=c(mean(loc.groups$Roosevelt[,"LD1"]), mean(loc.groups$Roosevelt[,"LD2"])), level = 0.68, npoints = 250)
+eli.rumfs <- ellipse(cor(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"]), scale=c(sd(loc.groups$RUMFS[,"LD1"]),sd(loc.groups$RUMFS[,"LD2"])), centre=c(mean(loc.groups$RUMFS[,"LD1"]), mean(loc.groups$RUMFS[,"LD2"])), level = 0.68, npoints = 250)
 
 #Calculate the center of ellipse for each location
 eli_center_nc = c(mean(eli.nc[,1]), mean(eli.nc[,2]))
@@ -929,7 +930,8 @@ York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
 
 Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
 Roosevelt.out <- Roosevelt.out[-5,]
-Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
+# Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
+Roosevelt.in <- loc.groups$Roosevelt[!rownames(loc.groups$Roosevelt) %in% rownames(Roosevelt.out),]
 
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
 RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
@@ -943,19 +945,19 @@ RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_cent
 
 ###################################################################
 # Make sure these points are actually outside of ellipses
-# Combine Fish IDs of data that was within 67% confidence ellipses
-in.67 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
+# Combine Fish IDs of data that was within 68% confidence ellipses
+in.68 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-train.67 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.67,] # 138 x 6
-train <- which(rownames(otoliths.sub.log.trans2) %in% in.67) # just need the indices
+train.68 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.68,] # 138 x 6
+train <- which(rownames(otoliths.sub.log.trans2) %in% in.68) # just need the indices
 
-test.67 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.67),] # 59 x 6
+test.68 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.68),] # 59 x 6
 
 # Use these individuals to redo LDA
 dfa3 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
 dfa4 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
-ct1 <- table(train.67$Location.ordered, dfa3$class)
+ct1 <- table(train.68$Location.ordered, dfa3$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
 legend("bottomright",
@@ -968,7 +970,7 @@ legend("bottomright",
 
 # And now predict everyone
 plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
-ct1 <- table(test.67$Location.ordered, plda$class)
+ct1 <- table(test.68$Location.ordered, plda$class)
 props2 <- prop.table(ct1,1)
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
 legend("bottomright",
@@ -982,7 +984,7 @@ legend("bottomright",
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
-all.locs <- as.factor(c(as.character(test.67$Location.ordered), as.character(train.67$Location.ordered)))
+all.locs <- as.factor(c(as.character(test.68$Location.ordered), as.character(train.68$Location.ordered)))
 all.locs.ordered <- factor(all.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 all.predicted <- as.factor(c(as.character(plda$class), as.character(dfa3$class)))
 all.predicted.ordered <- factor(all.predicted, levels = c("NC", "York", "Roosevelt", "RUMFS"))
@@ -1071,6 +1073,8 @@ early.dfa <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans
 early.dfa.values <- predict(early.dfa) # Calculates linear discriminants, as above
 early.dfa.values2 <- cbind.data.frame(early.dfa.values$x, early.locs.ordered)
 
+early.regions <- split(early.dfa.values2, f = early.dfa.values2$early.locs.ordered)
+
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
@@ -1080,10 +1084,10 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-early.dfa1 <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2) 
+early.dfa1 <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "1989 - 1993\n(n = 24)")
 legend("bottomright",
        legend=rev(levels(early.trans2$early.locs.ordered)),
        pch=22,
@@ -1106,14 +1110,17 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-# 67% CI
-qnorm(.835)
-me <- qnorm(.835) * (sd(middle.dfa.values2$LD1)/sqrt(57))
-
-# Lower & upper bounds
-mean(middle.dfa.values2$LD1) - me
-mean(middle.dfa.values2$LD1) + me
-
+middle.dfa1 <- lda(middle.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
+ct1 <- table(middle.trans2$middle.locs.ordered, middle.dfa1$class)
+props1 <- prop.table(ct1,1)
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "1998 - 2002\n(n = 57)")
+legend("bottomright",
+       legend=rev(levels(middle.trans2$middle.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette)[c(1,4)],
+       title = expression(bold('Collection location')), 
+       bty = "n")
 
 # LDA for late time period
 late.dfa <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, prior = c(1,1,1,1)/4)
@@ -1129,6 +1136,19 @@ legend("topleft",
        pch=19,
        col = rev(col.palette))
 
+late.dfa1 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
+ct1 <- table(late.trans2$late.locs.ordered, late.dfa1$class)
+props1 <- prop.table(ct1,1)
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "2008 - 2012\n(n = 116)")
+legend("bottomright",
+       legend=rev(levels(late.trans2$late.locs.ordered)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette),
+       title = expression(bold('Collection location')), 
+       bty = "n")
+
+# LDA using fish within 68% confidence ellipses
 # Draw data ellipses for each ingress site
 loc.groups <- split(late.dfa.values2, late.dfa.values2$late.locs.ordered)
 dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-2,3), ylim = c(-3,2)) # NC
@@ -1340,6 +1360,9 @@ palette(col.palette)
 oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 
 clusters <- split(oto.gen.merge6, oto.gen.merge6$cluster4)
+
+# Create column with ingress site and location
+oto.gen.merge6$Location.ordered.TP <- paste(oto.gen.merge6$Location.ordered, oto.gen.merge6$Period)
 
 # Plot together
 # Makes nice pie chart figure
