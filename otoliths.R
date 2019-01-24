@@ -122,53 +122,54 @@ par(
   mfrow = c(5,2)
 )
 
-boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+# boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Mg ~ locations, ylab = 'Mg:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(otoliths.sub.log$Mg ~ locations*period)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Mn ~ locations, ylab = expression(log[10]*(Mn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Mn ~ locations, ylab = 'Mn:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mn.anova <- aov(otoliths.sub$Mn ~ locations*period)
 leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Fe ~ locations, ylab = expression(log[10]*(Fe:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Fe ~ locations, ylab = 'Fe:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 fe.anova <- aov(otoliths.sub$Fe ~ locations*period)
 leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cu ~ locations, ylab = expression(log[10]*(Cu:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Cu ~ locations, ylab = 'Cu:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cu.anova <- aov(otoliths.sub$Cu ~ locations*period)
 leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sr ~ locations, ylab = expression(log[10]*(Sr:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Sr ~ locations, ylab = 'Sr:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sr.anova <- aov(otoliths.sub$Sr ~ locations*period)
 leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cd ~ locations, ylab = expression(log[10]*(Cd:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Cd ~ locations, ylab = 'Cd:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cd.anova <- aov(otoliths.sub$Cd ~ locations*period)
 leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Ba ~ locations, ylab = expression(log[10]*(Ba:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Ba ~ locations, ylab = 'Ba:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 ba.anova <- aov(otoliths.sub$Ba ~ locations*period)
 leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sn ~ locations, ylab = expression(log[10]*(Sn:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Sn ~ locations, ylab = 'Sn:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sn.anova <- aov(otoliths.sub$Sn ~ locations*period)
 leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Pb ~ locations, ylab = expression(log[10]*(Pb:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Pb ~ locations, ylab = 'Pb:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
 pb.anova <- aov(otoliths.sub$Pb ~ locations*period)
 leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$U ~ locations, ylab = expression(log[10]*(U:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$U ~ locations, ylab = 'U:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
 u.anova <- aov(otoliths.sub$U ~ locations*period)
 leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
@@ -189,53 +190,54 @@ par(
   mfrow = c(5,2)
 )
 
-boxplot(otoliths.sub.log$Mg ~ period, ylab = expression(log[10]*(Mg:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+# boxplot(otoliths.sub.log$Mg ~ period, ylab = expression(log[10]*(Mg:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Mg ~ period, ylab = 'Mg:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(otoliths.sub.log$Mg ~ period)
 leastsquare <- lsmeans(mg.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Mn ~ period, ylab = expression(log[10]*(Mn:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Mn ~ period, ylab = 'Mn:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mn.anova <- aov(otoliths.sub.log$Mn ~ period)
 leastsquare <- lsmeans(mn.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Fe ~ period, ylab = expression(log[10]*(Fe:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Fe ~ period, ylab = 'Fe:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 fe.anova <- aov(otoliths.sub.log$Fe ~ period)
 leastsquare <- lsmeans(fe.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cu ~ period, ylab = expression(log[10]*(Cu:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Cu ~ period, ylab = 'Cu:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cu.anova <- aov(otoliths.sub.log$Cu ~ period)
 leastsquare <- lsmeans(cu.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sr ~ period, ylab = expression(log[10]*(Sr:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Sr ~ period, ylab = 'Sr:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sr.anova <- aov(otoliths.sub.log$Sr ~ period)
 leastsquare <- lsmeans(sr.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Cd ~ period, ylab = expression(log[10]*(Cd:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Cd ~ period, ylab = 'Cd:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 cd.anova <- aov(otoliths.sub.log$Cd ~ period)
 leastsquare <- lsmeans(cd.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Ba ~ period, ylab = expression(log[10]*(Ba:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Ba ~ period, ylab = 'Ba:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 ba.anova <- aov(otoliths.sub.log$Ba ~ period)
 leastsquare <- lsmeans(ba.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Sn ~ period, ylab = expression(log[10]*(Sn:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Sn ~ period, ylab = 'Sn:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 sn.anova <- aov(otoliths.sub.log$Sn ~ period)
 leastsquare <- lsmeans(sn.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$Pb ~ period, ylab = expression(log[10]*(Pb:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$Pb ~ period, ylab = 'Pb:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Time period",1, line = 2.5)
 pb.anova <- aov(otoliths.sub.log$Pb ~ period)
 leastsquare <- lsmeans(pb.anova, pairwise ~ period, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
-boxplot(otoliths.sub.log$U ~ period, ylab = expression(log[10]*(U:Ca)), col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+boxplot(otoliths$U ~ period, ylab = 'U:Ca', col = c("#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Time period",1, line = 2.5)
 u.anova <- aov(otoliths.sub.log$U ~ period)
 leastsquare <- lsmeans(u.anova, pairwise ~ period, adjust = "tukey")
@@ -1356,16 +1358,22 @@ library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 
+# Create color palette with enough colors for time periods within an ingress site to be different colors
+col.palette <- c("#fffbd3", "#f2ea8e", "#E2D200", "#46ACC8", "#E58601", "#f2b3b9", "#e04c5b", "#B40F20")
+
 # Change order of locations
 oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 
+# Create column with ingress site and location & order location/time period combos
+oto.gen.merge6$Location.ordered.TP <- factor(paste(oto.gen.merge6$Location.ordered, oto.gen.merge6$Period, sep = '-'), levels = c("NC-Late", "NC-Mid", "NC-Early", "York-Late", "Roosevelt-Late", "RUMFS-Late", "RUMFS-Mid", "RUMFS-Early"))
+
+# Order developmemntal stages
+oto.gen.merge6$Developmental.Stage <- factor(oto.gen.merge6$Developmental.Stage, levels = c('F', 'G', 'H-', 'H', 'H+', 'I'))
+
 clusters <- split(oto.gen.merge6, oto.gen.merge6$cluster4)
 
-# Create column with ingress site and location
-oto.gen.merge6$Location.ordered.TP <- paste(oto.gen.merge6$Location.ordered, oto.gen.merge6$Period)
-
 # Plot together
-# Makes nice pie chart figure
+# Makes nice pie chart figure where each color is an ingress site
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts.png", width=5, height=4.5, res=300, units="in")
 
 par(
@@ -1439,7 +1447,64 @@ mtext('cluster 6 (n = 19)', side = 3, line = -4.5)
 text(-0.3, 0.1, "Roosevelt")
 text(0.4,-0.2, "RUMFS")
 
+# Plot pie charts with different colors for time periods
+par(
+  mar=c(0, 0, 2, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(2,2), # point size, which is the font size
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
 
+pie(table(clusters[[1]]$Location.ordered.TP), col = col.palette, labels = '', main = '')
+mtext('cluster 1\n (n = 44)', 3, -1)
+pie(table(clusters[[2]]$Location.ordered.TP), col = col.palette, labels = '', main = '')
+mtext('cluster 2\n (n = 23)', 3, -1)
+pie(table(clusters[[3]]$Location.ordered.TP), col = col.palette, labels = '', main = '')
+mtext('cluster 3\n (n = 35)', 3, -1)
+pie(table(clusters[[4]]$Location.ordered.TP), col = col.palette, labels = '', main = '')
+mtext('cluster 4\n (n = 49)', 3, -1)
+
+legend(1.2,0.5,
+       legend=rev(levels(oto.gen.merge6$Location.ordered.TP)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette))
+
+# Plot pie charts with different colors for stages
+# Create color palette with enough colors for time periods within an ingress site to be different colors
+cols <- rainbow(6)
+
+par(
+  mar=c(0, 0, 2, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(2,2), # point size, which is the font size
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+pie(table(clusters[[1]]$Developmental.Stage), col = cols, labels = '', main = '')
+mtext('cluster 1\n (n = 44)', 3, -1)
+pie(table(clusters[[2]]$Developmental.Stage), col = cols, labels = '', main = '')
+mtext('cluster 2\n (n = 23)', 3, -1)
+pie(table(clusters[[3]]$Developmental.Stage), col = cols, labels = '', main = '')
+mtext('cluster 3\n (n = 35)', 3, -1)
+pie(table(clusters[[4]]$Developmental.Stage), col = cols, labels = '', main = '')
+mtext('cluster 4\n (n = 49)', 3, -1)
+
+legend(1.2,0.5,
+       legend=levels(oto.gen.merge6$Developmental.Stage),
+       pch=22,
+       col = 'black',
+       pt.bg= cols)
 
 
 # Make some plots
