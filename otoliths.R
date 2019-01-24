@@ -259,21 +259,21 @@ summary.aov(fit) # Mg, Sn and Pb
 
 
 #### Multidimensional scaling ####
-# oto.chem <- otoliths[-28,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Sn", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)
+oto.chem2 <- otoliths[,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)? Joel says Sn may have interference, so don't include?
 # oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
-# rownames(oto.chem) <- oto.chem[, "Fish.ID"] # Make fish IDs as rownames
-oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
-oto.chem2 <- cbind.data.frame(oto.chem2[,c("Fish.ID", "Location", "Period")], log10(oto.chem2[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
 rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
-oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
-oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
-oto.chem2$Period <- gsub("Late", "3", oto.chem2$Period)
-oto.chem2$Period <- as.numeric(oto.chem2$Period) # convert time period to numeric for scaling later
+# oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable # better to use all available elements
+# oto.chem2 <- cbind.data.frame(oto.chem2[,c("Fish.ID", "Location", "Period")], log10(oto.chem2[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
+# rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
+# oto.chem2$Period <- gsub("Early", "1", oto.chem2$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
+# oto.chem2$Period <- gsub("Mid", "2", oto.chem2$Period)
+# oto.chem2$Period <- gsub("Late", "3", oto.chem2$Period)
+# oto.chem2$Period <- as.numeric(oto.chem2$Period) # convert time period to numeric for scaling later
 
 # Separate MDS for each time period
-oto.chem.early <- oto.chem2[which(oto.chem2$Period == 1),]
-oto.chem.middle <- oto.chem2[which(oto.chem2$Period == 2),]
-oto.chem.late <- oto.chem2[which(oto.chem2$Period == 3),]
+oto.chem.early <- oto.chem2[which(oto.chem2$Period == 'Early'),]
+oto.chem.middle <- oto.chem2[which(oto.chem2$Period == 'Mid'),]
+oto.chem.late <- oto.chem2[which(oto.chem2$Period == 'Late'),]
 
 # Scatter plot matrix
 loc.cols <- col.palette[as.numeric(otoliths$Location)]
@@ -284,15 +284,13 @@ legend(x = 0.05, y = 0.35, cex = 2,
        fill = col.palette)
 par(xpd = NA)
 
-oto.chem <- scale(oto.chem[, -1]) # scaling probably a good idea since there is a big range of values for each elemental ratio
-oto.chem2 <- scale(oto.chem2[,-c(1:2)])
+oto.chem2 <- scale(oto.chem2[,-c(1:3)]) # scaling probably a good idea since there is a big range of values for each elemental ratio
 
 oto.chem.early2 <- scale(oto.chem.early[,-c(1:3)])
 oto.chem.middle2 <- scale(oto.chem.middle[,-c(1:3)])
 oto.chem.late2 <- scale(oto.chem.late[,-c(1:3)])
 
 # Euclidian distance between rows
-oto.dist <- dist(oto.chem)
 oto.dist2 <- dist(oto.chem2)
 
 oto.chem.early2 <- dist(oto.chem.early2)
@@ -300,15 +298,13 @@ oto.chem.middle2 <- dist(oto.chem.middle2)
 oto.chem.late2 <- dist(oto.chem.late2)
 
 # Fit model
-oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE) # How many dimensions?
-oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 3, add = FALSE)
+oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 2, add = FALSE) # How many dimensions? Look at scree plot.
 
 oto.fit.early <- cmdscale(oto.chem.early2, eig = TRUE, k = 2, add = FALSE)
 oto.fit.middle <- cmdscale(oto.chem.middle2, eig = TRUE, k = 2, add = FALSE)
 oto.fit.late <- cmdscale(oto.chem.late2, eig = TRUE, k = 2, add = FALSE)
 
-plot(oto.fit$eig[1:10]) # scree plot
-plot(oto.fit2$eig[1:10])
+plot(oto.fit2$eig[1:10]) # scree plot
 
 # Histograms of MDS axis - unimodal or multimodal?
 hist(x, xlab = "MDS 1", main = "") # all unimodal
@@ -345,7 +341,7 @@ palette(rev(col.palette))
 locations <- factor(otoliths$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
 # plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = otoliths$Location[-28], pch = 19) # without NCPD 074 (28)
 plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry", col = locations, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend("topleft",
+legend("bottomright",
        legend = levels(locations),
        pch=19,
        col = rev(col.palette))
@@ -400,13 +396,13 @@ points(x[c(56:57,65:72,119:123,180:185)], y[c(56:57,65:72,119:123,180:185)], col
 points(x[c(73:77,186:188)], y[c(73:77,186:188)], col = "#FF00DBFF", pch = 19) #2011
 points(x[c(78:82,189:196)], y[c(78:82,189:196)], col = "#FF006DFF", pch = 19) #2012
 
-# Plot separate MDS for each time period
+# Plot separate MDS for each time period using 9 elements (all except Sn)
 library(wesanderson)
 
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(rev(col.palette))
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_10elements.png", width=8, height=2.5, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_9elements.png", width=8, height=2.5, res=300, units="in")
 
 par(
   mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
@@ -423,41 +419,35 @@ par(
 # Early time period
 x <- oto.fit.early$points[,1]
 y <- oto.fit.early$points[,2]
-# z <- oto.fit.early$points[,3]
 
 locations.early <- factor(oto.chem.early$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Early: 1989-1993", col = locations.early, pch = 19) # mds using Mg, Mn, Fe & Sn
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Early: 1989-1993", col = locations.early, pch = 19) # mds using for all elements except Sn
 # legend("topleft",
-       # legend = levels(locations.early),
-       # pch=19,
-       # col = rev(col.palette))
-# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: early", col = oto.chem.early$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
+      # legend = levels(locations.early),
+      # pch=19,
+      # col = rev(col.palette))
 
 # Middle time period
 x <- oto.fit.middle$points[,1]
 y <- oto.fit.middle$points[,2]
-# z <- oto.fit.middle$points[,3]
 
 locations.middle <- factor(oto.chem.middle$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Middle: 1998-2002", col = locations.middle, pch = 19) # mds using Mg, Mn, Fe & Sn
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Middle: 1998-2002", col = locations.middle, pch = 19) # mds using for all elements except Sn
 # legend("topleft",
        # legend = levels(locations.middle),
        # pch=19,
        # col = rev(col.palette))
-# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Middle: 1998-2002", col = oto.chem.middle$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 
 # Late time period
 x <- oto.fit.late$points[,1]
 y <- oto.fit.late$points[,2]
-# z <- oto.fit.late$points[,3]
 
 locations.late <- factor(oto.chem.late$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Late: 2008-2012", col = locations.late, pch = 19) # mds using Mg, Mn, Fe & Sn
-legend(4,5,
+plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Late: 2008-2012", col = locations.late, pch = 19) # mds using for all elements except Sn
+legend(4.5,5,
        legend = levels(locations.late),
        pch=19,
        col = rev(col.palette))
-# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: late", col = oto.chem.late$Location, pch = 19) # mds using Mg, Mn, Fe & Sn
 
 dev.off()
 
