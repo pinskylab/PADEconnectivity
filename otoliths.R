@@ -293,16 +293,16 @@ oto.chem.late2 <- scale(oto.chem.late[,-c(1:3)])
 # Euclidian distance between rows
 oto.dist2 <- dist(oto.chem2)
 
-oto.chem.early2 <- dist(oto.chem.early2)
-oto.chem.middle2 <- dist(oto.chem.middle2)
-oto.chem.late2 <- dist(oto.chem.late2)
+oto.chem.early3 <- dist(oto.chem.early2)
+oto.chem.middle3 <- dist(oto.chem.middle2)
+oto.chem.late3 <- dist(oto.chem.late2)
 
 # Fit model
 oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 2, add = FALSE) # How many dimensions? Look at scree plot.
 
-oto.fit.early <- cmdscale(oto.chem.early2, eig = TRUE, k = 2, add = FALSE)
-oto.fit.middle <- cmdscale(oto.chem.middle2, eig = TRUE, k = 2, add = FALSE)
-oto.fit.late <- cmdscale(oto.chem.late2, eig = TRUE, k = 2, add = FALSE)
+oto.fit.early <- cmdscale(oto.chem.early3, eig = TRUE, k = 2, add = FALSE)
+oto.fit.middle <- cmdscale(oto.chem.middle3, eig = TRUE, k = 2, add = FALSE)
+oto.fit.late <- cmdscale(oto.chem.late3, eig = TRUE, k = 2, add = FALSE)
 
 plot(oto.fit2$eig[1:10]) # scree plot
 
@@ -568,66 +568,66 @@ image(x,y,z,col=my.colors(6),axes=FALSE,xlab='', ylab='',main='')
 mtext("Standard length", side=4, line=2.5)
 axis(4)
 
-# MDS of 4 elements (Mg, Mn, Sn and Fe) & time period and colored by cluster
-oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
-
-oto.chem <- oto.gen.merge4[,c("PinskyID", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
-rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
-oto.chem$Period <- gsub("Early", "1", oto.chem$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
-oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
-oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
-oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
-
-oto.chem <- scale(oto.chem[,-1]) # Scale
-oto.dist <- dist(oto.chem) # Euclidian distance between rows
-
-# Fit model
-oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE)
-
-# Plot MDS
-x <- oto.fit$points[,1]
-y <- oto.fit$points[,2]
-z <- oto.fit$points[,3]
-
-# Plot clusters in color
-par(mfrow = c(1,2))
-col.palette <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F")
-palette(col.palette)
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("topleft",
-       legend = levels(oto.gen.merge4$Location),
-       pch=19,
-       col = col.palette)
-
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("bottomright",
-       legend = levels(oto.gen.merge4$Location),
-       pch=19,
-       col = col.palette)
-
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("topleft",
-       legend = levels(oto.gen.merge4$Period),
-       pch=19,
-       col = col.palette)
-
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("bottomright",
-       legend = levels(oto.gen.merge4$Period),
-       pch=19,
-       col = col.palette)
-
-plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("topleft",
-       legend = levels(as.factor(oto.gen.merge4$cluster6)),
-       pch=19,
-       col = col.palette)
-
-plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
-legend("bottomright",
-       legend = levels(as.factor(oto.gen.merge4$cluster6)),
-       pch=19,
-       col = col.palette)
+# # MDS of 4 elements (Mg, Mn, Sn and Fe) & time period and colored by cluster
+# oto.gen.merge4 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.6clusters.txt", header = TRUE)
+# 
+# oto.chem <- oto.gen.merge4[,c("PinskyID", "Period", "Mg", "Mn", "Fe", "Sn")] # including time period as a variable
+# rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
+# oto.chem$Period <- gsub("Early", "1", oto.chem$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
+# oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
+# oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
+# oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
+# 
+# oto.chem <- scale(oto.chem[,-1]) # Scale
+# oto.dist <- dist(oto.chem) # Euclidian distance between rows
+# 
+# # Fit model
+# oto.fit <- cmdscale(oto.dist, eig = TRUE, k = 3, add = FALSE)
+# 
+# # Plot MDS
+# x <- oto.fit$points[,1]
+# y <- oto.fit$points[,2]
+# z <- oto.fit$points[,3]
+# 
+# # Plot clusters in color
+# par(mfrow = c(1,2))
+# col.palette <- c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F")
+# palette(col.palette)
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("topleft",
+#        legend = levels(oto.gen.merge4$Location),
+#        pch=19,
+#        col = col.palette)
+# 
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: ingress site", col = oto.gen.merge4$Location, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("bottomright",
+#        legend = levels(oto.gen.merge4$Location),
+#        pch=19,
+#        col = col.palette)
+# 
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("topleft",
+#        legend = levels(oto.gen.merge4$Period),
+#        pch=19,
+#        col = col.palette)
+# 
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: time period", col = oto.gen.merge4$Period, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("bottomright",
+#        legend = levels(oto.gen.merge4$Period),
+#        pch=19,
+#        col = col.palette)
+# 
+# plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("topleft",
+#        legend = levels(as.factor(oto.gen.merge4$cluster6)),
+#        pch=19,
+#        col = col.palette)
+# 
+# plot(x, z, xlab = "MDS1", ylab = "MDS3", main = "Otolith microchemistry: cluster", col = oto.gen.merge4$cluster6, pch = 19) # mds using Mg, Mn, Fe & Sn and time period
+# legend("bottomright",
+#        legend = levels(as.factor(oto.gen.merge4$cluster6)),
+#        pch=19,
+#        col = col.palette)
 
 
 #### Clustering ####
@@ -714,21 +714,123 @@ fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 # pvrect(fit2, alpha = 0.95) # something not working
 
 #### Cluster only fish with otolith and genetic data ####
-oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
-oto.gen.merge6 <- oto.gen.merge5[,-59]
+oto.gen.merged <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
 
-oto.chem <- oto.gen.merge5[,c("PinskyID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable
-oto.chem <- cbind.data.frame(oto.chem[,c("PinskyID", "Location", "Period")], log10(oto.chem[, c("Mg", "Mn", "Fe", "Sn", "Pb")]))
+oto.chem <- cbind.data.frame(oto.gen.merged[,c("PinskyID", "Location", "Period")], log10(oto.gen.merged[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
 rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
-oto.chem$Period <- gsub("Early", "1", oto.chem$Period) # Assign numbers to time periods: 1 = Early, 2 = Mid, 3 = Late
-oto.chem$Period <- gsub("Mid", "2", oto.chem$Period)
-oto.chem$Period <- gsub("Late", "3", oto.chem$Period)
-oto.chem$Period <- as.numeric(oto.chem$Period) # convert time period to numeric for scaling later
-oto.chem <- scale(oto.chem[,-c(1:2)])
-oto.dist <- dist(oto.chem)
 
+# Separate data by time period
+oto.chem.early <- oto.chem[which(oto.chem$Period == 'Early'),]
+oto.chem.middle <- oto.chem[which(oto.chem$Period == 'Mid'),]
+oto.chem.late <- oto.chem[which(oto.chem$Period == 'Late'),]
+
+oto.chem.early2 <- scale(oto.chem.early[,-c(1:3)])
+oto.chem.middle2 <- scale(oto.chem.middle[,-c(1:3)])
+oto.chem.late2 <- scale(oto.chem.late[,-c(1:3)])
+
+# Clustering for each time period separately
 library(factoextra)
 library(cluster)
+library(NbClust)
+library(mclust)
+library(wesanderson)
+
+# Early
+fviz_nbclust(oto.chem.early2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.early2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.early2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.early2, distance = 'euclidean', min.nc = 2, max.nc = 6, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+mclust.fit <- Mclust(oto.chem.early2)
+plot(mclust.fit)
+summary(mclust.fit)
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.early2, centers = 3, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.early$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+
+fviz_cluster(kmean.cls, oto.chem.early2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point"
+)
+
+# Middle
+fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.middle2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.middle2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+mclust.fit <- Mclust(oto.chem.middle2)
+plot(mclust.fit)
+summary(mclust.fit)
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.middle2, centers = 2, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.middle$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+
+fviz_cluster(kmean.cls, oto.chem.middle2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point"
+)
+
+# Late
+fviz_nbclust(oto.chem.late2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.late2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.late2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.late2, distance = 'euclidean', min.nc = 2, max.nc = 6, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+mclust.fit <- Mclust(oto.chem.late2)
+plot(mclust.fit)
+summary(mclust.fit)
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.late2, centers = 3, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.late$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+
+fviz_cluster(kmean.cls, oto.chem.late2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point"
+)
+
+oto.chem.early$cluster <- kmean.cls$cluster
+# write.table(oto.gen.merge6, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", col.names = TRUE, row.names = FALSE)
+
+
+
+
 fviz_nbclust(oto.chem, FUN = hcut, method = "wss") # data should be scaled/standardized
 fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
@@ -1308,17 +1410,7 @@ legend("bottomright",
 dev.off()
 
 
-#### Add predicted sites to the otolith data ####
-# otoliths$predicted <- dfa1$class # using DFA classes
-otoliths$cluster <- kmean.cls$cluster # using heirarchical clustering
-otoliths$cluster8 <- kmean.cls$cluster
-otoliths$cluster6 <- kmean.cls$cluster
-otoliths$cluster3 <- kmean.cls$cluster
-
-names(kmean.cls$cluster) == otoliths$Fish.ID
-# rownames(otoliths)==lda.class.ordered[,1] # should be in same order
-# otoliths$predicted <- lda.class.ordered[,2] # from LDA using random 40% from each ingress site as test dataset
-
+#### Merge otolith data with genetic data to result in a file with 151 fish ####
 # Read in dataset containing outlier loci
 gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
 
@@ -1326,9 +1418,9 @@ gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flound
 gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == FALSE), ]
 
 # Merge otolith data with predicted sites with genetic data containing outliers
-oto.gen.merge2 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
-# write.table(oto.gen.merge2, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
-oto.gen.merge2 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
+oto.gen.merged <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+# write.table(oto.gen.merged, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
+oto.gen.merged <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
 
 oto.gen.merge3 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 # write.table(oto.gen.merge3, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", col.names = TRUE, row.names = FALSE)
