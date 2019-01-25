@@ -713,20 +713,34 @@ fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 # plot(fit2)
 # pvrect(fit2, alpha = 0.95) # something not working
 
+#### Merge otolith data with genetic data to result in a file with 151 fish ####
+# Read in dataset containing outlier loci
+gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
+
+# Keep only larvae with genetic assignments
+gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == FALSE), ]
+
+# Merge otolith data with predicted sites with genetic data containing outliers
+oto.gen.merged <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
+# write.table(oto.gen.merged, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
+
 #### Cluster only fish with otolith and genetic data ####
 oto.gen.merged <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
-
-oto.chem <- cbind.data.frame(oto.gen.merged[,c("PinskyID", "Location", "Period")], log10(oto.gen.merged[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
-rownames(oto.chem) <- oto.chem[, "PinskyID"] # Make fish IDs as rownames
+rownames(oto.gen.merged) <- oto.gen.merged[, "PinskyID"] # Make fish IDs as rownames
 
 # Separate data by time period
-oto.chem.early <- oto.chem[which(oto.chem$Period == 'Early'),]
-oto.chem.middle <- oto.chem[which(oto.chem$Period == 'Mid'),]
-oto.chem.late <- oto.chem[which(oto.chem$Period == 'Late'),]
+oto.chem.early <- oto.gen.merged[which(oto.gen.merged$Period == 'Early'),]
+oto.chem.middle <- oto.gen.merged[which(oto.gen.merged$Period == 'Mid'),]
+oto.chem.late <- oto.gen.merged[which(oto.gen.merged$Period == 'Late'),]
 
-oto.chem.early2 <- scale(oto.chem.early[,-c(1:3)])
-oto.chem.middle2 <- scale(oto.chem.middle[,-c(1:3)])
-oto.chem.late2 <- scale(oto.chem.late[,-c(1:3)])
+# Log the data & scale
+oto.chem.early.log <- cbind.data.frame(oto.chem.early[,c("PinskyID", "Location", "Period")], log10(oto.chem.early[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
+oto.chem.middle.log <- cbind.data.frame(oto.chem.middle[,c("PinskyID", "Location", "Period")], log10(oto.chem.middle[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
+oto.chem.late.log <- cbind.data.frame(oto.chem.late[,c("PinskyID", "Location", "Period")], log10(oto.chem.late[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
+
+oto.chem.early2 <- scale(oto.chem.early.log[,-c(1:3)])
+oto.chem.middle2 <- scale(oto.chem.middle.log[,-c(1:3)])
+oto.chem.late2 <- scale(oto.chem.late.log[,-c(1:3)])
 
 # Clustering for each time period separately
 library(factoextra)
@@ -762,8 +776,9 @@ fviz_cluster(kmean.cls, oto.chem.early2,
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
              ggtheme = theme_minimal(),
-             geom = "point"
-)
+             geom = "point")
+
+oto.chem.early$cluster <- kmean.cls$cluster
 
 # Middle
 fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "wss") # data should be scaled/standardized
@@ -792,8 +807,9 @@ fviz_cluster(kmean.cls, oto.chem.middle2,
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
              ggtheme = theme_minimal(),
-             geom = "point"
-)
+             geom = "point")
+
+oto.chem.middle$cluster <- kmean.cls$cluster
 
 # Late
 fviz_nbclust(oto.chem.late2, FUN = hcut, method = "wss") # data should be scaled/standardized
@@ -822,46 +838,15 @@ fviz_cluster(kmean.cls, oto.chem.late2,
              star.plot = TRUE, # Add segments from centroids to items
              repel = TRUE, # Avoid label overplotting (slow)
              ggtheme = theme_minimal(),
-             geom = "point"
-)
+             geom = "point")
 
-oto.chem.early$cluster <- kmean.cls$cluster
-# write.table(oto.gen.merge6, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", col.names = TRUE, row.names = FALSE)
+oto.chem.late$cluster <- kmean.cls$cluster
 
+# Bind all the data for the time periods with the clustering assignments together
+# Check to make sure all column names are the same before rbind
+clustered_bytime <- rbind(oto.chem.early, oto.chem.middle, oto.chem.late)
 
-
-
-fviz_nbclust(oto.chem, FUN = hcut, method = "wss") # data should be scaled/standardized
-fviz_nbclust(oto.chem, FUN = hcut, method = "silhouette")
-gap_stat <- clusGap(oto.chem, FUN = hcut, nstart = 25, K.max = 10, B = 50)
-fviz_gap_stat(gap_stat)
-
-library(NbClust)
-nb <- NbClust(oto.chem, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
-fviz_nbclust(nb)
-dev.off()
-
-# k-means clustering
-library(wesanderson)
-col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
-palette(col.palette)
-kmean.cls <- kmeans(oto.chem, centers = 4, nstart = 50, iter.max = 10)
-class.table.km <- table(oto.gen.merge5$Location, kmean.cls$cluster)
-class.table.km2 <- table(oto.gen.merge5$Period, kmean.cls$cluster)
-mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
-mosaicplot(class.table.km2, color = col.palette, main = 'Time period')
-
-fviz_cluster(kmean.cls, oto.chem, 
-             palette = col.palette,
-             ellipse.type = "euclid", # Concentration ellipse
-             star.plot = TRUE, # Add segments from centroids to items
-             repel = TRUE, # Avoid label overplotting (slow)
-             ggtheme = theme_minimal(),
-             geom = "point"
-)
-
-oto.gen.merge6$cluster4 <- kmean.cls$cluster
-write.table(oto.gen.merge6, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", col.names = TRUE, row.names = FALSE)
+write.table(clustered_bytime, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.clusterdbytime.txt", col.names = TRUE, row.names = FALSE)
 
 ################################################################################
 #### Discriminant Function Analysis ####
@@ -1410,17 +1395,6 @@ legend("bottomright",
 dev.off()
 
 
-#### Merge otolith data with genetic data to result in a file with 151 fish ####
-# Read in dataset containing outlier loci
-gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
-
-# Keep only larvae with genetic assignments
-gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == FALSE), ]
-
-# Merge otolith data with predicted sites with genetic data containing outliers
-oto.gen.merged <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
-# write.table(oto.gen.merged, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
-oto.gen.merged <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
 
 oto.gen.merge3 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 # write.table(oto.gen.merge3, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.8clusters.txt", col.names = TRUE, row.names = FALSE)
@@ -1434,8 +1408,9 @@ oto.gen.merge5 <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y =
 # write.table(oto.gen.merge5, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", col.names = TRUE, row.names = FALSE)
 oto.gen.merge5 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.3clusters.txt", header = TRUE)
 
-# Pie charts of four clusters based on otolith elemental cores
-oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE)
+# Pie charts of clusters based on otolith elemental cores
+# oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE) # clusters using Mg, Mn, Sn, Fe, Pb and time period - not best way to do this
+clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.clusterdbytime.txt", header = TRUE) # clusters for each time period separately using all elements except Sn
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
@@ -1444,7 +1419,8 @@ palette(col.palette)
 col.palette <- c("#fffbd3", "#f2ea8e", "#E2D200", "#46ACC8", "#E58601", "#f2b3b9", "#e04c5b", "#B40F20")
 
 # Change order of locations
-oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+# oto.gen.merge6$Location.ordered <- factor(oto.gen.merge6$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+clusters$Location <- factor(clusters$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 
 # Create column with ingress site and location & order location/time period combos
 oto.gen.merge6$Location.ordered.TP <- factor(paste(oto.gen.merge6$Location.ordered, oto.gen.merge6$Period, sep = '-'), levels = c("NC-Late", "NC-Mid", "NC-Early", "York-Late", "Roosevelt-Late", "RUMFS-Late", "RUMFS-Mid", "RUMFS-Early"))
@@ -1453,6 +1429,13 @@ oto.gen.merge6$Location.ordered.TP <- factor(paste(oto.gen.merge6$Location.order
 oto.gen.merge6$Developmental.Stage <- factor(oto.gen.merge6$Developmental.Stage, levels = c('F', 'G', 'H-', 'H', 'H+', 'I'))
 
 clusters <- split(oto.gen.merge6, oto.gen.merge6$cluster4)
+
+# Separate data by time period (clustering was done for each time period separately)
+clusters.bytime <- split(clusters, clusters$Period)
+clusters.bytime.early <- split(clusters.bytime$Early, clusters.bytime$Early$cluster)
+clusters.bytime.mid <- split(clusters.bytime$Mid, clusters.bytime$Mid$cluster)
+clusters.bytime.late <- split(clusters.bytime$Late, clusters.bytime$Late$cluster)
+
 
 # Plot together
 # Makes nice pie chart figure where each color is an ingress site
@@ -1557,9 +1540,59 @@ legend(1.2,0.5,
        col = 'black',
        pt.bg= rev(col.palette))
 
-# Plot pie charts with different colors for stages
-# Create color palette with enough colors for time periods within an ingress site to be different colors
-cols <- rainbow(6)
+# Plot pie charts for each time period's clusters separately
+# Create color palette
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+
+# Plot clusters separately for each time period
+# Clusters for early time period
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts_bytimeperiod.png", width=5, height=6, res=300, units="in")
+par(
+  mar=c(0, 0, 2.5, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  mfrow = c(3,3), 
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+pie(table(clusters.bytime.early[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('E1\n (n = 5)', 3, -1)
+pie(table(clusters.bytime.early[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('E2\n (n = 7)', 3, -1)
+pie(table(clusters.bytime.early[[3]]$Location), col = col.palette, labels = '', main = '')
+mtext('E3\n (n = 9)', 3, -1)
+
+# Clusters for middle time period
+pie(table(clusters.bytime.mid[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('M1\n (n = 24)', 3, -1)
+pie(table(clusters.bytime.mid[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('M2\n (n = 23)', 3, -1)
+pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+
+legend(-0.5,0.9,
+       legend=rev(levels(clusters.bytime$Mid$Location)),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette))
+
+# Clusters for latest time period
+pie(table(clusters.bytime.late[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('L1\n (n = 30)', 3, -1)
+pie(table(clusters.bytime.late[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('L2\n (n = 33)', 3, -1)
+pie(table(clusters.bytime.late[[3]]$Location), col = col.palette, labels = '', main = '')
+mtext('L3\n (n = 20)', 3, -1)
+
+dev.off()
+
+# Makes nice pie chart figure where each color is an ingress site
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts.png", width=5, height=4.5, res=300, units="in")
 
 par(
   mar=c(0, 0, 2, 0), # panel magin size in "line number" units
@@ -1573,20 +1606,23 @@ par(
   xpd=NA
 )
 
-pie(table(clusters[[1]]$Developmental.Stage), col = cols, labels = '', main = '')
+pie(table(clusters[[1]]$Location.ordered), col = col.palette, labels = '', main = '')
 mtext('cluster 1\n (n = 44)', 3, -1)
-pie(table(clusters[[2]]$Developmental.Stage), col = cols, labels = '', main = '')
+pie(table(clusters[[2]]$Location.ordered), col = col.palette, labels = '', main = '')
 mtext('cluster 2\n (n = 23)', 3, -1)
-pie(table(clusters[[3]]$Developmental.Stage), col = cols, labels = '', main = '')
+pie(table(clusters[[3]]$Location.ordered), col = col.palette, labels = '', main = '')
 mtext('cluster 3\n (n = 35)', 3, -1)
-pie(table(clusters[[4]]$Developmental.Stage), col = cols, labels = '', main = '')
+pie(table(clusters[[4]]$Location.ordered), col = col.palette, labels = '', main = '')
 mtext('cluster 4\n (n = 49)', 3, -1)
 
 legend(1.2,0.5,
-       legend=levels(oto.gen.merge6$Developmental.Stage),
+       legend=rev(levels(oto.gen.merge6$Location.ordered)),
        pch=22,
        col = 'black',
-       pt.bg= cols)
+       pt.bg= rev(col.palette))
+
+dev.off()
+
 
 
 # Make some plots
