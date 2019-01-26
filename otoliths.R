@@ -1951,6 +1951,69 @@ write.table(bayenv.likelihoods, "~/Documents/Graduate School/Rutgers/Summer Flou
 
 most.like <- colnames(bayenv.likelihoods[apply(bayenv.likelihoods,1, which.max)])
 
+##############################################################################
+#### Calculate genotype likelihoods for each cluster within a time period ####
+##############################################################################
+# Read in fish data with clustering assignments
+clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.clusterdbytime.txt", header = TRUE) # clusters for each time period separately using all elements except Sn
+clusters.bytime <- split(clusters, clusters$Period)
+# clusters.bytime.early <- split(clusters.bytime$Early, clusters.bytime$Early$cluster)
+# clusters.bytime.mid <- split(clusters.bytime$Mid, clusters.bytime$Mid$cluster)
+# clusters.bytime.late <- split(clusters.bytime$Late, clusters.bytime$Late$cluster)
+
+# Read in individual likelihoods and then subset to fish in early, middle and late time periods
+bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE) # these are individual likelihoods for 151 fish
+bayenv.likelihoods.early <- bayenv.likelihoods.indivs[bayenv.likelihoods.indivs$ID %in% clusters.bytime$Early$PinskyID,] # important that the fish are in same order
+bayenv.likelihoods.middle <- bayenv.likelihoods.indivs[bayenv.likelihoods.indivs$ID %in% clusters.bytime$Mid$PinskyID,] # important that the fish are in same order
+bayenv.likelihoods.late <- bayenv.likelihoods.indivs[bayenv.likelihoods.indivs$ID %in% clusters.bytime$Late$PinskyID,] # important that the fish are in same order
+
+# Multiply across all fish within a cluster within a time period
+# Early
+bayenv.likelihoods.early$ID == clusters.bytime$Early$PinskyID # super important to check fish are in the same order
+bayenv1.likes.early <- aggregate(bayenv.likelihoods.early$Pop1, by = list(clusters.bytime$Early$cluster), FUN = prod) # likelihoods for BayEnv groupings from clustering analysis in early time period
+bayenv2.likes.early <- aggregate(bayenv.likelihoods.early$Pop2, by = list(clusters.bytime$Early$cluster), FUN = prod)
+bayenv3.likes.early <- aggregate(bayenv.likelihoods.early$Pop3, by = list(clusters.bytime$Early$cluster), FUN = prod)
+bayenv4.likes.early <- aggregate(bayenv.likelihoods.early$Pop4, by = list(clusters.bytime$Early$cluster), FUN = prod)
+bayenv5.likes.early <- aggregate(bayenv.likelihoods.early$Pop5, by = list(clusters.bytime$Early$cluster), FUN = prod) 
+
+bayenv.likelihoods.early.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.early[,2])), log10(as.numeric(bayenv2.likes.early[,2])), log10(as.numeric(bayenv3.likes.early[,2])), log10(as.numeric(bayenv4.likes.early[,2])), log10(as.numeric(bayenv5.likes.early[,2]))))
+colnames(bayenv.likelihoods.early.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
+rownames(bayenv.likelihoods.early.clustered) <- c("cluster1", "cluster2", "cluster3")
+write.table(bayenv.likelihoods.early.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_3clusters.txt", row.names = TRUE, col.names = TRUE)
+
+most.like <- colnames(bayenv.likelihoods.early.clustered[apply(bayenv.likelihoods.early,1, which.max)]) # pick most likely origin region for each cluster
+
+# Middle
+bayenv.likelihoods.middle$ID == clusters.bytime$Mid$PinskyID # super important to check fish are in the same order
+bayenv1.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop1, by = list(clusters.bytime$Mid$cluster), FUN = prod) # likelihoods for BayEnv groupings - same as above but assumes ~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt has been read in
+bayenv2.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop2, by = list(clusters.bytime$Mid$cluster), FUN = prod)
+bayenv3.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop3, by = list(clusters.bytime$Mid$cluster), FUN = prod)
+bayenv4.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop4, by = list(clusters.bytime$Mid$cluster), FUN = prod)
+bayenv5.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop5, by = list(clusters.bytime$Mid$cluster), FUN = prod) 
+
+bayenv.likelihoods.middle.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.middle[,2])), log10(as.numeric(bayenv2.likes.middle[,2])), log10(as.numeric(bayenv3.likes.middle[,2])), log10(as.numeric(bayenv4.likes.middle[,2])), log10(as.numeric(bayenv5.likes.middle[,2]))))
+colnames(bayenv.likelihoods.middle.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
+rownames(bayenv.likelihoods.middle.clustered) <- c("cluster1", "cluster2")
+write.table(bayenv.likelihoods.middle.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_3clusters.txt", row.names = TRUE, col.names = TRUE)
+
+most.like <- colnames(bayenv.likelihoods.middle.clustered[apply(bayenv.likelihoods.middle.clustered,1, which.max)]) # pick most likely origin region for each cluster
+
+# Late
+bayenv.likelihoods.late$ID == clusters.bytime$Late$PinskyID # super important to check fish are in the same order
+bayenv1.likes.late <- aggregate(bayenv.likelihoods.late$Pop1, by = list(clusters.bytime$Late$cluster), FUN = prod) # likelihoods for BayEnv groupings - same as above but assumes ~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt has been read in
+bayenv2.likes.late <- aggregate(bayenv.likelihoods.late$Pop2, by = list(clusters.bytime$Late$cluster), FUN = prod)
+bayenv3.likes.late <- aggregate(bayenv.likelihoods.late$Pop3, by = list(clusters.bytime$Late$cluster), FUN = prod)
+bayenv4.likes.late <- aggregate(bayenv.likelihoods.late$Pop4, by = list(clusters.bytime$Late$cluster), FUN = prod)
+bayenv5.likes.late <- aggregate(bayenv.likelihoods.late$Pop5, by = list(clusters.bytime$Late$cluster), FUN = prod) 
+
+bayenv.likelihoods.late.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.late[,2])), log10(as.numeric(bayenv2.likes.late[,2])), log10(as.numeric(bayenv3.likes.late[,2])), log10(as.numeric(bayenv4.likes.late[,2])), log10(as.numeric(bayenv5.likes.late[,2]))))
+colnames(bayenv.likelihoods.late.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
+rownames(bayenv.likelihoods.late.clustered) <- c("cluster1", "cluster2", "cluster3")
+write.table(bayenv.likelihoods.late.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt", row.names = TRUE, col.names = TRUE)
+
+most.like <- colnames(bayenv.likelihoods.late.clustered[apply(bayenv.likelihoods.late.clustered,1, which.max)]) # pick most likely origin region for each cluster
+
+
 #### Plot population likelihoods of otolith populations/clusters ####
 # plot(pops.likelihood[,'s.likes'] ~ pops.likelihood[,'n.likes'], ylab = 'Southern likelihood', xlab = 'Northern likelihood', col = "blue", xlim = c(-280,-150), ylim = c(-280,-150))
 # points(pops.likelihood[2,'n.likes'], pops.likelihood[2,'s.likes'], col = 'tomato')
