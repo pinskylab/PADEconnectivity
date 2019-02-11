@@ -1084,7 +1084,7 @@ legend("bottomright",
 plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
 ct1 <- table(test.68$Location.ordered, plda$class)
 props2 <- prop.table(ct1,1)
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
@@ -1111,7 +1111,7 @@ props3 <- prop.table(ct1,1) # 'origin' signature/total number of fished that ing
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test sets")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
        pch=22,
@@ -1132,8 +1132,8 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set (n = 138)")
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 59)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 149)")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)")
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)")
 legend("bottomright",
        legend=rev(levels(otoliths.sub.log.trans2$Location)),
