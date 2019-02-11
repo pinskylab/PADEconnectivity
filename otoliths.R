@@ -124,56 +124,46 @@ par(
 
 # boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 boxplot(otoliths$Mg ~ locations, ylab = 'Mg:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mg.anova <- aov(otoliths.sub.log$Mg ~ locations*period)
+mg.anova <- aov(Mg ~ Location*Period, data = otoliths.sub.log)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
 
 boxplot(otoliths$Mn ~ locations, ylab = 'Mn:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-mn.anova <- aov(otoliths.sub$Mn ~ locations*period)
-leastsquare <- lsmeans(mn.anova, pairwise ~ locations, adjust = "tukey")
+mn.anova <- aov(Mn ~ Location*Period, data = otoliths.sub.log)
+with(otoliths.sub.log, interaction.plot(Location, Period, Mn))
+leastsquare <- lsmeans(mn.anova, pairwise ~ Location, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
+tapply(otoliths.sub.log$Mn, otoliths.sub.log[c('Location', 'Period')], mean)
 
 boxplot(otoliths$Fe ~ locations, ylab = 'Fe:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-fe.anova <- aov(otoliths.sub$Fe ~ locations*period)
-leastsquare <- lsmeans(fe.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+fe.anova <- aov(Fe ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$Cu ~ locations, ylab = 'Cu:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-cu.anova <- aov(otoliths.sub$Cu ~ locations*period)
-leastsquare <- lsmeans(cu.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+cu.anova <- aov(Cu ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$Sr ~ locations, ylab = 'Sr:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-sr.anova <- aov(otoliths.sub$Sr ~ locations*period)
-leastsquare <- lsmeans(sr.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+sr.anova <- aov(Sr ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$Cd ~ locations, ylab = 'Cd:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-cd.anova <- aov(otoliths.sub$Cd ~ locations*period)
-leastsquare <- lsmeans(cd.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+cd.anova <- aov(Cd ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$Ba ~ locations, ylab = 'Ba:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-ba.anova <- aov(otoliths.sub$Ba ~ locations*period)
-leastsquare <- lsmeans(ba.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+ba.anova <- aov(Ba ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$Sn ~ locations, ylab = 'Sn:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
-sn.anova <- aov(otoliths.sub$Sn ~ locations*period)
-leastsquare <- lsmeans(sn.anova, pairwise ~ locations, adjust = "tukey")
+sn.anova <- aov(Sn ~ Location*Period, data = otoliths.sub.log)
+with(otoliths.sub.log, interaction.plot(Location, Period, Sn))
+leastsquare <- lsmeans(sn.anova, pairwise ~ Location, adjust = "tukey")
 cld(leastsquare, alpha = 0.05, Letters = letters)
+tapply(otoliths.sub.log$Sn, otoliths.sub.log[c('Location', 'Period')], mean)
 
 boxplot(otoliths$Pb ~ locations, ylab = 'Pb:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
-pb.anova <- aov(otoliths.sub$Pb ~ locations*period)
-leastsquare <- lsmeans(pb.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+pb.anova <- aov(Pb ~ Location*Period, data = otoliths.sub.log)
 
 boxplot(otoliths$U ~ locations, ylab = 'U:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mtext("Ingress site",1, line = 2.5)
-u.anova <- aov(otoliths.sub$U ~ locations*period)
-leastsquare <- lsmeans(u.anova, pairwise ~ locations, adjust = "tukey")
-cld(leastsquare, alpha = 0.05, Letters = letters)
+u.anova <- aov(U ~ Location*Period, data = otoliths.sub.log)
 
 dev.off()
     
@@ -245,8 +235,36 @@ cld(leastsquare, alpha = 0.05, Letters = letters)
 
 dev.off()
 
+# I only have microchemistry data for NC and RUMFS from all 3 time periods. Two way ANOVA for NJ & NC fish across time. One way ANOVA for all sites for latest time period.
+otoliths.sub.log2 <- otoliths.sub.log[otoliths.sub.log$Location %in% c('NC','RUMFS'),]
+sr.anova <- aov(Sr ~ Location*Period, data = otoliths.sub.log2)
+mg.anova <- aov(Mg ~ Location*Period, data = otoliths.sub.log2)
+mn.anova <- aov(Mn ~ Location*Period, data = otoliths.sub.log2)
+with(otoliths.sub.log2, interaction.plot(Period, Location, Mn))
+fe.anova <- aov(Fe ~ Location*Period, data = otoliths.sub.log2)
+cu.anova <- aov(Cu ~ Location*Period, data = otoliths.sub.log2)
+cd.anova <- aov(Cd ~ Location*Period, data = otoliths.sub.log2)
+ba.anova <- aov(Ba ~ Location*Period, data = otoliths.sub.log2)
+sn.anova <- aov(Sn ~ Location*Period, data = otoliths.sub.log2)
+with(otoliths.sub.log2, interaction.plot(Period, Location, Sn))
+pb.anova <- aov(Pb ~ Location*Period, data = otoliths.sub.log2)
+u.anova <- aov(U ~ Location*Period, data = otoliths.sub.log2)
+
+otoliths.sub.log.late <- otoliths.sub.log[otoliths.sub.log$Period %in% c('Late'),]
+sr.anova <- aov(Sr ~ Location, data = otoliths.sub.log.late)
+mg.anova <- aov(Mg ~ Location, data = otoliths.sub.log.late)
+mn.anova <- aov(Mn ~ Location, data = otoliths.sub.log.late)
+fe.anova <- aov(Fe ~ Location, data = otoliths.sub.log.late)
+cu.anova <- aov(Cu ~ Location, data = otoliths.sub.log.late)
+cd.anova <- aov(Cd ~ Location, data = otoliths.sub.log.late)
+ba.anova <- aov(Ba ~ Location, data = otoliths.sub.log.late)
+sn.anova <- aov(Sn ~ Location, data = otoliths.sub.log.late)
+pb.anova <- aov(Pb ~ Location, data = otoliths.sub.log.late)
+u.anova <- aov(U ~ Location, data = otoliths.sub.log.late)
+
+
 # MANOVA
-otoliths.sub.log
+otoliths.sub.log # all fish
 oto10 <- cbind(locations, otoliths.sub.log[,-c(1:3)])
 fit <- manova(as.matrix(oto10[,-1]) ~ oto10$locations)
 summary(fit)
@@ -855,14 +873,17 @@ library(car) # beware, both car and ellipse have ellipse functions
 library(ellipse)
 
 # transform to normal if necessary and standardize
-# otoliths.sub <- otoliths[,c(1,4,5,12:21)]
-otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
+otoliths.sub <- otoliths[,c(1,4,5,12:21)]
 rownames(otoliths.sub) <- otoliths.sub[,1]
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]) ) # log transform, all elements except Sn
+otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:12]))
+# otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
+# rownames(otoliths.sub) <- otoliths.sub[,1]
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Ba', 'Sn')]), log10(otoliths.sub[,c('Fe', 'Cu', 'Cd', 'Pb', 'U')]+1) ) # log transform, adding 1 to elements with zero values
-otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
+# otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
 # otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
-otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:8]))
+# otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:8]))
 pairs(otoliths.sub.log.trans)
 scatterplotMatrix(otoliths.sub.log.trans)
 Location <- otoliths.sub.log$Location
@@ -875,7 +896,9 @@ otoliths.sub.log.trans2 <- cbind(Location.ordered, otoliths.sub.log.trans)
 # names(kmean.cls$cluster) == rownames(otoliths.sub.log.trans) # make sure individuals are in the right order
 # otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
 # dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) 
-dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
+# dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
+dfa1 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
+
 
 # Assess accuracy of the prediction
 # percent correct for each category of Location
@@ -1121,36 +1144,47 @@ library(ellipse)
 #### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody. Doing this for each time period separately ####
 # Read in non-zero otolith data
 otoliths <- read.table("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt", header = TRUE, sep = '\t')
-otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
+otoliths.sub <- otoliths[,c("Fish.ID","Location","Period",'Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]
 rownames(otoliths.sub) <- otoliths.sub[,1]
-otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
+# otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]) ) # log transform, all elements except Sn
 
 # Split data into three time periods
 time_period <- split(otoliths.sub.log, f = otoliths.sub.log$Period) # a list containing early, late and middle
 
 # Prepare each dataset
 # Early
-early.trans <- as.data.frame(scale(time_period[[1]][4:8]))
+early.trans <- as.data.frame(scale(time_period[[1]][4:12]))
 early.locs <- time_period[[1]]$Location
 early.locs.ordered <- factor(early.locs, levels = c("NC", "RUMFS"))
 early.trans2 <- cbind(early.locs.ordered, early.trans)
 
 # Middle
-middle.trans <- as.data.frame(scale(time_period[[3]][4:8]))
+middle.trans <- as.data.frame(scale(time_period[[3]][4:12]))
 middle.locs <- time_period[[3]]$Location
 middle.locs.ordered <- factor(middle.locs, levels = c("NC", "RUMFS"))
 middle.trans2 <- cbind(middle.locs.ordered, middle.trans)
 
 # Late
-late.trans <- as.data.frame(scale(time_period[[2]][4:8]))
+late.trans <- as.data.frame(scale(time_period[[2]][4:12]))
 late.locs <- time_period[[2]]$Location
 late.locs.ordered <- factor(late.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 late.trans2 <- cbind(late.locs.ordered, late.trans)
 
 # LDA for early time period
-early.dfa <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, prior = c(1,1)/2)
+early.dfa <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = early.trans2, prior = c(1,1)/2)
 early.dfa.values <- predict(early.dfa) # Calculates linear discriminants, as above
 early.dfa.values2 <- cbind.data.frame(early.dfa.values$x, early.locs.ordered)
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/lda_barplots_3timeperiods.png", width=10, height=5, res=300, units="in")
+par(
+  mar=c(5, 4.5, 2.5, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(1,3) # point size, which is the font size
+)
 
 early.regions <- split(early.dfa.values2, f = early.dfa.values2$early.locs.ordered)
 
@@ -1163,10 +1197,10 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-early.dfa1 <- lda(early.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
+early.dfa1 <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "1989 - 1993\n(n = 24)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1989 - 1993\n(n = 24)")
 legend("bottomright",
        legend=rev(levels(early.trans2$early.locs.ordered)),
        pch=22,
@@ -1176,7 +1210,7 @@ legend("bottomright",
        bty = "n")
 
 # LDA for middle time period
-middle.dfa <- lda(middle.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = middle.trans2, prior = c(1,1)/2)
+middle.dfa <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = middle.trans2, prior = c(1,1)/2)
 middle.dfa.values <- predict(middle.dfa) # Calculates linear discriminants, as above
 middle.dfa.values2 <- cbind.data.frame(middle.dfa.values$x, middle.locs.ordered)
 
@@ -1189,10 +1223,10 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-middle.dfa1 <- lda(middle.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
+middle.dfa1 <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(middle.trans2$middle.locs.ordered, middle.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "1998 - 2002\n(n = 57)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1998 - 2002\n(n = 57)")
 legend("bottomright",
        legend=rev(levels(middle.trans2$middle.locs.ordered)),
        pch=22,
@@ -1202,7 +1236,7 @@ legend("bottomright",
        bty = "n")
 
 # LDA for late time period
-late.dfa <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, prior = c(1,1,1,1)/4)
+late.dfa <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, prior = c(1,1,1,1)/4)
 late.dfa.values <- predict(late.dfa) # Calculates linear discriminants, as above
 late.dfa.values2 <- cbind.data.frame(late.dfa.values$x, late.locs.ordered)
 
@@ -1215,10 +1249,10 @@ legend("topleft",
        pch=19,
        col = rev(col.palette))
 
-late.dfa1 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
+late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
 ct1 <- table(late.trans2$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "2008 - 2012\n(n = 116)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "2008 - 2012\n(n = 116)")
 legend("bottomright",
        legend=rev(levels(late.trans2$late.locs.ordered)),
        pch=22,
@@ -1226,6 +1260,8 @@ legend("bottomright",
        pt.bg= rev(col.palette),
        title = expression(bold('Collection location')), 
        bty = "n")
+
+dev.off()
 
 # LDA using fish within 68% confidence ellipses
 # Draw data ellipses for each ingress site
@@ -1979,9 +2015,9 @@ bayenv5.likes.early <- aggregate(bayenv.likelihoods.early$Pop5, by = list(cluste
 bayenv.likelihoods.early.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.early[,2])), log10(as.numeric(bayenv2.likes.early[,2])), log10(as.numeric(bayenv3.likes.early[,2])), log10(as.numeric(bayenv4.likes.early[,2])), log10(as.numeric(bayenv5.likes.early[,2]))))
 colnames(bayenv.likelihoods.early.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
 rownames(bayenv.likelihoods.early.clustered) <- c("cluster1", "cluster2", "cluster3")
-write.table(bayenv.likelihoods.early.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_3clusters.txt", row.names = TRUE, col.names = TRUE)
+# write.table(bayenv.likelihoods.early.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_3clusters.txt", row.names = TRUE, col.names = TRUE)
 
-most.like <- colnames(bayenv.likelihoods.early.clustered[apply(bayenv.likelihoods.early,1, which.max)]) # pick most likely origin region for each cluster
+most.like <- colnames(bayenv.likelihoods.early.clustered[apply(bayenv.likelihoods.early.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
 # Middle
 bayenv.likelihoods.middle$ID == clusters.bytime$Mid$PinskyID # super important to check fish are in the same order
@@ -1994,7 +2030,7 @@ bayenv5.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop5, by = list(clus
 bayenv.likelihoods.middle.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.middle[,2])), log10(as.numeric(bayenv2.likes.middle[,2])), log10(as.numeric(bayenv3.likes.middle[,2])), log10(as.numeric(bayenv4.likes.middle[,2])), log10(as.numeric(bayenv5.likes.middle[,2]))))
 colnames(bayenv.likelihoods.middle.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
 rownames(bayenv.likelihoods.middle.clustered) <- c("cluster1", "cluster2")
-write.table(bayenv.likelihoods.middle.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_3clusters.txt", row.names = TRUE, col.names = TRUE)
+# write.table(bayenv.likelihoods.middle.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_3clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.middle.clustered[apply(bayenv.likelihoods.middle.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
@@ -2009,7 +2045,7 @@ bayenv5.likes.late <- aggregate(bayenv.likelihoods.late$Pop5, by = list(clusters
 bayenv.likelihoods.late.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.late[,2])), log10(as.numeric(bayenv2.likes.late[,2])), log10(as.numeric(bayenv3.likes.late[,2])), log10(as.numeric(bayenv4.likes.late[,2])), log10(as.numeric(bayenv5.likes.late[,2]))))
 colnames(bayenv.likelihoods.late.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
 rownames(bayenv.likelihoods.late.clustered) <- c("cluster1", "cluster2", "cluster3")
-write.table(bayenv.likelihoods.late.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt", row.names = TRUE, col.names = TRUE)
+# write.table(bayenv.likelihoods.late.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.late.clustered[apply(bayenv.likelihoods.late.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
