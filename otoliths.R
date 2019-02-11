@@ -1273,11 +1273,11 @@ legend("bottomright",
 
 dev.off()
 
-# LDA using fish within 68% confidence ellipses
+# LDA for late time period only using fish within 68% confidence ellipses
 # Draw data ellipses for each ingress site
 loc.groups <- split(late.dfa.values2, late.dfa.values2$late.locs.ordered)
-dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-2,3), ylim = c(-3,2)) # NC
-dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68, xlim = c(-1,7)) # York
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-3,2.5)) # NC
+dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68) # York
 dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68) # Roosevelt
 dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68) # RUMFS
 
@@ -1336,38 +1336,39 @@ b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
 b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
 
 # Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
-NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
-NC.out <- NC.out[-3,] # Remove NCPD 108
-NC.out <- rbind(NC.out, loc.groups$NC['NCPD 150',]) # add NCPD 150
+NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(a.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(b.nc)^2),3) >= 1.000),]
 NC.in <- loc.groups$NC[!rownames(loc.groups$NC) %in% rownames(NC.out),]
 
 York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
-York.out <- York.out[-3,] # remove PADE09_067
+remove.York <- c('PADE10_048')
+York.out <- York.out[!rownames(York.out) %in% remove.York,] # remove PADE10_048
+York.out <- rbind(York.out, loc.groups$York['PADE10_050',]) # Add fish on the edge of the ellipse
 York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
 
 Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
-Roosevelt.out <- Roosevelt.out[-12,] # remove PADE10_015
+remove.Roosevelt <- c('PADE10_015') # remove PADE10_015
+Roosevelt.out <- Roosevelt.out[!rownames(Roosevelt.out) %in% remove.Roosevelt,]
 Roosevelt.in <- loc.groups$Roosevelt[!rownames(loc.groups$Roosevelt) %in% rownames(Roosevelt.out),]
 
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
-RUMFS.out <- RUMFS.out[-5,] # remove PADE09_014
+RUMFS.out <- rbind(RUMFS.out, loc.groups$RUMFS['PADE12_003',]) # add PADE12_003 
 RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out),]
 
 # Combine Fish IDs of data that was within 68% confidence ellipses
 late.in.68 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-late.train.68 <- late.trans2[rownames(late.trans2) %in% late.in.68,] # 85 x 6
+late.train.68 <- late.trans2[rownames(late.trans2) %in% late.in.68,] # 82 x 10
 late.train <- which(rownames(late.trans2) %in% late.in.68) # just need the indices
 
-late.test.68 <- late.trans2[!(rownames(late.trans2) %in% late.in.68),] # 31 x 6
+late.test.68 <- late.trans2[!(rownames(late.trans2) %in% late.in.68),] # 34 x 10
 
 # Use these individuals to redo LDA
-late.dfa1 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
-late.dfa2 <- lda(late.locs.ordered ~ Mg + Mn + Fe + Sn + Pb, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
+late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
+late.dfa2 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
 ct1 <- table(late.train.68$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set")
 legend("bottomright",
        legend=rev(levels(late.trans2$late.locs.ordered)),
        pch=22,
@@ -1380,7 +1381,7 @@ legend("bottomright",
 plda <- predict(late.dfa2, newdata = late.trans2[-late.train,])
 ct2 <- table(late.test.68$late.locs.ordered, plda$class)
 props2 <- prop.table(ct2,1)
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Test set")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set")
 legend("bottomright",
        legend=rev(levels(late.trans2$late.locs.ordered)),
        pch=22,
@@ -1406,7 +1407,7 @@ props3 <- prop.table(ct3,1) # 'origin' signature/total number of fished that ing
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training & test sets")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets")
 legend("bottomright",
        legend=rev(levels(late.trans2$late.locs.ordered)),
        pch=22,
@@ -1427,8 +1428,8 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted 'origin' signature", main = "Training set (n = 85)")
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 31)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 82)")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 34)")
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 116)")
 legend("bottomright",
        legend=rev(levels(late.trans2$late.locs.ordered)),
