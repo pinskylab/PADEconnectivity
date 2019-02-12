@@ -126,19 +126,17 @@ late1 <- colSums(clusters.bytime.late[[1]][16:35], na.rm = TRUE)/(2*colSums(!is.
 late2 <- colSums(clusters.bytime.late[[2]][16:35], na.rm = TRUE)/(2*colSums(!is.na(clusters.bytime.late[[2]][16:35])))
 late3 <- colSums(clusters.bytime.late[[3]][16:35], na.rm = TRUE)/(2*colSums(!is.na(clusters.bytime.late[[3]][16:35])))
 
-# Keep only one allele per locus
-odds <- seq(1,20,2) # odd indicies to keep
+# Keep only one allele per locus. Must match alleles in candidate adult populations
+early1.odds <- early1[names(early1) %in% rownames(pop.allele.freqs5.odds2)]
+early2.odds <- early2[names(early2) %in% rownames(pop.allele.freqs5.odds2)]
+early3.odds <- early3[names(early3) %in% rownames(pop.allele.freqs5.odds2)]
 
-early1.odds <- early1[odds]
-early2.odds <- early2[odds]
-early3.odds <- early3[odds]
+mid1.odds <- mid1[names(mid1) %in% rownames(pop.allele.freqs5.odds2)]
+mid2.odds <- mid2[names(mid2) %in% rownames(pop.allele.freqs5.odds2)]
 
-mid1.odds <- mid1[odds]
-mid2.odds <- mid2[odds]
-
-late1.odds <- late1[odds]
-late2.odds <- late2[odds]
-late3.odds <- late3[odds]
+late1.odds <- late1[names(late1) %in% rownames(pop.allele.freqs5.odds2)]
+late2.odds <- late2[names(late2) %in% rownames(pop.allele.freqs5.odds2)]
+late3.odds <- late3[names(late3) %in% rownames(pop.allele.freqs5.odds2)]
 
 # Plot points for early1 on top of adult allele frequency graph
 points(4, early1.odds[1], col = cols[10])
@@ -236,9 +234,20 @@ points(jitter(4), late3.odds[8], col = cols[3])
 points(4, late3.odds[9], col = cols[2])
 points(jitter(4), late3.odds[10], col = cols[1])
 
-##########################################################################################################################
-# Difference between adult and larval allele frequencies. Smallest difference seems to correspond to ML origin population
+#########################################################################################################################################
+# Difference between adult and larval allele frequencies. Smallest difference seems to correspond to ML origin population, except for M2
 sum(abs(pop.allele.freqs5.odds2[,'Pop2'] - mid2.odds))
 sum(abs(pop.allele.freqs5.odds2[,'Pop4'] - mid2.odds))
 
-sum(abs(pop.allele.freqs5.odds2[,'Pop1'] - late1.odds))
+diffs <- rbind(
+colSums(abs(pop.allele.freqs5.odds2 - early1.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - early2.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - early3.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - mid1.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - mid2.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - late1.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - late2.odds)),
+colSums(abs(pop.allele.freqs5.odds2 - late3.odds))
+)
+
+rownames(diffs) <- c('E1', 'E2', 'E3', 'M1', 'M2', 'L1', 'L2', 'L3')
