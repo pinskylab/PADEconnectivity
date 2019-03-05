@@ -6,13 +6,21 @@
 #### is calculated using the observed allele frequency of the BayEnv population the alleles are drawn from. These genotype likelihoods are then multipled across the number  
 #### of individuals in a group, which is the depth of the simulated array
 
-# Read in cluster sizes
-oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE)
-table(oto.gen.merge6$cluster4)
-cluster.sizes <- as.numeric(table(oto.gen.merge6$cluster4))
+# Read in cluster sizes & set a vector of cluster sizes of which to resample
+# oto.gen.merge6 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.4clusters.txt", header = TRUE)
+# table(oto.gen.merge6$cluster4)
+# cluster.sizes <- as.numeric(table(oto.gen.merge6$cluster4))
+
+clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.clusterdbytime.txt", header = TRUE) # clusters for each time period separately using all elements except Sn
+clusters.bytime <- split(clusters, clusters$Period)
+cluster.sizes <- as.numeric(table(clusters.bytime$Late$cluster)) # this will need to be set for early, middle and late separately
 
 # Read in the likelihoods for each cluster
-obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_4clusters.txt")
+# obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_4clusters.txt") # when clustering is done across all time periods
+
+# obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+# obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt', header = TRUE) # middle clusters
+obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt', header = TRUE) # late clusters
 
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
@@ -22,13 +30,9 @@ odds <- seq(1,20,2) # odd indicies to keep
 pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
 
 # Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
-# Set group size (n)
-# cluster.sizes <- 23 # also works
-# obs.likes <- obs.likes[1,]
-# cluster.sizes <- c(5,1) # this is working........
-# obs.likes <- obs.likes[2:3,]
-cluster.sizes <- 53
-obs.likes <- obs.likes[2,]
+# Set group size (n) for testing one distribution at a time
+cluster.sizes <- 20
+obs.likes <- obs.likes[3,]
 
 dist.likes <- data.frame()
 
