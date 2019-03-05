@@ -2034,8 +2034,8 @@ bayenv5.likes.early <- aggregate(bayenv.likelihoods.early$Pop5, by = list(cluste
 
 bayenv.likelihoods.early.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.early[,2])), log10(as.numeric(bayenv2.likes.early[,2])), log10(as.numeric(bayenv3.likes.early[,2])), log10(as.numeric(bayenv4.likes.early[,2])), log10(as.numeric(bayenv5.likes.early[,2]))))
 colnames(bayenv.likelihoods.early.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
-rownames(bayenv.likelihoods.early.clustered) <- c("cluster1", "cluster2", "cluster3")
-# write.table(bayenv.likelihoods.early.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_3clusters.txt", row.names = TRUE, col.names = TRUE)
+rownames(bayenv.likelihoods.early.clustered) <- c("cluster1", "cluster2", "cluster3", "cluster4", "cluster5", "cluster6")
+# write.table(bayenv.likelihoods.early.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.early.clustered[apply(bayenv.likelihoods.early.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
@@ -2050,7 +2050,7 @@ bayenv5.likes.middle <- aggregate(bayenv.likelihoods.middle$Pop5, by = list(clus
 bayenv.likelihoods.middle.clustered <- as.data.frame(cbind(log10(as.numeric(bayenv1.likes.middle[,2])), log10(as.numeric(bayenv2.likes.middle[,2])), log10(as.numeric(bayenv3.likes.middle[,2])), log10(as.numeric(bayenv4.likes.middle[,2])), log10(as.numeric(bayenv5.likes.middle[,2]))))
 colnames(bayenv.likelihoods.middle.clustered) <- c("bayenv1.likes", "bayenv2.likes", "bayenv3.likes", "bayenv4.likes", "bayenv5.likes")
 rownames(bayenv.likelihoods.middle.clustered) <- c("cluster1", "cluster2")
-# write.table(bayenv.likelihoods.middle.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_3clusters.txt", row.names = TRUE, col.names = TRUE)
+# write.table(bayenv.likelihoods.middle.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.middle.clustered[apply(bayenv.likelihoods.middle.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
