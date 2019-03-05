@@ -875,8 +875,8 @@ library(ellipse)
 # transform to normal if necessary and standardize
 otoliths.sub <- otoliths[,c(1,4,5,12:21)]
 rownames(otoliths.sub) <- otoliths.sub[,1]
-otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]) ) # log transform, all elements except Sn
-otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:12]))
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U', 'Sn')]) ) # log transform all elements
+otoliths.sub.log.trans <- as.data.frame(scale(otoliths.sub.log[4:13]))
 # otoliths.sub <- otoliths[,c("Fish.ID","Location","Period","Mg","Mn","Fe","Sn","Pb")]
 # rownames(otoliths.sub) <- otoliths.sub[,1]
 # otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period", "Sr")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Sn', 'Pb', 'U')]+0.00000001) ) # log transform
@@ -897,7 +897,7 @@ otoliths.sub.log.trans2 <- cbind(Location.ordered, otoliths.sub.log.trans)
 # otoliths.sub.log.trans2 <- cbind(Cluster, otoliths.sub.log.trans)
 # dfa1 <- lda(Cluster ~ Mg + Mn + Fe + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4) 
 # dfa1 <- lda(Location.ordered ~ Mg + Mn + Fe + Sn + Pb, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
-dfa1 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
+dfa1 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)  # the jack-knifing doesn't result in coordinates for plotting
 
 
 # Assess accuracy of the prediction
@@ -924,7 +924,7 @@ legend("bottomright",
        bty = "n")
 
 #### DFA using 68% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody ####
-dfa2 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
+dfa2 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, prior = c(1,1,1,1)/4)
 plot(dfa2)
 # ld1 <- dfa2$scaling[1,1]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,1]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,1]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,1]*otoliths.sub.log.trans2$Sn
 # ld2 <- dfa2$scaling[1,2]*otoliths.sub.log.trans2$Mg + dfa2$scaling[2,2]*otoliths.sub.log.trans2$Mn + dfa2$scaling[3,2]*otoliths.sub.log.trans2$Fe + dfa2$scaling[4,2]*otoliths.sub.log.trans2$Sn
@@ -943,9 +943,9 @@ legend("topright",
 
 # Draw data ellipses for each ingress site
 loc.groups <- split(dfa.values2, dfa.values2$Location)
-dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-3,3)) # NC
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68) # NC
 dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68) # York
-dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68, ylim = c(-4,2.5)) # Roosevelt
+dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68) # Roosevelt
 dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68) # RUMFS
 
 # Fit ellipse for each ingress location
@@ -1023,27 +1023,23 @@ b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
 
 # Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
 NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
-remove.NC <- c("NCPD 015", "NCPD 023", "NCPD 086", "NCPD 082", "NCPD 093", "NCPD 092") #fish that are actually in ellipse
-NC.out <- NC.out[!rownames(NC.out) %in% remove.NC,]
-NC.out <- rbind(NC.out, loc.groups$NC[c('NCPD 071', 'NCPD 117'), ]) # Add fish that are on edge of ellipse: NCPD 071, NCPD 117
 NC.in <- loc.groups$NC[!rownames(loc.groups$NC) %in% rownames(NC.out),]
 # NC.in <- loc.groups$NC[-which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
 
 York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
-remove.York <- c("PADE12_020")
-York.out <- York.out[!rownames(York.out) %in% remove.York,] # Remove PADE12_020
+remove.York <- c("PADE09_069", "PADE10_050")
+York.out <- York.out[!rownames(York.out) %in% remove.York,] # PADE09_069 & PADE10_050
 York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
 # York.in <- loc.groups$York[-which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
 
 Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
-remove.Roosevelt <- c('PADE10_015', 'PADE09_039')
+remove.Roosevelt <- c('PADE09_029')
 Roosevelt.out <- Roosevelt.out[!rownames(Roosevelt.out) %in% remove.Roosevelt,]
-Roosevelt.out <- rbind(Roosevelt.out, loc.groups$Roosevelt[c('PADE08_034'), ]) # Add fish that are on edge of ellipse: PADE08_034
 # Roosevelt.in <- loc.groups$Roosevelt[-which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000),]
 Roosevelt.in <- loc.groups$Roosevelt[!rownames(loc.groups$Roosevelt) %in% rownames(Roosevelt.out),]
 
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
-remove.RUMFS <- c('PADE92_003', 'PADE09_001')
+remove.RUMFS <- c('PADE92_004')
 RUMFS.out <- RUMFS.out[!rownames(RUMFS.out) %in% remove.RUMFS,]
 RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out),]
 # RUMFS.in <- loc.groups$RUMFS[-which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
@@ -1061,14 +1057,14 @@ RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out
 in.68 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-train.68 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.68,] # 149 x 10
+train.68 <- otoliths.sub.log.trans2[rownames(otoliths.sub.log.trans2) %in% in.68,] # 141 x 11
 train <- which(rownames(otoliths.sub.log.trans2) %in% in.68) # just need the indices
 
-test.68 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.68),] # 48 x 10
+test.68 <- otoliths.sub.log.trans2[!(rownames(otoliths.sub.log.trans2) %in% in.68),] # 56 x 11
 
 # Use these individuals to redo LDA
-dfa3 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
-dfa4 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
+dfa3 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = train)  # the jack-knifing doesn't result in coordinates for plotting
+dfa4 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
 ct1 <- table(train.68$Location.ordered, dfa3$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set")
@@ -1124,7 +1120,7 @@ legend("bottomright",
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/lda_barplots.png", width=10, height=5, res=300, units="in")
 
 par(
-  mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
+  mar=c(5, 4, 2, 1), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
@@ -1355,14 +1351,14 @@ RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out
 late.in.68 <- c(rownames(NC.in), rownames(York.in), rownames(Roosevelt.in), rownames(RUMFS.in))
 
 # Now divide elemental data to only these fish (training) and the rest are test data
-late.train.68 <- late.trans2[rownames(late.trans2) %in% late.in.68,] # 82 x 10
+late.train.68 <- late.trans2[rownames(late.trans2) %in% late.in.68,] # 86 x 11
 late.train <- which(rownames(late.trans2) %in% late.in.68) # just need the indices
 
-late.test.68 <- late.trans2[!(rownames(late.trans2) %in% late.in.68),] # 34 x 10
+late.test.68 <- late.trans2[!(rownames(late.trans2) %in% late.in.68),] # 30 x 11
 
 # Use these individuals to redo LDA
-late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
-late.dfa2 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
+late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4, subset = late.train)  # the jack-knifing doesn't result in coordinates for plotting
+late.dfa2 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
 ct1 <- table(late.train.68$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set")
