@@ -1276,10 +1276,10 @@ dev.off()
 # LDA for late time period only using fish within 68% confidence ellipses
 # Draw data ellipses for each ingress site
 loc.groups <- split(late.dfa.values2, late.dfa.values2$late.locs.ordered)
-dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, xlim = c(-3,2.5)) # NC
+dataEllipse(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"], levels = 0.68, ylim = c(-2,2.5)) # NC
 dataEllipse(loc.groups$York[,"LD1"], loc.groups$York[,"LD2"], levels = 0.68) # York
 dataEllipse(loc.groups$Roosevelt[,"LD1"], loc.groups$Roosevelt[,"LD2"], levels = 0.68) # Roosevelt
-dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68) # RUMFS
+dataEllipse(loc.groups$RUMFS[,"LD1"], loc.groups$RUMFS[,"LD2"], levels = 0.68, xlim = c(-1,4)) # RUMFS
 
 # Fit ellipse for each ingress location
 eli.nc <- ellipse(cor(loc.groups$NC[,"LD1"], loc.groups$NC[,"LD2"]), scale=c(sd(loc.groups$NC[,"LD1"]),sd(loc.groups$NC[,"LD2"])), centre=c(mean(loc.groups$NC[,"LD1"]), mean(loc.groups$NC[,"LD2"])), level = 0.68, npoints = 250)
@@ -1336,22 +1336,19 @@ b.roosevelt <- distance.roosevelt[which.min(distance.roosevelt)]
 b.rumfs <- distance.rumfs[which.min(distance.rumfs)]
 
 # Figure out if points are inside or outside ellipses: ((x-h)^2)/rx^2 - ((y-k)^2)/ry^2. But I think this may only work if ellipse is in standard position, which is why York and Roosevelt calculations are slightly off....
-NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(a.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(b.nc)^2),3) >= 1.000),]
+NC.out <- loc.groups$NC[which(round((((loc.groups$NC[,"LD1"] - eli_center_nc[1])^2)/(b.nc)^2) + (((loc.groups$NC[,"LD2"] - eli_center_nc[2])^2)/(a.nc)^2),3) >= 1.000),]
 NC.in <- loc.groups$NC[!rownames(loc.groups$NC) %in% rownames(NC.out),]
 
 York.out <- loc.groups$York[which(round((((loc.groups$York[,"LD1"] - eli_center_york[1])^2)/(a.york)^2) + (((loc.groups$York[,"LD2"] - eli_center_york[2])^2)/(b.york)^2),3) >= 1.000),]
-remove.York <- c('PADE10_048')
-York.out <- York.out[!rownames(York.out) %in% remove.York,] # remove PADE10_048
-York.out <- rbind(York.out, loc.groups$York['PADE10_050',]) # Add fish on the edge of the ellipse
+remove.York <- c('PADE10_055')
+York.out <- York.out[!rownames(York.out) %in% remove.York,] # remove PADE10_055
+York.out <- rbind(York.out, loc.groups$York['PADE08_058',]) # Add fish on the edge of the ellipse
 York.in <- loc.groups$York[!rownames(loc.groups$York) %in% rownames(York.out),]
 
 Roosevelt.out <- loc.groups$Roosevelt[c(which(round((((loc.groups$Roosevelt[,"LD1"] - eli_center_roosevelt[1])^2)/(b.roosevelt)^2) + (((loc.groups$Roosevelt[,"LD2"] - eli_center_roosevelt[2])^2)/(a.roosevelt)^2),3) >= 1.000), 39),] # manually add index 39
-remove.Roosevelt <- c('PADE10_015') # remove PADE10_015
-Roosevelt.out <- Roosevelt.out[!rownames(Roosevelt.out) %in% remove.Roosevelt,]
 Roosevelt.in <- loc.groups$Roosevelt[!rownames(loc.groups$Roosevelt) %in% rownames(Roosevelt.out),]
 
 RUMFS.out <- loc.groups$RUMFS[which(round((((loc.groups$RUMFS[,"LD1"] - eli_center_rumfs[1])^2)/(a.rumfs)^2) + (((loc.groups$RUMFS[,"LD2"] - eli_center_rumfs[2])^2)/(b.rumfs)^2),3) >= 1.000),]
-RUMFS.out <- rbind(RUMFS.out, loc.groups$RUMFS['PADE12_003',]) # add PADE12_003 
 RUMFS.in <- loc.groups$RUMFS[!rownames(loc.groups$RUMFS) %in% rownames(RUMFS.out),]
 
 # Combine Fish IDs of data that was within 68% confidence ellipses
