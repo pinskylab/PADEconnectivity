@@ -1154,35 +1154,35 @@ library(ellipse)
 #### DFA using 67% of core points to 'train' DFA, then rerun with only these individuals, and then assign everybody. Doing this for each time period separately ####
 # Read in non-zero otolith data
 otoliths <- read.table("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt", header = TRUE, sep = '\t')
-otoliths.sub <- otoliths[,c("Fish.ID","Location","Period",'Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]
+otoliths.sub <- otoliths[,c("Fish.ID","Location","Period",'Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U', 'Sn')]
 rownames(otoliths.sub) <- otoliths.sub[,1]
 # otoliths.sub.log <- cbind.data.frame(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Mg', 'Mn', 'Fe', 'Sn', 'Pb')]) ) # log transform, +1  necessary because no elements have zero values, but +1 doesn't seem to really help with meeting normality assumptions
-otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U')]) ) # log transform, all elements except Sn
+otoliths.sub.log <- cbind(otoliths.sub[,c("Fish.ID", "Location", "Period")], log10(otoliths.sub[,c('Sr', 'Mg', 'Mn', 'Fe', 'Cu', 'Cd', 'Ba', 'Pb', 'U', 'Sn')]) ) # log transform all elements
 
 # Split data into three time periods
 time_period <- split(otoliths.sub.log, f = otoliths.sub.log$Period) # a list containing early, late and middle
 
 # Prepare each dataset
 # Early
-early.trans <- as.data.frame(scale(time_period[[1]][4:12]))
+early.trans <- as.data.frame(scale(time_period[[1]][4:13]))
 early.locs <- time_period[[1]]$Location
 early.locs.ordered <- factor(early.locs, levels = c("NC", "RUMFS"))
 early.trans2 <- cbind(early.locs.ordered, early.trans)
 
 # Middle
-middle.trans <- as.data.frame(scale(time_period[[3]][4:12]))
+middle.trans <- as.data.frame(scale(time_period[[3]][4:13]))
 middle.locs <- time_period[[3]]$Location
 middle.locs.ordered <- factor(middle.locs, levels = c("NC", "RUMFS"))
 middle.trans2 <- cbind(middle.locs.ordered, middle.trans)
 
 # Late
-late.trans <- as.data.frame(scale(time_period[[2]][4:12]))
+late.trans <- as.data.frame(scale(time_period[[2]][4:13]))
 late.locs <- time_period[[2]]$Location
 late.locs.ordered <- factor(late.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 late.trans2 <- cbind(late.locs.ordered, late.trans)
 
 # LDA for early time period
-early.dfa <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = early.trans2, prior = c(1,1)/2)
+early.dfa <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = early.trans2, prior = c(1,1)/2)
 early.dfa.values <- predict(early.dfa) # Calculates linear discriminants, as above
 early.dfa.values2 <- cbind.data.frame(early.dfa.values$x, early.locs.ordered)
 
@@ -1207,7 +1207,7 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-early.dfa1 <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
+early.dfa1 <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1989 - 1993\n(n = 24)")
@@ -1220,7 +1220,7 @@ legend("bottomright",
        bty = "n")
 
 # LDA for middle time period
-middle.dfa <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = middle.trans2, prior = c(1,1)/2)
+middle.dfa <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = middle.trans2, prior = c(1,1)/2)
 middle.dfa.values <- predict(middle.dfa) # Calculates linear discriminants, as above
 middle.dfa.values2 <- cbind.data.frame(middle.dfa.values$x, middle.locs.ordered)
 
@@ -1233,7 +1233,7 @@ legend("topleft",
        pch=19,
        col = rev(col.palette)[3:4])
 
-middle.dfa1 <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
+middle.dfa1 <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(middle.trans2$middle.locs.ordered, middle.dfa1$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1998 - 2002\n(n = 57)")
@@ -1246,7 +1246,7 @@ legend("bottomright",
        bty = "n")
 
 # LDA for late time period
-late.dfa <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, prior = c(1,1,1,1)/4)
+late.dfa <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, prior = c(1,1,1,1)/4)
 late.dfa.values <- predict(late.dfa) # Calculates linear discriminants, as above
 late.dfa.values2 <- cbind.data.frame(late.dfa.values$x, late.locs.ordered)
 
@@ -1259,7 +1259,7 @@ legend("topleft",
        pch=19,
        col = rev(col.palette))
 
-late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
+late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
 ct1 <- table(late.trans2$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "2008 - 2012\n(n = 116)")
