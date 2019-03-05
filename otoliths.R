@@ -752,9 +752,9 @@ oto.chem.middle <- oto.gen.merged[which(oto.gen.merged$Period == 'Mid'),]
 oto.chem.late <- oto.gen.merged[which(oto.gen.merged$Period == 'Late'),]
 
 # Log the data & scale
-oto.chem.early.log <- cbind.data.frame(oto.chem.early[,c("PinskyID", "Location", "Period")], log10(oto.chem.early[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
-oto.chem.middle.log <- cbind.data.frame(oto.chem.middle[,c("PinskyID", "Location", "Period")], log10(oto.chem.middle[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
-oto.chem.late.log <- cbind.data.frame(oto.chem.late[,c("PinskyID", "Location", "Period")], log10(oto.chem.late[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")]))  # all elements except Sn
+oto.chem.early.log <- cbind.data.frame(oto.chem.early[,c("PinskyID", "Location", "Period")], log10(oto.chem.early[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+oto.chem.middle.log <- cbind.data.frame(oto.chem.middle[,c("PinskyID", "Location", "Period")], log10(oto.chem.middle[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+oto.chem.late.log <- cbind.data.frame(oto.chem.late[,c("PinskyID", "Location", "Period")], log10(oto.chem.late[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
 
 oto.chem.early2 <- scale(oto.chem.early.log[,-c(1:3)])
 oto.chem.middle2 <- scale(oto.chem.middle.log[,-c(1:3)])
@@ -773,7 +773,7 @@ fviz_nbclust(oto.chem.early2, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem.early2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
 
-nb <- NbClust(oto.chem.early2, distance = 'euclidean', min.nc = 2, max.nc = 6, method = 'kmeans')
+nb <- NbClust(oto.chem.early2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
 fviz_nbclust(nb)
 dev.off()
 
@@ -784,7 +784,7 @@ summary(mclust.fit)
 # k-means clustering
 col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
 palette(col.palette)
-kmean.cls <- kmeans(oto.chem.early2, centers = 3, nstart = 50, iter.max = 10)
+kmean.cls <- kmeans(oto.chem.early2, centers = 6, nstart = 50, iter.max = 10)
 class.table.km <- table(oto.chem.early$Location, kmean.cls$cluster)
 mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
 
@@ -1597,32 +1597,40 @@ palette(col.palette)
 # Clusters for early time period
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts_bytimeperiod.png", width=5, height=6, res=300, units="in")
 par(
-  mar=c(0, 0, 2.5, 0), # panel magin size in "line number" units
+  mar=c(1, 2, 2.7, 0), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
   ps=14, # point size, which is the font size
-  mfrow = c(3,3), 
+  mfrow = c(4,3), 
   oma = c(3,3,0,1) +0.1,
   omi=c(0,0,0,1.5), 
   xpd=NA
 )
 
 pie(table(clusters.bytime.early[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('E1\n (n = 5)', 3, -1)
+mtext('E1\n (n = 4)', 3, -0.5)
 pie(table(clusters.bytime.early[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('E2\n (n = 7)', 3, -1)
+mtext('E2\n (n = 3)', 3, -0.5)
 pie(table(clusters.bytime.early[[3]]$Location), col = col.palette, labels = '', main = '')
-mtext('E3\n (n = 9)', 3, -1)
+mtext('E3\n (n = 4)', 3, -0.5)
+pie(table(clusters.bytime.early[[4]]$Location), col = col.palette, labels = '', main = '')
+mtext('E4\n (n = 4)', 3, -0.5)
+mtext('                                      1989-1993', 2, -0.1)
+pie(table(clusters.bytime.early[[5]]$Location), col = col.palette, labels = '', main = '')
+mtext('E5\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[6]]$Location), col = col.palette, labels = '', main = '')
+mtext('E6\n (n = 3)', 3, -0.5)
 
 # Clusters for middle time period
 pie(table(clusters.bytime.mid[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('M1\n (n = 24)', 3, -1)
+mtext('M1\n (n = 21)', 3, -0.5)
+mtext('          1998-2002', 2, -0.1)
 pie(table(clusters.bytime.mid[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('M2\n (n = 23)', 3, -1)
+mtext('M2\n (n = 26)', 3, -0.5)
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
 
-legend(-0.5,0.9,
+legend(-1,0.9,
        legend=rev(levels(clusters.bytime$Mid$Location)),
        pch=22,
        col = 'black',
@@ -1630,11 +1638,12 @@ legend(-0.5,0.9,
 
 # Clusters for latest time period
 pie(table(clusters.bytime.late[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('L1\n (n = 30)', 3, -1)
+mtext('L1\n (n = 33)', 3, -0.5)
+mtext('          2008-2012', 2, -0.1)
 pie(table(clusters.bytime.late[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('L2\n (n = 33)', 3, -1)
+mtext('L2\n (n = 22)', 3, -0.5)
 pie(table(clusters.bytime.late[[3]]$Location), col = col.palette, labels = '', main = '')
-mtext('L3\n (n = 20)', 3, -1)
+mtext('L3\n (n = 28)', 3, -0.5)
 
 dev.off()
 
