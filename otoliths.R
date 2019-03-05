@@ -277,7 +277,7 @@ summary.aov(fit) # Mg, Sn and Pb
 
 
 #### Multidimensional scaling ####
-oto.chem2 <- otoliths[,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)? Joel says Sn may have interference, so don't include?
+oto.chem2 <- otoliths[,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Sn", "Cu", "Sr", "Cd", "Ba", "Pb", "U")] # without PADE12_014 (194)? Scaling might take care of this. Without NCPD 074 (28)? Joel says Sn may have interference, but he confirmed that I should include it.
 # oto.chem <- otoliths[,c("Fish.ID", "Mg", "Mn", "Fe", "Sn")] # why use all the elements when only 4 are different between regions?
 rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
 # oto.chem2 <- otoliths[,c("Fish.ID", "Location", "Period", "Mg", "Mn", "Fe", "Sn", "Pb")] # including time period as a variable # better to use all available elements
@@ -414,13 +414,13 @@ points(x[c(56:57,65:72,119:123,180:185)], y[c(56:57,65:72,119:123,180:185)], col
 points(x[c(73:77,186:188)], y[c(73:77,186:188)], col = "#FF00DBFF", pch = 19) #2011
 points(x[c(78:82,189:196)], y[c(78:82,189:196)], col = "#FF006DFF", pch = 19) #2012
 
-# Plot separate MDS for each time period using 9 elements (all except Sn)
+# Plot separate MDS for each time period using all 10 elements
 library(wesanderson)
 
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(rev(col.palette))
 
-png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_9elements.png", width=8, height=2.5, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_10elements.png", width=8, height=2.5, res=300, units="in")
 
 par(
   mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
