@@ -22,6 +22,51 @@ cluster.sizes <- as.numeric(table(clusters.bytime$Late$cluster)) # this will nee
 # obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt', header = TRUE) # middle clusters
 obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt', header = TRUE) # late clusters
 
+# Plot likelihoods across region for each cluster
+obs.likes.early <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+obs.likes.mid <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt', header = TRUE) # middle clusters
+obs.likes.late <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt', header = TRUE) # late clusters
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_likelihoods.png", width=8, height=9.5, res=300, units="in")
+
+par(
+  mar=c(2, 2, 1.2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bty = 'n',
+  par(mfrow = c(4,3)),
+  oma = c(0,2,0,0)
+)
+
+plot(c(1:5), obs.likes.early[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E1')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.early[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E2')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.early[3,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E3')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.early[4,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E4')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.early[5,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E5')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.early[6,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E6')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.mid[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'M1')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.mid[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'M2')
+axis(1, at=seq(1,5, by=1), labels=F)
+plot(c(1:5), obs.likes.mid[2,], type = 'l', col = 'white', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '', main = '')
+plot(c(1:5), obs.likes.late[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L1')
+axis(1, at=seq(1,5, by=1), labels=c('A', 'B', 'C', 'D', 'E'), line = 0)
+plot(c(1:5), obs.likes.late[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L2')
+axis(1, at=seq(1,5, by=1), labels=c('A', 'B', 'C', 'D', 'E'), line = 0)
+plot(c(1:5), obs.likes.late[3,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L3')
+axis(1, at=seq(1,5, by=1), labels=c('A', 'B', 'C', 'D', 'E'), line = 0)
+mtext(expression('log'[10]*' (genotype likelihood)'), side = 2, line = 0.7, outer = TRUE)
+
+dev.off()
+
 # Read in adult outlier allele frequencies
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
 
