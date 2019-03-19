@@ -221,8 +221,187 @@ for (i in 1:length(gam.joined)){
 }
 
 allele.freqs10.df <- data.frame(t(matrix(unlist(allele.freqs10), nrow=length(allele.freqs10), byrow=T)))
-colnames(allele.freqs10.df) <- names(gam.names.p)
 
-# Reorder 10 allele frequencies to be in same order as larvae
+# Fix names for columns
+allelenames.split <- as.data.frame(do.call(rbind, strsplit(as.character(names(gam.names)), '.', fixed = TRUE)))
+allelenames.split2 <- as.factor(paste(allelenames.split$V1, '.', allelenames.split$V2, sep = ''))
 
-# Use these allele frequencies to calculate larval likelihoods
+colnames(allele.freqs10.df) <- allelenames.split2
+
+# # Keep only one allele per locus in adults
+odds <- seq(1,20,2) # odd indicies to keep
+allele.freqs10.df.odds <- allele.freqs10.df[,odds]
+
+#### Use these allele frequencies to calculate larval likelihoods for all 293 fish ####
+# Read in dataset containing outlier loci
+gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
+
+# Keep only larvae with genetic assignments
+gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == FALSE), ]
+
+indiv.allele.counts <- gen.larvae.outs2[,c(16:35)] # Genetic data for all 293 larvae
+
+indiv.allele.counts.odds <- indiv.allele.counts[, colnames(indiv.allele.counts) %in% colnames(allele.freqs10.df.odds)] # subset alleles in larvae to those in adults
+indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's with 9's to make the ifelse statements easier
+
+# Reorder 10 adult allele frequencies to be in same order as larvae
+allele.freqs10.df.odds.ordered <- allele.freqs10.df.odds[names(indiv.allele.counts.odds)]
+
+colnames(indiv.allele.counts.odds) == colnames(allele.freqs10.df.odds.ordered) # column names match? yay!
+
+#### Now that I have allele frequencies for 10 adult groups from the GAMS and the allele counts for the larvae, I'm ready to calculate the genotype likelihood of each larval indivdiual coming from the 10 potential popuations of origin ####
+# Population likelihoods for 10 groups
+pop1.likelihoods <- data.frame()
+pop2.likelihoods <- data.frame()
+pop3.likelihoods <- data.frame()
+pop4.likelihoods <- data.frame()
+pop5.likelihoods <- data.frame()
+pop6.likelihoods <- data.frame()
+pop7.likelihoods <- data.frame()
+pop8.likelihoods <- data.frame()
+pop9.likelihoods <- data.frame()
+pop10.likelihoods <- data.frame()
+
+for (j in 1:length(rownames(indiv.allele.counts.odds))){
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop1.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[1,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop1.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[1,i] * (1-allele.freqs10.df.odds.ordered[1,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop1.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[1,i])^2 
+    } else {
+      pop1.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2){
+      pop2.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[2,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop2.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[2,i] * (1-allele.freqs10.df.odds.ordered[2,i]))
+    } else  if (indiv.allele.counts.odds[j,i] == 0) {
+      pop2.likelihoods[j,i] <- (1-allele.freqs10.df.odds.ordered[2,i])^2
+    } else {
+      pop2.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop3.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[3,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop3.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[3,i] * (1-allele.freqs10.df.odds.ordered[3,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop3.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[3,i])^2 
+    } else {
+      pop3.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop4.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[4,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop4.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[4,i] * (1-allele.freqs10.df.odds.ordered[4,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop4.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[4,i])^2 
+    } else {
+      pop4.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop5.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[5,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop5.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[5,i] * (1-allele.freqs10.df.odds.ordered[5,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop5.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[5,i])^2 
+    } else {
+      pop5.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop6.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[6,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop6.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[6,i] * (1-allele.freqs10.df.odds.ordered[6,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop6.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[6,i])^2 
+    } else {
+      pop6.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop7.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[7,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop7.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[7,i] * (1-allele.freqs10.df.odds.ordered[7,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop7.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[7,i])^2 
+    } else {
+      pop7.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop8.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[8,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop8.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[8,i] * (1-allele.freqs10.df.odds.ordered[8,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop8.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[8,i])^2 
+    } else {
+      pop8.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop9.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[9,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop9.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[9,i] * (1-allele.freqs10.df.odds.ordered[9,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop9.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[9,i])^2 
+    } else {
+      pop9.likelihoods[j,i] <- 1
+    }
+  }
+  
+  for (i in 1:length(colnames(indiv.allele.counts.odds))){
+    if(indiv.allele.counts.odds[j,i] == 2) {
+      pop10.likelihoods[j,i] <- allele.freqs10.df.odds.ordered[10,i]^2
+    } else if (indiv.allele.counts.odds[j,i] == 1) {
+      pop10.likelihoods[j,i] <- 2*(allele.freqs10.df.odds.ordered[10,i] * (1-allele.freqs10.df.odds.ordered[10,i]))
+    } else if (indiv.allele.counts.odds[j,i] == 0) {
+      pop10.likelihoods[j,i] <- ( 1-allele.freqs10.df.odds.ordered[10,i])^2 
+    } else {
+      pop10.likelihoods[j,i] <- 1
+    }
+  }
+}
+
+pop1.vector <- apply(pop1.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop2.vector <- apply(pop2.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop3.vector <- apply(pop3.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop4.vector <- apply(pop4.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop5.vector <- apply(pop5.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop6.vector <- apply(pop6.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop7.vector <- apply(pop7.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop8.vector <- apply(pop8.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop9.vector <- apply(pop9.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+pop10.vector <- apply(pop10.likelihoods, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+bayenv.likelihoods.293indivs <- data.frame(gen.larvae.outs2$PinskyID, gen.larvae.outs2$Place, pop1.vector, pop2.vector, pop3.vector, pop4.vector, pop5.vector, pop6.vector, pop7.vector, pop8.vector, pop9.vector, pop10.vector) # this is for all 293 fish with genetic data
+colnames(bayenv.likelihoods.293indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3", "Pop4", "Pop5", "Pop6", "Pop7", "Pop8", "Pop9", "Pop10")
+# write.table(bayenv.likelihoods.293indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs_10pops.txt", row.names = FALSE, col.names = TRUE)
+
+# Which BayEnv population is each individual most likely from?
+most.like <- colnames(bayenv.likelihoods.293indivs[,-c(1:2)])[apply(bayenv.likelihoods.293indivs[,-c(1:2)],1, which.max)]
+t(table(most.like,bayenv.likelihoods.293indivs$Place))
+
+
