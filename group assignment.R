@@ -15,13 +15,15 @@ clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Anal
 clusters.bytime <- split(clusters, clusters$Period)
 cluster.sizes <- as.numeric(table(clusters.bytime$Late$cluster)) # this will need to be set for early, middle and late separately
 
-# Read in the likelihoods for each cluster
+#### Read in the likelihoods for each cluster ####
 # obs.likes <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_4clusters.txt") # when clustering is done across all time periods
 
+# 5 BayEnv populations
 # obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
 # obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt', header = TRUE) # middle clusters
 obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters.txt', header = TRUE) # late clusters
 
+##################################################
 # Plot likelihoods across region for each cluster
 obs.likes.early <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
 obs.likes.mid <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters.txt', header = TRUE) # middle clusters
@@ -67,13 +69,15 @@ mtext(expression('log'[10]*' (genotype likelihood)'), side = 2, line = 0.7, oute
 
 dev.off()
 
-# Read in adult outlier allele frequencies
+##########################################################################
+# Read in adult outlier allele frequencies based on 5 BayEnv populations
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
 
 # Keep only one allele per locus
 odds <- seq(1,20,2) # odd indicies to keep
 pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
 
+################################################################################################
 # Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
 # Set group size (n) for testing one distribution at a time
 cluster.sizes <- 20
@@ -108,6 +112,7 @@ Pop5.alleles <- array(dim = c(10000,10,paste(cluster.sizes[n])))
 for (i in 1:paste(cluster.sizes[n])){
   Pop5.alleles[,,i] <- sapply(pop.allele.freqs5.odds[5,],function(z){rbinom(10000,2,z)})
 }
+
 
 # Use adult allele frequencies to calculate likelihoods
 # For loop to loop through each of 10 loci & multiply by the corresponding Bayenv pop adult allele frequency, and then do this for all 10000 offspring. NA's/9's get coded as 1's so they don't make a difference when each row's product is taken
