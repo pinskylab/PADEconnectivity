@@ -7,10 +7,16 @@
 # Read in cluster sizes & set a vector of cluster sizes of which to resample
 clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.clusterdbytime.txt", header = TRUE) # clusters for each time period separately using all elements except Sn
 clusters.bytime <- split(clusters, clusters$Period)
-cluster.sizes <- as.numeric(table(clusters.bytime$Early$cluster)) # this will need to be set for early, middle and late separately
+cluster.sizes <- as.numeric(table(clusters.bytime$Late$cluster)) # this will need to be set for early, middle and late separately
 
+#### Read in the likelihoods for each cluster ####
 # 10 populations from distance GAMS
-obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters_10pops.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+# obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters_10pops.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+# obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters_10pops.txt', header = TRUE)
+obs.likes <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters_10pops.txt', header = TRUE)
+
+# Most likely origin population?
+most.like <- colnames(obs.likes[apply(obs.likes,1, which.max)]) # pick most likely origin region for each cluster
 
 ##########################################################################
 # Read in adult outlier allele frequencies based on 10 populations
@@ -101,11 +107,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop1.alleles)){
         if(Pop1.alleles[j,i,h] == 2) {
-          Pop1.likelihoods.pop1dist[j,i,h] <- pop.allele.freqs5.odds['Pop1',i]^2
+          Pop1.likelihoods.pop1dist[j,i,h] <- pop.allele.freqs5.odds[1,i]^2
         } else if (Pop1.alleles[j,i,h] == 1) {
-          Pop1.likelihoods.pop1dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop1',i] * (1-pop.allele.freqs5.odds['Pop1',i]))
+          Pop1.likelihoods.pop1dist[j,i,h] <- 2*(pop.allele.freqs5.odds[1,i] * (1-pop.allele.freqs5.odds[1,i]))
         } else if (Pop1.alleles[j,i,h] == 0) {
-          Pop1.likelihoods.pop1dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop1',i])^2 
+          Pop1.likelihoods.pop1dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[1,i])^2 
         } else {
           Pop1.likelihoods.pop1dist[j,i,h] <- 1
         }
@@ -116,11 +122,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop2.alleles)){
         if(Pop2.alleles[j,i,h] == 2) {
-          Pop2.likelihoods.pop2dist[j,i,h] <- pop.allele.freqs5.odds['Pop2',i]^2
+          Pop2.likelihoods.pop2dist[j,i,h] <- pop.allele.freqs5.odds[2,i]^2
         } else if (Pop2.alleles[j,i,h] == 1) {
-          Pop2.likelihoods.pop2dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop2',i] * (1-pop.allele.freqs5.odds['Pop2',i]))
+          Pop2.likelihoods.pop2dist[j,i,h] <- 2*(pop.allele.freqs5.odds[2,i] * (1-pop.allele.freqs5.odds[2,i]))
         } else if (Pop2.alleles[j,i,h] == 0) {
-          Pop2.likelihoods.pop2dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop2',i])^2 
+          Pop2.likelihoods.pop2dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[2,i])^2 
         } else {
           Pop2.likelihoods.pop2dist[j,i,h] <- 1
         }
@@ -131,11 +137,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop3.alleles)){
         if(Pop3.alleles[j,i,h] == 2) {
-          Pop3.likelihoods.pop3dist[j,i,h] <- pop.allele.freqs5.odds['Pop3',i]^2
+          Pop3.likelihoods.pop3dist[j,i,h] <- pop.allele.freqs5.odds[3,i]^2
         } else if (Pop3.alleles[j,i,h] == 1) {
-          Pop3.likelihoods.pop3dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop3',i] * (1-pop.allele.freqs5.odds['Pop3',i]))
+          Pop3.likelihoods.pop3dist[j,i,h] <- 2*(pop.allele.freqs5.odds[3,i] * (1-pop.allele.freqs5.odds[3,i]))
         } else if (Pop3.alleles[j,i,h] == 0) {
-          Pop3.likelihoods.pop3dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop3',i])^2 
+          Pop3.likelihoods.pop3dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[3,i])^2 
         } else {
           Pop3.likelihoods.pop3dist[j,i,h] <- 1
         }
@@ -146,11 +152,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop4.alleles)){
         if(Pop4.alleles[j,i,h] == 2) {
-          Pop4.likelihoods.pop4dist[j,i,h] <- pop.allele.freqs5.odds['Pop4',i]^2
+          Pop4.likelihoods.pop4dist[j,i,h] <- pop.allele.freqs5.odds[4,i]^2
         } else if (Pop4.alleles[j,i,h] == 1) {
-          Pop4.likelihoods.pop4dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop4',i] * (1-pop.allele.freqs5.odds['Pop4',i]))
+          Pop4.likelihoods.pop4dist[j,i,h] <- 2*(pop.allele.freqs5.odds[4,i] * (1-pop.allele.freqs5.odds[4,i]))
         } else if (Pop4.alleles[j,i,h] == 0) {
-          Pop4.likelihoods.pop4dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop4',i])^2 
+          Pop4.likelihoods.pop4dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[4,i])^2 
         } else {
           Pop4.likelihoods.pop4dist[j,i,h] <- 1
         }
@@ -161,11 +167,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop5.alleles)){
         if(Pop5.alleles[j,i,h] == 2) {
-          Pop5.likelihoods.pop5dist[j,i,h] <- pop.allele.freqs5.odds['Pop5',i]^2
+          Pop5.likelihoods.pop5dist[j,i,h] <- pop.allele.freqs5.odds[5,i]^2
         } else if (Pop5.alleles[j,i,h] == 1) {
-          Pop5.likelihoods.pop5dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop5',i] * (1-pop.allele.freqs5.odds['Pop5',i]))
+          Pop5.likelihoods.pop5dist[j,i,h] <- 2*(pop.allele.freqs5.odds[5,i] * (1-pop.allele.freqs5.odds[5,i]))
         } else if (Pop5.alleles[j,i,h] == 0) {
-          Pop5.likelihoods.pop5dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop5',i])^2 
+          Pop5.likelihoods.pop5dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[5,i])^2 
         } else {
           Pop5.likelihoods.pop5dist[j,i,h] <- 1
         }
@@ -176,11 +182,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop6.alleles)){
         if(Pop6.alleles[j,i,h] == 2) {
-          Pop6.likelihoods.pop6dist[j,i,h] <- pop.allele.freqs5.odds['Pop6',i]^2
+          Pop6.likelihoods.pop6dist[j,i,h] <- pop.allele.freqs5.odds[6,i]^2
         } else if (Pop6.alleles[j,i,h] == 1) {
-          Pop6.likelihoods.pop6dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop6',i] * (1-pop.allele.freqs5.odds['Pop6',i]))
+          Pop6.likelihoods.pop6dist[j,i,h] <- 2*(pop.allele.freqs5.odds[6,i] * (1-pop.allele.freqs5.odds[6,i]))
         } else if (Pop6.alleles[j,i,h] == 0) {
-          Pop6.likelihoods.pop6dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop6',i])^2 
+          Pop6.likelihoods.pop6dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[6,i])^2 
         } else {
           Pop6.likelihoods.pop6dist[j,i,h] <- 1
         }
@@ -191,11 +197,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop7.alleles)){
         if(Pop7.alleles[j,i,h] == 2) {
-          Pop7.likelihoods.pop7dist[j,i,h] <- pop.allele.freqs5.odds['Pop7',i]^2
+          Pop7.likelihoods.pop7dist[j,i,h] <- pop.allele.freqs5.odds[7,i]^2
         } else if (Pop7.alleles[j,i,h] == 1) {
-          Pop7.likelihoods.pop7dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop7',i] * (1-pop.allele.freqs5.odds['Pop7',i]))
+          Pop7.likelihoods.pop7dist[j,i,h] <- 2*(pop.allele.freqs5.odds[7,i] * (1-pop.allele.freqs5.odds[7,i]))
         } else if (Pop7.alleles[j,i,h] == 0) {
-          Pop7.likelihoods.pop7dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop7',i])^2 
+          Pop7.likelihoods.pop7dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[7,i])^2 
         } else {
           Pop7.likelihoods.pop7dist[j,i,h] <- 1
         }
@@ -206,11 +212,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop8.alleles)){
         if(Pop8.alleles[j,i,h] == 2) {
-          Pop8.likelihoods.pop8dist[j,i,h] <- pop.allele.freqs5.odds['Pop8',i]^2
+          Pop8.likelihoods.pop8dist[j,i,h] <- pop.allele.freqs5.odds[8,i]^2
         } else if (Pop8.alleles[j,i,h] == 1) {
-          Pop8.likelihoods.pop8dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop8',i] * (1-pop.allele.freqs5.odds['Pop8',i]))
+          Pop8.likelihoods.pop8dist[j,i,h] <- 2*(pop.allele.freqs5.odds[8,i] * (1-pop.allele.freqs5.odds[8,i]))
         } else if (Pop8.alleles[j,i,h] == 0) {
-          Pop8.likelihoods.pop8dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop8',i])^2 
+          Pop8.likelihoods.pop8dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[8,i])^2 
         } else {
           Pop8.likelihoods.pop8dist[j,i,h] <- 1
         }
@@ -221,11 +227,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop9.alleles)){
         if(Pop9.alleles[j,i,h] == 2) {
-          Pop9.likelihoods.pop9dist[j,i,h] <- pop.allele.freqs5.odds['Pop9',i]^2
+          Pop9.likelihoods.pop9dist[j,i,h] <- pop.allele.freqs5.odds[9,i]^2
         } else if (Pop9.alleles[j,i,h] == 1) {
-          Pop9.likelihoods.pop9dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop9',i] * (1-pop.allele.freqs5.odds['Pop9',i]))
+          Pop9.likelihoods.pop9dist[j,i,h] <- 2*(pop.allele.freqs5.odds[9,i] * (1-pop.allele.freqs5.odds[9,i]))
         } else if (Pop9.alleles[j,i,h] == 0) {
-          Pop9.likelihoods.pop9dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop9',i])^2 
+          Pop9.likelihoods.pop9dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[9,i])^2 
         } else {
           Pop9.likelihoods.pop9dist[j,i,h] <- 1
         }
@@ -236,11 +242,11 @@ for(n in 1:length(cluster.sizes)){
       
       for (i in 1:ncol(Pop10.alleles)){
         if(Pop10.alleles[j,i,h] == 2) {
-          Pop10.likelihoods.pop10dist[j,i,h] <- pop.allele.freqs5.odds['Pop10',i]^2
+          Pop10.likelihoods.pop10dist[j,i,h] <- pop.allele.freqs5.odds[10,i]^2
         } else if (Pop10.alleles[j,i,h] == 1) {
-          Pop10.likelihoods.pop10dist[j,i,h] <- 2*(pop.allele.freqs5.odds['Pop10',i] * (1-pop.allele.freqs5.odds['Pop10',i]))
+          Pop10.likelihoods.pop10dist[j,i,h] <- 2*(pop.allele.freqs5.odds[10,i] * (1-pop.allele.freqs5.odds[10,i]))
         } else if (Pop10.alleles[j,i,h] == 0) {
-          Pop10.likelihoods.pop10dist[j,i,h] <- ( 1-pop.allele.freqs5.odds['Pop10',i])^2 
+          Pop10.likelihoods.pop10dist[j,i,h] <- ( 1-pop.allele.freqs5.odds[10,i])^2 
         } else {
           Pop10.likelihoods.pop10dist[j,i,h] <- 1
         }
@@ -270,4 +276,65 @@ for(n in 1:length(cluster.sizes)){
 
 rownames(dist.likes) <- rownames(obs.likes)
 colnames(dist.likes) <- c('prob_pop1', 'prob_pop2', 'prob_pop3', 'prob_pop4', 'prob_pop5', 'prob_pop6', 'prob_pop7', 'prob_pop8', 'prob_pop9', 'prob_pop10')
+
+
+##################################################
+# Plot likelihoods across region for each cluster
+# 10 GAM-generated groups
+obs.likes.early <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters_10pops.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+obs.likes.mid <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters_10pops.txt', header = TRUE) # middle clusters
+obs.likes.late <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters_10pops.txt', header = TRUE) # late clusters
+
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_likelihoods_10GAMSgroups.png", width=12, height=9.5, res=300, units="in")
+
+par(
+  mar=c(2, 2, 1.2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bty = 'n',
+  par(mfrow = c(4,3)),
+  oma = c(0,2,0,0)
+)
+
+plot(c(1:10), obs.likes.early[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E1')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v = 5)
+plot(c(1:10), obs.likes.early[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E2')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v = 6)
+plot(c(1:10), obs.likes.early[3,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E3')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v = 6)
+plot(c(1:10), obs.likes.early[4,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E4')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v = 8)
+plot(c(1:10), obs.likes.early[5,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E5')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v=4)
+plot(c(1:10), obs.likes.early[6,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'E6')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v=5)
+plot(c(1:10), obs.likes.mid[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'M1')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v=6)
+plot(c(1:10), obs.likes.mid[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'M2')
+axis(1, at=seq(1,10, by=1), labels=F)
+abline(v=6)
+plot(c(1:10), obs.likes.mid[2,], type = 'l', col = 'white', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '', main = '')
+plot(c(1:10), obs.likes.late[1,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L1')
+axis(1, at=seq(1,10, by=1), labels=c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), line = 0)
+abline(v=5)
+plot(c(1:10), obs.likes.late[2,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L2')
+axis(1, at=seq(1,10, by=1), labels=c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), line = 0)
+abline(v=6)
+plot(c(1:10), obs.likes.late[3,], type = 'l', col = 'black', xaxt = 'n', xlab = '', ylab = '', main = 'L3')
+axis(1, at=seq(1,10, by=1), labels=c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), line = 0)
+abline(v=5)
+mtext(expression('log'[10]*' (genotype likelihood)'), side = 2, line = 0.7, outer = TRUE)
+
+dev.off()
+
 
