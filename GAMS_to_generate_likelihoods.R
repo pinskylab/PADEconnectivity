@@ -1,44 +1,4 @@
-# Bringing in adult genotype data and environmental data
-setwd("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis")
-
-library(ade4)
-library(adegenet)
-library(devtools)
-library("hierfstat")
-library(pegas)
-library(fields)
-
-# Reading in SNP data file containing only the first SNP at each locus
-adults <- read.structure("structure_input_Nov_11_2015.str",
-                         n.ind = 241, n.loc = 1137, col.lab = 1, col.pop = 2, row.marknames = 1, 
-                         onerowperind = FALSE)
-
-which(adults@loc.n.all > 2) # which snps have more than 2 alelles?
-
-# adults.nonas <- scaleGen(adults, center = TRUE, scale = FALSE, NA.method = "mean") # filling in NAs with allele frequencies and centering
-adults.nonas <- scaleGen(adults, center = FALSE, scale = FALSE, NA.method = "mean") # based on Meirimans 2015 and others, it's okay to perform rda on allele frequencies
-hist(adults.nonas)
-sum(is.na(adults.nonas)) #0 All NAs have been replaced with means
-
-exclu_names <- c("PADE_14230L1439",
-                 "PADE_14231L1440",
-                 "PADE_14232L1529",
-                 "PADE_14233L1588",
-                 "PADE_14234L1441",
-                 "PADE_14235L1442",
-                 "PADE_14236L1530",
-                 "PADE_14237L1531",
-                 "PADE_14238L1532") # Creating a list of IDs to exclude from the genetic matrix
-
-adults.nonas.232 <- adults.nonas[ ! rownames(adults.nonas) %in% exclu_names, ] # This is genotype data for 232 fish where NAs have been replaced by mean allele frequencies
-rownames(adults.nonas.232)
-adults.nonas.232.2274 <- adults.nonas.232[, -c(56, 96, 734, 2115)] # SNP 28, 47, 366 and 1056 have 3 alleles. All the rest have 2. Need to remove 3rd allele for SNP 28, 47, 366 and 1056. Removing one with lowest count
-dim(adults.nonas.232.2274)
-adults.nonas.232.1137 <- adults.nonas.232.2274[, seq(1, ncol(adults.nonas.232.2274),by = 2)] # including every other column
-# adults.nonas.232.1137 <- adults.nonas.232.2274[, -seq(1, ncol(adults.nonas.232.2274),by = 2)] # excluding every other column
-dim(adults.nonas.232.1137)
-
-
+#### This script fits GAMS between candidate loci and distance along the coast, which can then be used to figure out allele frequencies for an arbitrary number of 'populations' along the coast ####
 #### Reads in a file of 232 fish and their allele counts at the 10 candidates present in larvae. Allele frequencies need to be calculated. ####
 adults232 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.counts10.txt", header = TRUE)
 rownames(adults232) <- adults232$PinskyID
@@ -51,12 +11,18 @@ for(i in 1:ncol(adults232[,-c(1:2)])){
 colSums(is.na(adults232)) # Check there are no zeros in any of the columns
 
 # Convert from count to frequency for allele columns
-adults232.freqs <- adults232[,-c(1:2)]/2
-
+# adults232.freqs <- adults232[,-c(1:2)]/2
+ 
 envi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/Local adaptation/232envirowithdist.txt", header = TRUE)
 envi.ordered <- envi[with(envi, order(PinskyID)),] 
 # as.character(envi.ordered[,2]) == rownames(adults.nonas.232.1137)
-as.character(envi.ordered[,2]) == rownames(adults232.freqs) # environmental data is in same order as genetic data?
+# as.character(envi.ordered[,2]) == rownames(adults232.freqs) # environmental data is in same order as genetic data?
+# rownames(envi.ordered) <- envi.ordered[,"PinskyID"] # so that environmental variable units in GAM plots won't be standardized
+
+# Set up for GAM with binomial errors
+adults232 <- adults232[,-c(1:2)] # get rid of names and regions columns
+adults232.split <- tapply(as.list(adults232), gl(ncol(adults232)/2, 2), as.data.frame) # split dataframe so that each locus is 232 x 2; array is 232 rows x 2 columns x 10 deep
+as.character(envi.ordered[,2]) == rownames(adults232) # environmental data is in same order as genetic data?
 rownames(envi.ordered) <- envi.ordered[,"PinskyID"] # so that environmental variable units in GAM plots won't be standardized
 
 # Look up SNP number
@@ -66,20 +32,22 @@ rownames(envi.ordered) <- envi.ordered[,"PinskyID"] # so that environmental vari
 # For loop to fit GAM between all 10 // 15 candidates and each 4 enviromental variables
 library(mgcv)
 
-# for(i in candidates){
-#   assign(paste0('dist',i,'gam'), mgcv::gam(adults.nonas.232.1137[,i] ~ s(dist), data = envi.ordered, method = 'REML', select = TRUE))
-#   assign(paste0('depth',i,'gam'), mgcv::gam(adults.nonas.232.1137[,i] ~ s(depth), data = envi.ordered, method = 'REML', select = TRUE))
-#   assign(paste0('btemp',i,'gam'), mgcv::gam(adults.nonas.232.1137[,i] ~ s(b_temp), data = envi.ordered, method = 'REML', select = TRUE))
-#   assign(paste0('bsalin',i,'gam'), mgcv::gam(adults.nonas.232.1137[,i] ~ s(b_salin), data = envi.ordered, method = 'REML', select = TRUE))
-# }
-
 # 10 loci
-for(i in 1:ncol(adults232.freqs)){
-  assign(paste0(colnames(adults232.freqs[i]), '.dist.gam'), mgcv::gam(adults232.freqs[,i] ~ s(dist), data = envi.ordered, method = 'REML', select = TRUE))
+# for(i in 1:ncol(adults232.freqs)){
+  # assign(paste0(colnames(adults232.freqs[i]), '.dist.gam'), mgcv::gam(adults232.freqs[,i] ~ s(dist), data = envi.ordered, method = 'REML', select = TRUE))
   # assign(paste0(colnames(adults232.freqs[i]), '.depth.gam'), mgcv::gam(adults232.freqs[,i] ~ s(depth), data = envi.ordered, method = 'REML', select = TRUE))
   # assign(paste0(colnames(adults232.freqs[i]), '.btemp.gam'), mgcv::gam(adults232.freqs[,i] ~ s(b_temp), data = envi.ordered, method = 'REML', select = TRUE))
   # assign(paste0(colnames(adults232.freqs[i]), '.bsalin.gam'), mgcv::gam(adults232.freqs[,i] ~ s(b_salin), data = envi.ordered, method = 'REML', select = TRUE))
+# }
+
+# 10 loci with binomial errors
+for(i in 1:length(adults232.split)){
+  assign(paste0(colnames(adults232.split[[i]][1]), '.dist.gam'), mgcv::gam(as.matrix(adults232.split[[i]]) ~ s(dist), data = envi.ordered, method = 'REML', select = TRUE, family = binomial))
 }
+
+# mgcv::gam(as.matrix(adults232[,5:6]) ~ s(dist), data = envi.ordered, method = 'REML', select = TRUE, family = binomial)
+# predict.gam(test, data.frame(dist = dist.new), type = 'response')
+
 
 # plot(GAM.object) as an object and this will save coordinates
 par(mfrow = c(2,2))
@@ -98,7 +66,7 @@ dist.new <- seq(min(envi.ordered$dist), max(envi.ordered$dist), length = 500)
 # bsalin.new <- seq(min(envi.ordered$b_salin), max(envi.ordered$b_salin), length = 500)
 
 for (i in 1:length(names(gam.names))){
-  assign(paste0(names(gam.names)[[i]], '.p'), predict.gam(gam.names[[i]], data.frame(dist = dist.new)))
+  assign(paste0(names(gam.names)[[i]], '.p'), predict.gam(gam.names[[i]], data.frame(dist = dist.new), type = 'response'))
 }
 
 gam.names.p <- mget(ls(pattern = ".gam.p")) # searches through environment and pulls all objects with '.gam.p'
@@ -106,24 +74,16 @@ gam.names.p <- mget(ls(pattern = ".gam.p")) # searches through environment and p
 # Round any predicted allele frequency that is above 1 down to 0.999, or below 0 to 0.001. Allele frequencies of exactly 1 or zero will lead to null alleles and values of infinity. Cornuet (1999) says null allele frequencies can be replaced by a small value.
 # Alleles with predicted allele frequencies > 1: dDocent_Contig_15075_20.02.dist.gam.p
 # Alleles with predicted allele frequencies < 0: dDocent_Contig_15075_20.04.dist.gam.p
-gam.names.p$dDocent_Contig_15075_20.02.dist.gam.p[gam.names.p$dDocent_Contig_15075_20.02.dist.gam.p > 1] <- 0.999
-gam.names.p$dDocent_Contig_15075_20.04.dist.gam.p[gam.names.p$dDocent_Contig_15075_20.04.dist.gam.p < 0] <- 0.001
+# gam.names.p$dDocent_Contig_15075_20.02.dist.gam.p[gam.names.p$dDocent_Contig_15075_20.02.dist.gam.p > 1] <- 0.999
+# gam.names.p$dDocent_Contig_15075_20.04.dist.gam.p[gam.names.p$dDocent_Contig_15075_20.04.dist.gam.p < 0] <- 0.001
 
-
-# Plot newly predicted allele frequency
-# plot(dist35gam.p ~ dist.new)
-# plot(dist35gam.p ~ envi.ordered$dist)
-
+#### Plot newly predicted allele frequency ####
 # Plots all predicted gams quickly!
 for (i in 1:length(gam.names.p)){
-  plot(gam.names.p[[i]] ~ dist.new, main = paste0(names(gam.names.p)[[i]]))
+  plot(gam.names.p[[i]] ~ dist.new, main = paste0(names(gam.names.p)[[i]]), ylab = 'Allele frequency')
 }
 
 # Break 500 bottom temps into 10 groups
-# break_points <- cut(btemp.new, breaks =10)
-# break.points <- btemp.new[c(25, 75, 125, 175, 225, 275, 325, 375, 425, 475)]
-
-# break_points <- cut(dist.new, breaks =10)
 break.points <- dist.new[c(25, 75, 125, 175, 225, 275, 325, 375, 425, 475)]
 
 # Figure out corresponding allele frequency
@@ -140,13 +100,14 @@ for (i in 1:length(gam.joined)){
 }
 
 allele.freqs10.df <- data.frame(t(matrix(unlist(allele.freqs10), nrow=length(allele.freqs10), byrow=T)))
-write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.txt', row.names = FALSE, col.names = TRUE)
 
 # Fix names for columns
 allelenames.split <- as.data.frame(do.call(rbind, strsplit(as.character(names(gam.names)), '.', fixed = TRUE)))
 allelenames.split2 <- as.factor(paste(allelenames.split$V1, '.', allelenames.split$V2, sep = ''))
 
 colnames(allele.freqs10.df) <- allelenames.split2
+# write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.txt', row.names = FALSE, col.names = TRUE)
+write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.txt', row.names = FALSE, col.names = TRUE)
 
 # # Keep only one allele per locus in adults
 odds <- seq(1,20,2) # odd indicies to keep
@@ -166,7 +127,7 @@ indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's wi
 
 # Reorder 10 adult allele frequencies to be in same order as larvae
 allele.freqs10.df.odds.ordered <- allele.freqs10.df.odds[names(indiv.allele.counts.odds)]
-write.table(allele.freqs10.df.odds.ordered, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', row.names = FALSE, col.names = TRUE)
+# write.table(allele.freqs10.df.odds.ordered, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', row.names = FALSE, col.names = TRUE)
 
 colnames(indiv.allele.counts.odds) == colnames(allele.freqs10.df.odds.ordered) # column names match? yay!
 
@@ -450,4 +411,125 @@ rownames(bayenv.likelihoods.late.clustered) <- c("cluster1", "cluster2", "cluste
 
 most.like <- colnames(bayenv.likelihoods.late.clustered[apply(bayenv.likelihoods.late.clustered,1, which.max)]) # pick most likely origin region for each cluster
 
+###############################################################################
+#### What is the meaning of distance? Can I convert this back to lat/long and plot this on a map? ####
+library(geosphere)
 
+envi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/Local adaptation/232envirowithdist.txt", header = TRUE)
+
+# Distances from southern most point: 28.384993, -80.546297
+# Can these be r? Then (x-h)^2 + (y-k)^2 = r^2?
+# x = r*cosine(angle) --> x = Cx + (r*cosine((degrees * pi/180)))
+# y = r*sin(angle) --> y = Cy + (r*sine((degrees * pi/180)))
+new_latitude  <- latitude  + (dy / 6378137) * (180 / pi)
+new_longitude <- longitude + (dx / 6378137) * (180 / pi) / cos(latitude * pi/180)
+break.points <- c(158.5453,  343.7802,  529.0152,  714.2502,  899.4852, 1084.7202, 1269.9552, 1455.1902, 1640.4251, 1825.6601) * 1000 # These are km, multiply by 1000 to get meters
+
+x.add <- vector()
+y.add <- vector()
+
+x.degs <- vector()
+y.degs <- vector()
+
+for (i in 1:length(break.points)){
+  x.add[i] <- (r*cos((degrees * pi/180))) #r is distance
+  y.add[i] <- (r*sin((degrees * pi/180)))
+  
+  x.degs[i] <- 28.384993  + ((y.add[i]) / 6378137) * (180 / pi)
+  y.degs[i] <- -80.546297 + ((x.add[i]) / 6378137) * (180 / pi) / cos(28.384993 * pi/180)
+}
+
+
+# Plot circles with radius as distance?
+library(geosphere)
+
+distantCircle <- function(x, radius) {
+  # Creation de 360 points distincts sur le cercle de centre
+  # x et de rayon radius
+  resul <- do.call("rbind", lapply(0:360, function(bearing) {
+    res <- destPoint(p = x, b = bearing, d = radius)
+    rownames(res) <- NULL
+    return(data.frame(res))
+  }))
+  resul$dist <- radius / 1000
+  return(resul)
+}
+
+distantCircle(x = c(0.0000001,89.9999999), radius = 1500*1000)
+
+
+data <- t(data.frame(c(1,-80.546297,28.384993)))
+circle <- make_circles(data, break.points[1]*1000)
+
+library(sp)
+longlat <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/adults_locations2.txt")
+coordinates(longlat) <- c(1,2)
+proj4string(longlat) <- CRS("+proj=longlat +datum=WGS84")
+utm <- spTransform(longlat,CRS("+proj=utm +zone=18 +datum=WGS84"))
+utm
+
+#############################################################################
+library(sp)
+library(rgdal)
+library(rgeos)
+library(maps)
+library(mapdata)
+library(mapproj)
+# the.points.latlong <- data.frame(
+#   Country=c("Finland", "Canada", "Tanzania", "Bolivia", "France"),
+#   lat=c(63.293001, 54.239631, -2.855123, -13.795272, 48.603949),
+#   long=c(27.472918, -90.476303, 34.679950, -65.691146, 4.533465))
+
+the.points.latlong <- data.frame(long = -80.546297, lat = 28.384993)
+
+the.points.sp <- SpatialPointsDataFrame(the.points.latlong, data.frame(ID=seq(1:nrow(the.points.latlong))), proj4string=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
+
+the.points.projected <- spTransform(the.points.sp, CRS( "+init=epsg:32618" ))  # projected southern point
+# bring in the 10 distances
+break.points <- c(158.5453,  343.7802,  529.0152,  714.2502,  899.4852, 1084.7202, 1269.9552, 1455.1902, 1640.4251, 1825.6601) * 1000 # These are km, multiply by 1000 to get meters
+
+# For loop to generate buffer and then project those points
+for (i in 1:length(break.points)){
+  assign(paste0('the.circles.projected',i), gBuffer(the.points.projected, width=break.points[i], byid=TRUE))
+}
+
+projected.circles.names <- mget(ls(pattern = "the.circles.projected")) # searches through environment and pulls all objects with 'the.circles.projected'
+
+for (i in 1:length(break.points)){
+  assign(paste0('the.circles.sp',i), spTransform(projected.circles.names[[i]], CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")))
+}
+
+# And now plot!
+map("worldHires", c("us"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE) #plots the region of the USA that I want
+# map("worldHires", c("us", "canada", "bah", "cub"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE, projection = 'albers', parameters = c(30,40), lforce = "s") #plots the region of the USA & canada that I want
+map("worldHires", c("us", "canada", "bah", "cub"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE) #plots the region of the USA & canada that I want
+# map("state", xlim=c(-85,-60), ylim=c(23,47.5), add = TRUE, boundary=FALSE, col = 'black', projection = '') # plots US state boundaries
+map("state", xlim=c(-85,-60), ylim=c(23,47.5), add = TRUE, boundary=FALSE, col = 'black') # plots US state boundaries
+# map.grid(cex=0.1 , col="grey30", labels = T)
+title(xlab = "Longitude (°)", ylab = "Latitude (°)")
+points(-80.546297, 28.384993, pch = "*", cex = 1.8)
+# points(mapproject(-80.546297, 28.384993), col = 'red', pch = 15)
+
+# lines(mapproject(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2]), col = 'red')
+
+lines(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+lines(the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+
+text(-80.11503, 29.76001, "J", cex=0.55)
+text(-79.59933, 31.36622, "I", cex=0.55)
+text(-77.9, 32.5, "H", cex=0.55)
+text(-76.33829, 33.70481, "G", cex=0.55)
+text(-74.9, 34.8, "F", cex=0.55)
+text(-74.6, 36.7, "E", cex=0.55)
+text(-73.6, 38.2, "D", cex=0.55)
+text(-72.4, 39.5, "C", cex=0.55)
+text(-70.05015, 40.36029, "B", cex=0.55)
+text(-68.3, 41.3, "A", cex=0.55)
