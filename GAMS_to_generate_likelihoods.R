@@ -107,11 +107,11 @@ allelenames.split2 <- as.factor(paste(allelenames.split$V1, '.', allelenames.spl
 
 colnames(allele.freqs10.df) <- allelenames.split2
 # write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.txt', row.names = FALSE, col.names = TRUE)
-write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.txt', row.names = FALSE, col.names = TRUE)
+write.table(allele.freqs10.df, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.txt', row.names = FALSE, col.names = TRUE) # one allele for each locus
 
-# # Keep only one allele per locus in adults
-odds <- seq(1,20,2) # odd indicies to keep
-allele.freqs10.df.odds <- allele.freqs10.df[,odds]
+# # Keep only one allele per locus in adults. This is only necessary when the datafile contains both alleles.
+# odds <- seq(1,20,2) # odd indicies to keep
+# allele.freqs10.df.odds <- allele.freqs10.df[,odds]
 
 #### Use these allele frequencies to calculate larval likelihoods for all 293 fish ####
 # Read in dataset containing outlier loci
@@ -122,11 +122,13 @@ gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == F
 
 indiv.allele.counts <- gen.larvae.outs2[,c(16:35)] # Genetic data for all 293 larvae
 
-indiv.allele.counts.odds <- indiv.allele.counts[, colnames(indiv.allele.counts) %in% colnames(allele.freqs10.df.odds)] # subset alleles in larvae to those in adults
+# indiv.allele.counts.odds <- indiv.allele.counts[, colnames(indiv.allele.counts) %in% colnames(allele.freqs10.df.odds)] # subset alleles in larvae to those in adults when both alleles are in datafile
+indiv.allele.counts.odds <- indiv.allele.counts[, colnames(indiv.allele.counts) %in% colnames(allele.freqs10.df)] # 293 x 10
 indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's with 9's to make the ifelse statements easier
 
 # Reorder 10 adult allele frequencies to be in same order as larvae
-allele.freqs10.df.odds.ordered <- allele.freqs10.df.odds[names(indiv.allele.counts.odds)]
+# allele.freqs10.df.odds.ordered <- allele.freqs10.df.odds[names(indiv.allele.counts.odds)] # subset alleles in larvae to those in adults when both alleles are in datafile
+allele.freqs10.df.odds.ordered <- allele.freqs10.df[names(indiv.allele.counts.odds)]
 # write.table(allele.freqs10.df.odds.ordered, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', row.names = FALSE, col.names = TRUE)
 
 colnames(indiv.allele.counts.odds) == colnames(allele.freqs10.df.odds.ordered) # column names match? yay!
