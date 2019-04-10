@@ -129,7 +129,7 @@ indiv.allele.counts.odds[is.na(indiv.allele.counts.odds)] <- 9 # replace NA's wi
 # Reorder 10 adult allele frequencies to be in same order as larvae
 # allele.freqs10.df.odds.ordered <- allele.freqs10.df.odds[names(indiv.allele.counts.odds)] # subset alleles in larvae to those in adults when both alleles are in datafile
 allele.freqs10.df.odds.ordered <- allele.freqs10.df[names(indiv.allele.counts.odds)]
-# write.table(allele.freqs10.df.odds.ordered, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', row.names = FALSE, col.names = TRUE)
+# write.table(allele.freqs10.df.odds.ordered, '~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.ordered.txt', row.names = FALSE, col.names = TRUE)
 
 colnames(indiv.allele.counts.odds) == colnames(allele.freqs10.df.odds.ordered) # column names match? yay!
 
@@ -477,12 +477,15 @@ library(rgeos)
 library(maps)
 library(mapdata)
 library(mapproj)
-# the.points.latlong <- data.frame(
-#   Country=c("Finland", "Canada", "Tanzania", "Bolivia", "France"),
-#   lat=c(63.293001, 54.239631, -2.855123, -13.795272, 48.603949),
-#   long=c(27.472918, -90.476303, 34.679950, -65.691146, 4.533465))
+library(marmap)
+library(geosphere)
+library(ade4)
 
-the.points.latlong <- data.frame(long = -80.546297, lat = 28.384993)
+# Get bathymetry data
+useast <- getNOAA.bathy(lon1 = -85, lon2 = -60, lat1 = 23, lat2 = 48, resolution = 1)
+
+# Calculate buffer zones
+the.points.latlong <- data.frame(long = -80.546297, lat = 28.384993) # southern point from which distance is calculated
 
 the.points.sp <- SpatialPointsDataFrame(the.points.latlong, data.frame(ID=seq(1:nrow(the.points.latlong))), proj4string=CRS("+proj=longlat +ellps=WGS84 +datum=WGS84"))
 
@@ -502,36 +505,77 @@ for (i in 1:length(break.points)){
 }
 
 # And now plot!
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Maps/connectivity maps/adult_connectivity_regions.png", width=7, height=7.5, res=300, units="in")
+
+par(
+  mar=c(5, 7, 4, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=18, # point size, which is the font size
+  bg=NA
+)
+
 map("worldHires", c("us"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE) #plots the region of the USA that I want
-# map("worldHires", c("us", "canada", "bah", "cub"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE, projection = 'albers', parameters = c(30,40), lforce = "s") #plots the region of the USA & canada that I want
+# map("worldHires", c("us", "canada", "bah", "cub"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE, projection = 'albers', parameters = c(30,40), lforce = "s") #plots the region of the USA & canada that I want in albers projection
 map("worldHires", c("us", "canada", "bah", "cub"), xlim=c(-85,-60), ylim=c(23,47.5), col="gray90", fill=TRUE) #plots the region of the USA & canada that I want
-# map("state", xlim=c(-85,-60), ylim=c(23,47.5), add = TRUE, boundary=FALSE, col = 'black', projection = '') # plots US state boundaries
+# map("state", xlim=c(-85,-60), ylim=c(23,47.5), add = TRUE, boundary=FALSE, col = 'black', projection = '') # plots US state boundaries in albers projection
 map("state", xlim=c(-85,-60), ylim=c(23,47.5), add = TRUE, boundary=FALSE, col = 'black') # plots US state boundaries
-# map.grid(cex=0.1 , col="grey30", labels = T)
+# map.grid(cex=0.1 , col="grey30", labels = T) # for albers projection
 title(xlab = "Longitude (°)", ylab = "Latitude (°)")
-points(-80.546297, 28.384993, pch = "*", cex = 1.8)
-# points(mapproject(-80.546297, 28.384993), col = 'red', pch = 15)
+points(-80.546297, 28.384993, pch = "*", cex = 1.8, col = 'deepskyblue3')
+# points(mapproject(-80.546297, 28.384993), col = 'red', pch = 15) # for albers projection
+text(-76, 46.5,"CANADA")
+text(-67.7, 43, "Gulf of Maine", cex=0.55)
+text(-71.8, 35.236, "Cape Hatteras", cex=0.55)
+lines(c(-68,-65.5), c(41, 40.5))
+text(-62.9,40.2, "Georges Bank", cex=0.55)
+lines(c(-75.54, -74.3), c(35.236, 35.236))
+text(-65,33, expression(italic("Atlantic Ocean")))
+axis(1, at=seq(-85,-60, by=5), labels=seq(-85,-60, by= 5)) # Plot axes
+axis(2, at=seq(20,50, by = 5), labels=seq(20,50, by= 5), las = TRUE)
+box()
 
-# lines(mapproject(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2]), col = 'red')
+# Figure out where 200 meter isobath and buffer zones intersect. Not necessary for final map
+# plot(useast, deep = -200, shallow = -200, step = 0, lwd = 0.5, add = TRUE) # plot 200 meter isobath
 
-lines(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
-lines(the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'gray95')
+# lines(mapproject(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2]), col = 'red') # for albers projection
 
-text(-80.11503, 29.76001, "J", cex=0.55)
-text(-79.59933, 31.36622, "I", cex=0.55)
-text(-77.9, 32.5, "H", cex=0.55)
-text(-76.33829, 33.70481, "G", cex=0.55)
-text(-74.9, 34.8, "F", cex=0.55)
-text(-74.6, 36.7, "E", cex=0.55)
-text(-73.6, 38.2, "D", cex=0.55)
-text(-72.4, 39.5, "C", cex=0.55)
-text(-70.05015, 40.36029, "B", cex=0.55)
-text(-68.3, 41.3, "A", cex=0.55)
+# lines(the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp1@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # J
+# lines(the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp2@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # A
+# lines(the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp3@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # I
+# lines(the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp4@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # H
+# lines(the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp5@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # G
+# lines(the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp6@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') #F
+# lines(the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp7@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # E
+# lines(the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp8@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # D
+# lines(the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp9@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # C
+# lines(the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,1], the.circles.sp10@polygons[[1]]@Polygons[[1]]@coords[,2], col = 'tomato') # B
+
+# Points where buffer zones intersect with 200 meter isobath
+points(-80.2, 29.76001, pch = 18, col = 'deepskyblue3')
+text(-79.6, 29.70, "J", cex=0.8)
+points(-79.65, 31.36622, pch = 18, col = 'deepskyblue3')
+text(-79.1, 31.2, "I", cex=0.8)
+points(-78.25, 32.65, pch = 18, col = 'deepskyblue3')
+text(-77.5, 32.2, "H", cex=0.8)
+points(-76.5, 33.8, pch = 18, col = 'deepskyblue3')
+text(-76.0, 33.4, "G", cex=0.8)
+points(-75.16604, 34.95, pch = 18, col = 'deepskyblue3')
+text(-74.5, 34.6, "F", cex=0.8)
+points(-74.7, 36.7, pch = 18, col = 'deepskyblue3')
+text(-73.9, 36.7, "E", cex=0.8)
+points(-73.7, 38.2, pch = 18, col = 'deepskyblue3')
+text(-72.95, 37.8, "D", cex=0.8)
+points(-72.3, 39.5, pch = 18, col = 'deepskyblue3')
+text(-71.8, 39.0, "C", cex=0.8)
+points(-69.7, 40.05, pch = 18, col = 'deepskyblue3')
+text(-69.7, 39.4, "B", cex=0.8)
+points(-67.45, 40.5, pch = 18, col = 'deepskyblue3')
+text(-66.9, 40.1, "A", cex=0.8)
+
+# And plot larval ingress sites
+larvalsamps <- read.csv("~/Documents/Graduate School/Rutgers/Summer Flounder/Maps/LarvalSamplingSites.csv") #my data for sampling sites, contains a column of "lat" and a column of "lon" with GPS points in decimal degrees
+points(larvalsamps$lon, larvalsamps$lat, pch=21, col="black", cex=1.2, bg = 'tomato')
+
+dev.off()
