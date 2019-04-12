@@ -1,4 +1,5 @@
-# Read in adult outlier allele frequencies
+#### Plot allele frequencies of 5 BayEnv populations or 10 GAM-determined locations ####
+# Read in adult outlier allele frequencies of 5 BayEnv pops
 pop.allele.freqs5 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.5pops.txt')
 
 # Keep only one allele per locus
@@ -43,6 +44,50 @@ axis(2, at=seq(0.4,1, by=0.1), labels=seq(0.4,1, by= 0.1), line = 0, las = 1)
 mtext("Allele frequency", side = 2, line = 3)
 
 legend(5.2,1, legend = row.names(pop.allele.freqs5.odds2), col = rev(cols), lty = rep(1:2, times = 5), cex = 0.8)
+
+dev.off()
+
+# Read in adult outlier allele frequencies of 10 GAM-determined locations
+pop.allele.freqs10 <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.ordered.txt', header = TRUE) # row1 is southern-most, row10 is northern-most
+
+# Reverse the columns so that allele freqs are read north to south (easier for plotting) and then transpose
+pop.allele.freqs10.rev.trans <- t(pop.allele.freqs10[nrow(pop.allele.freqs10):1,])
+
+# Get colors
+library(RColorBrewer)
+library(plotly)
+cols <- brewer.pal(10, "Paired")
+
+# Plot
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity//outlierloci_lineplot_GAM_10pops.png", width=9, height=6, res=300, units="in")
+
+par(
+  mar=c(5, 5, 2, 15), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  bty = 'n',
+  xpd = NA
+)
+
+plot(pop.allele.freqs10.rev.trans[1,], type = "l", ylim = c(0.40, 1), xlab = "", ylab = "", xaxt = 'n', yaxt = 'n', col = cols[10])
+lines(pop.allele.freqs10.rev.trans[2,], type = "l", col = cols[9], lty = 2)
+lines(pop.allele.freqs10.rev.trans[3,], type = "l", col = cols[8])
+lines(pop.allele.freqs10.rev.trans[4,], type = "l", col = cols[7], lty = 2)
+lines(pop.allele.freqs10.rev.trans[5,], type = "l", col = cols[6])
+lines(pop.allele.freqs10.rev.trans[6,], type = "l", col = cols[5], lty = 2)
+lines(pop.allele.freqs10.rev.trans[7,], type = "l", col = cols[4])
+lines(pop.allele.freqs10.rev.trans[8,], type = "l", col = cols[3], lty = 2)
+lines(pop.allele.freqs10.rev.trans[9,], type = "l", col = cols[2])
+lines(pop.allele.freqs10.rev.trans[10,], type = "l", col = cols[1], lty = 2)
+
+axis(1, at=seq(1,10, by=1), labels=c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), line = 0)
+mtext("Region (north to south)", side = 1, line = 2.5)
+axis(2, at=seq(0.4,1, by=0.1), labels=seq(0.4,1, by= 0.1), line = 0, las = 1)
+mtext("Allele frequency", side = 2, line = 3)
+
+legend(10.3,1, legend = row.names(pop.allele.freqs10.rev.trans), col = rev(cols), lty = rep(1:2, times = 5), cex = 0.8)
 
 dev.off()
 
