@@ -3,10 +3,13 @@
 adults232 <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.counts10.txt", header = TRUE)
 rownames(adults232) <- adults232$PinskyID
 
-# Replace NAs with column mean
+# Replace NAs with column mean?
 for(i in 1:ncol(adults232[,-c(1:2)])){
   adults232[,-c(1:2)][is.na(adults232[,-c(1:2)][,i]), i] <- mean(adults232[,-c(1:2)][,i], na.rm = TRUE)
 }
+
+# Or just remove the few individuals with some missing data? Same results as letting GAM run with some missing data
+# adults232 <- na.omit(adults232)
 
 colSums(is.na(adults232)) # Check there are no zeros in any of the columns
 
@@ -15,6 +18,7 @@ colSums(is.na(adults232)) # Check there are no zeros in any of the columns
  
 envi <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/Local adaptation/232envirowithdist.txt", header = TRUE)
 envi.ordered <- envi[with(envi, order(PinskyID)),] 
+# envi.ordered <- envi.ordered[envi.ordered$PinskyID %in% rownames(adults232),] # If 4 individuals are removed b/c of missing data; 228 x 11
 # as.character(envi.ordered[,2]) == rownames(adults.nonas.232.1137)
 # as.character(envi.ordered[,2]) == rownames(adults232.freqs) # environmental data is in same order as genetic data?
 # rownames(envi.ordered) <- envi.ordered[,"PinskyID"] # so that environmental variable units in GAM plots won't be standardized
@@ -324,6 +328,47 @@ legend(6.1,1,
        title = 'North to south', text.font = 1)
 
 dev.off()
+
+# Which GAM-determined population is each individual most likely from?
+bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs_10pops.txt", header = TRUE) # 10 GAM pops
+
+locations <- factor(bayenv.likelihoods.indivs$Place, c("Little Egg Inlet, NJ", "Roosevelt Inlet, DE", "York River, VA", "Beaufort, NC", "North Inlet, SC"))
+most.like <- colnames(bayenv.likelihoods.indivs[,-c(1:2)])[apply(bayenv.likelihoods.indivs[,-c(1:2)],1, which.max)]
+table <- t(table(most.like,locations))
+most.like.geno <- apply(bayenv.likelihoods.indivs[,-c(1:2)],1,max)
+least.like.geno <- apply(bayenv.likelihoods.indivs[,-c(1:2)],1,min)
+
+# Find second most likely geno & pop
+n <- 10
+second.most.like <- vector()
+second.most.like.geno <- vector()
+for (i in 1:nrow(bayenv.likelihoods.indivs[,-c(1:2)])){
+  second.most.like.geno[i] <- sort(bayenv.likelihoods.indivs[i,-c(1:2)],partial=n-1)[n-1]
+  second.most.like[i] <- colnames(sort(bayenv.likelihoods.indivs[i,-c(1:2)],partial=n-1)[n-1])
+}
+
+second.most.like.geno <- unlist(second.most.like.geno)
+dif <- most.like.geno - second.most.like.geno
+
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/indiv_assignments_hists_10GAMpops.png", width=8, height=4.5, res=300, units="in")
+
+par(
+  mar=c(5, 5, 3, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  xpd=NA,
+  mfrow = c(1,2)
+)
+
+hist(dif, xlab = '', main = '')
+mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+hist(most.like.geno - least.like.geno, xlab = '', main = "")
+mtext("Difference between highest and \nlowest genotype likelihoods", 1, 3.7)
+
+dev.off()
+
 
 #### Use individual genotype likelihoods to calculate group likelihoods ####
 # Read in fish data with clustering assignments
