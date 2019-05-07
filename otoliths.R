@@ -1623,8 +1623,9 @@ pie(table(clusters.bytime.mid[[2]]$Location), col = col.palette, labels = '', ma
 mtext('M2\n (n = 26)', 3, -0.5)
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
 
-legend(-1,0.9,
-       legend=rev(levels(clusters.bytime$Mid$Location)),
+legend(-0.5,0.9,
+       # legend=rev(levels(clusters.bytime$Mid$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette))
@@ -1858,7 +1859,7 @@ colnames(bayenv.likelihoods.293indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3
 write.table(bayenv.likelihoods.293indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs.txt", row.names = FALSE, col.names = TRUE)
 
 # Which BayEnv population is each individual most likely from?
-bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE)
+bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_indivs.txt", header = TRUE) # 5 BayEnv pops
 
 most.like <- colnames(bayenv.likelihoods.indivs[,-c(1:2)])[apply(bayenv.likelihoods.indivs[,-c(1:2)],1, which.max)]
 t(table(most.like,bayenv.likelihoods.indivs$Place))
