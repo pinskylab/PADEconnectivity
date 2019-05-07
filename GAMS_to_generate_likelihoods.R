@@ -571,10 +571,10 @@ title(xlab = "Longitude (°)", ylab = "Latitude (°)")
 points(-80.546297, 28.384993, pch = "*", cex = 1.8, col = 'deepskyblue3')
 # points(mapproject(-80.546297, 28.384993), col = 'red', pch = 15) # for albers projection
 text(-76, 46.5,"CANADA")
-text(-67.7, 43, "Gulf of Maine", cex=0.55)
-text(-71.8, 35.236, "Cape Hatteras", cex=0.55)
+text(-67.7, 43, "Gulf of Maine", cex=0.45)
+text(-72, 35.236, "Cape Hatteras", cex=0.45)
 lines(c(-68,-65.5), c(41, 40.5))
-text(-62.9,40.2, "Georges Bank", cex=0.55)
+text(-63.2,40.2, "Georges Bank", cex=0.45)
 lines(c(-75.54, -74.3), c(35.236, 35.236))
 text(-65,33, expression(italic("Atlantic Ocean")))
 axis(1, at=seq(-85,-60, by=5), labels=seq(-85,-60, by= 5)) # Plot axes
@@ -609,15 +609,38 @@ text(-76.0, 33.4, "G", cex=0.8)
 points(-75.16604, 34.95, pch = 18, col = 'deepskyblue3')
 text(-74.5, 34.6, "F", cex=0.8)
 points(-74.7, 36.7, pch = 18, col = 'deepskyblue3')
-text(-73.9, 36.7, "E", cex=0.8)
+text(-74.1, 36.3, "E", cex=0.8)
 points(-73.7, 38.2, pch = 18, col = 'deepskyblue3')
-text(-72.95, 37.8, "D", cex=0.8)
+text(-72.95, 37.9, "D", cex=0.8)
 points(-72.3, 39.5, pch = 18, col = 'deepskyblue3')
-text(-71.8, 39.0, "C", cex=0.8)
+text(-71.6, 39.2, "C", cex=0.8)
 points(-69.7, 40.05, pch = 18, col = 'deepskyblue3')
-text(-69.7, 39.4, "B", cex=0.8)
+text(-69.1, 39.6, "B", cex=0.8)
 points(-67.45, 40.5, pch = 18, col = 'deepskyblue3')
 text(-66.9, 40.1, "A", cex=0.8)
+
+# Label ingress sites
+lines(c(-79.16799, -78), c(33.33229, 31.4)) # North Inlet, SC
+text(-75.5, 31, "North Inlet, SC", cex=0.55)
+
+lines(c(-76.67293, -75), c(34.71724, 33.5)) # Beaufort, NC
+text(-72.7, 33.3, "Beaufort, NC", cex=0.55)
+
+lines(c(-76.49952, -74.5), c(37.24831, 37.24831)) # York River, VA
+lines(c(-74.5, -72.5), c(37.24831, 36.5))
+text(-69.8, 36.2, "York River, VA", cex=0.55)
+
+lines(c(-75.42182, -72), c(37.93211, 37)) # Chincoteague, VA
+text(-68.8, 36.9, "Chincoteague, VA", cex=0.55)
+
+lines(c(-75.15865, -73.8), c(38.79292, 38.79292)) # Roosevelt Inlet, DE
+lines(c(-73.8, -72.3), c(38.79292, 38.2))
+text(-69, 37.9, "Roosevelt Inlet, DE", cex=0.55)
+
+lines(c(-74.32394, -72), c(39.50938, 38.65)) # Little Egg Inlet, NJ
+lines(c(-72, -70.8), c(38.65, 38.65))
+text(-67.6, 38.65, "Little Egg Inlet, NJ", cex=0.55)
+
 
 # And plot larval ingress sites
 larvalsamps <- read.csv("~/Documents/Graduate School/Rutgers/Summer Flounder/Maps/LarvalSamplingSites.csv") #my data for sampling sites, contains a column of "lat" and a column of "lon" with GPS points in decimal degrees
