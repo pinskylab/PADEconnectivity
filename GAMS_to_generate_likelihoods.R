@@ -289,6 +289,7 @@ colnames(bayenv.likelihoods.293indivs) <- c("ID", "Place", "Pop1", "Pop2", "Pop3
 # write.table(bayenv.likelihoods.293indivs, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs_10pops.txt", row.names = FALSE, col.names = TRUE)
 
 # Which BayEnv population is each individual most likely from?
+bayenv.likelihoods.293indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs_10pops.txt", header = TRUE)
 most.like <- colnames(bayenv.likelihoods.293indivs[,-c(1:2)])[apply(bayenv.likelihoods.293indivs[,-c(1:2)],1, which.max)]
 t(table(most.like,bayenv.likelihoods.293indivs$Place))
 
@@ -313,10 +314,10 @@ par(
   ps=14,
   xpd=NA
 )
-barplot(t(table3), ylab = 'Proportion assignment', col = cols, axisnames = FALSE, xaxt = 'n')
+barplot(t(table3), ylab = 'Proportion assignment', col = cols, axisnames = FALSE, xaxt = 'n', las = 1)
 axis(1, at=c(0.7, 1.9, 3.1, 4.3, 5.5), labels = FALSE)
-mtext("Ingress site", side = 1, line = 3.7)
-text(seq(0.7, 5.5, by=1.2), -0.135, srt = 45, labels = c("RUMFS", "Roosevelt", "York", "NC", "SC"), xpd = TRUE)
+mtext("Ingress site", side = 1, line = 3)
+text(seq(0.7, 5.5, by=1.2), -0.11, srt = 45, labels = c("NJ", "DE", "VA", "NC", "SC"), xpd = TRUE)
 text(seq(0.7, 5.5, by=1.2), 1.03, labels = c("n = 52", "n = 50", "n = 44", "n = 146", "n = 1"), cex = 0.8)
 
 legend(6.1,1,
