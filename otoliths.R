@@ -122,7 +122,7 @@ par(
   mfrow = c(5,2)
 )
 
-# boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
+# boxplot(otoliths.sub.log$Mg ~ locations, ylab = expression(log[10]*(Mg:Ca)), col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19, names = c('NJ', 'DE', 'VA', 'NC'))
 boxplot(otoliths$Mg ~ locations, ylab = 'Mg:Ca', col = c("#B40F20", "#E58601", "#E2D200", "#46ACC8"), outpch = 19)
 mg.anova <- aov(Mg ~ Location*Period, data = otoliths.sub.log)
 leastsquare <- lsmeans(mg.anova, pairwise ~ locations, adjust = "tukey")
