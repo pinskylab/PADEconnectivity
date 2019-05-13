@@ -914,9 +914,10 @@ props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingr
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary")
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       # legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -934,7 +935,8 @@ dfa.values2 <- cbind.data.frame(dfa.values$x, Location)
 
 plot(dfa.values2$LD1, dfa.values2$LD2, col = dfa.values2$Location)
 legend("topright",
-       legend=levels(Location),
+       #legend=levels(Location),
+       legend =c('NC', 'DE', 'NJ', 'VA'),
        pch=19,
        col = col.palette)
 
@@ -1067,9 +1069,10 @@ dfa3 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, d
 dfa4 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
 ct1 <- table(train.68$Location.ordered, dfa3$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       # legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1080,9 +1083,10 @@ legend("bottomright",
 plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
 ct1 <- table(test.68$Location.ordered, plda$class)
 props2 <- prop.table(ct1,1)
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       # legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1107,9 +1111,10 @@ props3 <- prop.table(ct1,1) # 'origin' signature/total number of fished that ing
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       #legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1128,11 +1133,12 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 149)")
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)")
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       #legend=rev(levels(otoliths.sub.log.trans2$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1206,9 +1212,10 @@ legend("topleft",
 early.dfa1 <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1989 - 1993\n(n = 24)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1989 - 1993\n(n = 24)", names.arg = c('NC', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(early.trans2$early.locs.ordered)),
+       # legend=rev(levels(early.trans2$early.locs.ordered)),
+       legend = c('NJ', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette)[c(1,4)],
@@ -1232,9 +1239,10 @@ legend("topleft",
 middle.dfa1 <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(middle.trans2$middle.locs.ordered, middle.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1998 - 2002\n(n = 57)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1998 - 2002\n(n = 57)", names.arg = c('NC', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(middle.trans2$middle.locs.ordered)),
+       #legend=rev(levels(middle.trans2$middle.locs.ordered)),
+       legend = c('NJ', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette)[c(1,4)],
@@ -1258,9 +1266,10 @@ legend("topleft",
 late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
 ct1 <- table(late.trans2$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "2008 - 2012\n(n = 116)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "2008 - 2012\n(n = 116)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(late.trans2$late.locs.ordered)),
+       # legend=rev(levels(late.trans2$late.locs.ordered)),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1361,9 +1370,10 @@ late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U +
 late.dfa2 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = late.train)  # this is necessary for prediction step
 ct1 <- table(late.train.68$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(late.trans2$late.locs.ordered)),
+       # legend=rev(levels(late.trans2$late.locs.ordered)),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1374,9 +1384,10 @@ legend("bottomright",
 plda <- predict(late.dfa2, newdata = late.trans2[-late.train,])
 ct2 <- table(late.test.68$late.locs.ordered, plda$class)
 props2 <- prop.table(ct2,1)
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set")
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(late.trans2$late.locs.ordered)),
+       # legend=rev(levels(late.trans2$late.locs.ordered)),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1400,9 +1411,10 @@ props3 <- prop.table(ct3,1) # 'origin' signature/total number of fished that ing
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets")
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(late.trans2$late.locs.ordered)),
+       # legend=rev(levels(late.trans2$late.locs.ordered)),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
@@ -1421,11 +1433,12 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 82)")
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 34)")
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 116)")
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 82)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 34)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 116)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
-       legend=rev(levels(late.trans2$late.locs.ordered)),
+       # legend=rev(levels(late.trans2$late.locs.ordered)),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
