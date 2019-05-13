@@ -25,7 +25,8 @@ most.like <- colnames(obs.likes[apply(obs.likes,1, which.max)]) # pick most like
 # pop.allele.freqs5.odds <- pop.allele.freqs5[,odds]
 
 # pop.allele.freqs10.20alleles <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.txt', header = TRUE)
-pop.allele.freqs5.odds <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', header = TRUE) # these are the alleles used to calculate genotype likelihoods of clusters
+# pop.allele.freqs5.odds <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.odd.ordered.txt', header = TRUE) # GAM with distance: these are the alleles used to calculate genotype likelihoods of clusters
+pop.allele.freqs5.odds <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/pop.allele.freqs.10pops.gambinomial.ordered.txt', header = TRUE) # GAM with distance and binomial errors: these are the alleles used to calculate genotype likelihoods of clusters; 10 x 10, one allele per locus
 
 ################################################################################################
 # Sample one allele per locus many times from each BayEnv population, with the z dimension being the number of individuals in a 'cluster'
@@ -337,4 +338,75 @@ mtext(expression('log'[10]*' (genotype likelihood)'), side = 2, line = 0.7, oute
 
 dev.off()
 
+#### Calculate most likely, 2nd most likely and least likely for each cluster. Then plot histograms of these differences ####
+# 10 GAM-generated groups. These cluster likelihoods are logged-10 likelihoods. Individual likelihoods are not logged.
+obs.likes.early <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters_10pops.txt', header = TRUE) # when clustering is done for each time period separately; early clusters
+obs.likes.mid <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters_10pops.txt', header = TRUE) # middle clusters
+obs.likes.late <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters_10pops.txt', header = TRUE) # late clusters
+
+# Early
+most.like.early <- colnames(obs.likes.early[apply(obs.likes.early,1, which.max)])
+most.like.geno.early <- apply(obs.likes.early,1,max)
+least.like.geno.early <- apply(obs.likes.early,1,min)
+
+# Find second most likely geno & pop
+n <- 10
+second.most.like.early <- vector()
+second.most.like.geno.early <- vector()
+for (i in 1:nrow(obs.likes.early)){
+  second.most.like.geno.early[i] <- sort(obs.likes.early[i,],partial=n-1)[n-1]
+  second.most.like.early[i] <- colnames(sort(obs.likes.early[i,],partial=n-1)[n-1])
+}
+
+second.most.like.geno.early <- unlist(second.most.like.geno.early)
+dif <- 10^(most.like.geno.early) - 10^(second.most.like.geno.early) # these are log rules log(M/N) = log(M) - log(N). Undo the log.
+
+hist(dif, xlab = '', main = '')
+mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+hist(10^(most.like.geno.early) - 10^(least.like.geno.early), xlab = '', main = "")
+mtext("Difference between highest and \nlowest genotype likelihoods", 1, 3.7)
+
+# Middle
+most.like.mid <- colnames(obs.likes.mid[apply(obs.likes.mid,1, which.max)])
+most.like.geno.mid <- apply(obs.likes.mid,1,max)
+least.like.geno.mid <- apply(obs.likes.mid,1,min)
+
+# Find second most likely geno & pop
+n <- 10
+second.most.like.mid <- vector()
+second.most.like.geno.mid <- vector()
+for (i in 1:nrow(obs.likes.mid)){
+  second.most.like.geno.mid[i] <- sort(obs.likes.mid[i,],partial=n-1)[n-1]
+  second.most.like.mid[i] <- colnames(sort(obs.likes.mid[i,],partial=n-1)[n-1])
+}
+
+second.most.like.geno.mid <- unlist(second.most.like.geno.mid)
+dif <- 10^(most.like.geno.mid) - 10^(second.most.like.geno.mid) # these are log rules log(M/N) = log(M) - log(N). Undo the log.
+
+hist(dif, xlab = '', main = '')
+mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+hist(10^(most.like.geno.mid) - 10^(least.like.geno.mid), xlab = '', main = "")
+mtext("Difference between highest and \nlowest genotype likelihoods", 1, 3.7)
+
+# Late
+most.like.late <- colnames(obs.likes.late[apply(obs.likes.late,1, which.max)])
+most.like.geno.late <- apply(obs.likes.late,1,max)
+least.like.geno.late <- apply(obs.likes.late,1,min)
+
+# Find second most likely geno & pop
+n <- 10
+second.most.like.late <- vector()
+second.most.like.geno.late <- vector()
+for (i in 1:nrow(obs.likes.late)){
+  second.most.like.geno.late[i] <- sort(obs.likes.late[i,],partial=n-1)[n-1]
+  second.most.like.late[i] <- colnames(sort(obs.likes.late[i,],partial=n-1)[n-1])
+}
+
+second.most.like.geno.late <- unlist(second.most.like.geno.late)
+dif <- 10^(most.like.geno.late) - 10^(second.most.like.geno.late) # these are log rules log(M/N) = log(M) - log(N). Undo the log.
+
+hist(dif, xlab = '', main = '')
+mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+hist(10^(most.like.geno.late) - 10^(least.like.geno.late), xlab = '', main = "")
+mtext("Difference between highest and \nlowest genotype likelihoods", 1, 3.7)
 
