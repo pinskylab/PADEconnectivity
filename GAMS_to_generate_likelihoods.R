@@ -631,8 +631,8 @@ lines(c(-76.49952, -74.5), c(37.24831, 37.24831)) # York River, VA
 lines(c(-74.5, -72.5), c(37.24831, 36.5))
 text(-69.8, 36.2, "York River, VA", cex=0.55)
 
-lines(c(-75.42182, -72), c(37.93211, 37)) # Chincoteague, VA
-text(-68.8, 36.9, "Chincoteague, VA", cex=0.55)
+#lines(c(-75.42182, -72), c(37.93211, 37)) # Chincoteague, VA
+#text(-68.8, 36.9, "Chincoteague, VA", cex=0.55)
 
 lines(c(-75.15865, -73.8), c(38.79292, 38.79292)) # Roosevelt Inlet, DE
 lines(c(-73.8, -72.3), c(38.79292, 38.2))
@@ -645,6 +645,6 @@ text(-67.6, 38.65, "Little Egg Inlet, NJ", cex=0.55)
 
 # And plot larval ingress sites
 larvalsamps <- read.csv("~/Documents/Graduate School/Rutgers/Summer Flounder/Maps/LarvalSamplingSites.csv") #my data for sampling sites, contains a column of "lat" and a column of "lon" with GPS points in decimal degrees
-points(larvalsamps$lon, larvalsamps$lat, pch=21, col="black", cex=1.2, bg = 'tomato')
+points(larvalsamps$lon[-4], larvalsamps$lat[-4], pch=21, col="black", cex=1.2, bg = 'tomato') #without Chincoteague
 
 dev.off()
