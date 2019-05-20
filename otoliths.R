@@ -429,12 +429,13 @@ points(x[c(56:57,65:72,119:123,180:185)], y[c(56:57,65:72,119:123,180:185)], col
 points(x[c(73:77,186:188)], y[c(73:77,186:188)], col = "#FF00DBFF", pch = 19) #2011
 points(x[c(78:82,189:196)], y[c(78:82,189:196)], col = "#FF006DFF", pch = 19) #2012
 
-# Plot separate MDS for each time period using all 10 elements
+# Plot separate MDS/nMDS for each time period using all 10 elements
 library(wesanderson)
 
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(rev(col.palette))
 
+# MDS
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/mds_byperiod_10elements.png", width=8, height=2.5, res=300, units="in")
 
 par(
@@ -478,6 +479,32 @@ y <- oto.fit.late$points[,2]
 locations.late <- factor(oto.chem.late$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
 plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Late: 2008-2012", col = locations.late, pch = 19) # mds using for all elements except Sn
 legend(4.5,5,
+       # legend = levels(locations.late),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
+       pch=19,
+       col = rev(col.palette))
+
+dev.off()
+
+# nMDS
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/nmds_byperiod_10elements.png", width=9, height=2.5, res=300, units="in")
+
+par(
+  mar=c(5, 4.5, 2, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=13, # point size, which is the font size
+  mfrow = c(1,3), 
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+plot(early.scores[,1], early.scores[,2], col = locations.early, pch = 19, xlab = 'Axis 1', ylab = 'Axis 2', main = 'Early: 1989-1993')
+plot(middle.scores[,1], middle.scores[,2], col = locations.middle, pch = 19, xlab = 'Axis 1', ylab = 'Axis 2', main = 'Middle: 1998-2002')
+plot(late.scores[,1], late.scores[,2], col = locations.late, pch = 19, xlab = 'Axis1', ylab = 'Axis 2', main = 'Late: 2008-2012')
+legend(9,7.5,
        # legend = levels(locations.late),
        legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=19,
