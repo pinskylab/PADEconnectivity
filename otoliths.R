@@ -478,7 +478,8 @@ y <- oto.fit.late$points[,2]
 locations.late <- factor(oto.chem.late$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
 plot(x, y, xlab = "MDS1", ylab = "MDS2", main = "Late: 2008-2012", col = locations.late, pch = 19) # mds using for all elements except Sn
 legend(4.5,5,
-       legend = levels(locations.late),
+       # legend = levels(locations.late),
+       legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=19,
        col = rev(col.palette))
 
