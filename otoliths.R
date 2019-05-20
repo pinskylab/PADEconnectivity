@@ -318,11 +318,26 @@ oto.chem.late3 <- dist(oto.chem.late2)
 # Fit model
 oto.fit2 <- cmdscale(oto.dist2, eig = TRUE, k = 2, add = FALSE) # How many dimensions? Look at scree plot.
 
-oto.fit.early <- cmdscale(oto.chem.early3, eig = TRUE, k = 2, add = FALSE)
+oto.fit.early <- cmdscale(oto.chem.early3, eig = TRUE, k = 2, add = FALSE) # MDS
 oto.fit.middle <- cmdscale(oto.chem.middle3, eig = TRUE, k = 2, add = FALSE)
 oto.fit.late <- cmdscale(oto.chem.late3, eig = TRUE, k = 2, add = FALSE)
 
 plot(oto.fit2$eig[1:10]) # scree plot
+
+early.nmds <- nmds(oto.chem.early3, mindim = 2, maxdim = 2) # nMDS early. Scale and caldulate euclidean distance, then use this in nMDS
+early.scores <- nmds.min(early.nmds)
+locations.early <- factor(oto.chem.early$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(early.scores[,1], early.scores[,2], col = locations.early, pch = 19, xlab = 'nMDS1', ylab = 'nMDS2', main = 'Early: 1989-1993')
+
+middle.nmds <- nmds(oto.chem.middle3, mindim = 2, maxdim = 2) # nMDS middle
+middle.scores <- nmds.min(middle.nmds)
+locations.middle <- factor(oto.chem.middle$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(middle.scores[,1], middle.scores[,2], col = locations.middle, pch = 19, xlab = 'nMDS1', ylab = 'nMDS2', main = 'Middle: 1998-2002')
+
+late.nmds <- nmds(oto.chem.late3, mindim = 2, maxdim = 2) # nMDS late
+late.scores <- nmds.min(late.nmds)
+locations.late <- factor(oto.chem.late$Location, c("RUMFS", "Roosevelt", "York", "NC")) # changes order of ingress sites
+plot(late.scores[,1], late.scores[,2], col = locations.late, pch = 19, xlab = 'nMDS1', ylab = 'nMDS2', main = 'Late: 2008-2012')
 
 # Histograms of MDS axis - unimodal or multimodal?
 hist(x, xlab = "MDS 1", main = "") # all unimodal
