@@ -333,19 +333,23 @@ dev.off()
 # Which GAM-determined population is each individual most likely from?
 bayenv.likelihoods.indivs <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/bayenv_likelihoods_293indivs_10pops.txt", header = TRUE) # 10 GAM pops
 
-locations <- factor(bayenv.likelihoods.indivs$Place, c("Little Egg Inlet, NJ", "Roosevelt Inlet, DE", "York River, VA", "Beaufort, NC", "North Inlet, SC"))
-most.like <- colnames(bayenv.likelihoods.indivs[,-c(1:2)])[apply(bayenv.likelihoods.indivs[,-c(1:2)],1, which.max)]
+# Create logged dataset
+bayenv.likelihoods.indivs2 <- as.data.frame(cbind(bayenv.likelihoods.indivs[,c(1:2)], log10(bayenv.likelihoods.indivs[,-c(1:2)])))
+
+# Use either unlogged or logged version
+locations <- factor(bayenv.likelihoods.indivs2$Place, c("Little Egg Inlet, NJ", "Roosevelt Inlet, DE", "York River, VA", "Beaufort, NC", "North Inlet, SC"))
+most.like <- colnames(bayenv.likelihoods.indivs2[,-c(1:2)])[apply(bayenv.likelihoods.indivs2[,-c(1:2)],1, which.max)]
 table <- t(table(most.like,locations))
-most.like.geno <- apply(bayenv.likelihoods.indivs[,-c(1:2)],1,max)
-least.like.geno <- apply(bayenv.likelihoods.indivs[,-c(1:2)],1,min)
+most.like.geno <- apply(bayenv.likelihoods.indivs2[,-c(1:2)],1,max)
+least.like.geno <- apply(bayenv.likelihoods.indivs2[,-c(1:2)],1,min)
 
 # Find second most likely geno & pop
 n <- 10
 second.most.like <- vector()
 second.most.like.geno <- vector()
-for (i in 1:nrow(bayenv.likelihoods.indivs[,-c(1:2)])){
-  second.most.like.geno[i] <- sort(bayenv.likelihoods.indivs[i,-c(1:2)],partial=n-1)[n-1]
-  second.most.like[i] <- colnames(sort(bayenv.likelihoods.indivs[i,-c(1:2)],partial=n-1)[n-1])
+for (i in 1:nrow(bayenv.likelihoods.indivs2[,-c(1:2)])){
+  second.most.like.geno[i] <- sort(bayenv.likelihoods.indivs2[i,-c(1:2)],partial=n-1)[n-1]
+  second.most.like[i] <- colnames(sort(bayenv.likelihoods.indivs2[i,-c(1:2)],partial=n-1)[n-1])
 }
 
 second.most.like.geno <- unlist(second.most.like.geno)
@@ -458,6 +462,33 @@ rownames(bayenv.likelihoods.late.clustered) <- c("cluster1", "cluster2", "cluste
 # write.table(bayenv.likelihoods.late.clustered, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters_10pops.txt", row.names = TRUE, col.names = TRUE)
 
 most.like <- colnames(bayenv.likelihoods.late.clustered[apply(bayenv.likelihoods.late.clustered,1, which.max)]) # pick most likely origin region for each cluster
+
+#### Histograms of cluster likelihood differences, as for individuals ####
+bayenv.likelihoods.early.clustered <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_early_6clusters_10pops.txt", header = TRUE)
+bayenv.likelihoods.middle.clustered <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_middle_2clusters_10pops.txt", header = TRUE)
+bayenv.likelihoods.late.clustered <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/obs_likelihoods_late_3clusters_10pops.txt", header = TRUE)
+
+cluster.likes <- rbind(bayenv.likelihoods.early.clustered, bayenv.likelihoods.middle.clustered, bayenv.likelihoods.late.clustered) # make sure colnames are the same and in same order
+
+most.like.geno.clusters <- apply(cluster.likes,1,max)
+least.like.geno.clusters <- apply(cluster.likes,1,min)
+
+# Find second most likely geno & pop
+n <- 10
+second.most.like.clusters <- vector()
+second.most.like.geno.clusters <- vector()
+for (i in 1:nrow(cluster.likes)){
+  second.most.like.geno.clusters[i] <- sort(cluster.likes[i,],partial=n-1)[n-1]
+  second.most.like.clusters[i] <- colnames(sort(cluster.likes[i,],partial=n-1)[n-1])
+}
+
+second.most.like.geno.clusters <- unlist(second.most.like.geno.clusters)
+dif.clusters <- most.like.geno.clusters - second.most.like.geno.clusters
+
+hist(dif.clusters, xlab = '', main = '')
+mtext("Difference between two most \nlikely cluster genotypes", 1, 3.7)
+hist(most.like.geno.clusters - least.like.geno.clusters, xlab = '', main = "")
+mtext("Difference between highest and \nlowest cluster genotype likelihoods", 1, 3.7)
 
 ###############################################################################
 #### What is the meaning of distance? Can I convert this back to lat/long and plot this on a map? ####
