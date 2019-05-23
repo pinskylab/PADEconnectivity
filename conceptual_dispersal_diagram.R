@@ -90,7 +90,7 @@ text(17, 0,"J")
 # Draw arrows of where each pie chart ingressed to #
 arrows(16,10,3.6,14.1, length = 0.1, lwd = 5, col = rgb(202/255,178/255,214/255,0.4)) # M1 NJ
 
-arrows(16,9.9,3.6,13.9, length = 0.1, lwd = 1, col = rgb(255/255,127/255,0/255,0.4)) # M2 NJ
+arrows(16,9.9,3.6,13.8, length = 0.1, lwd = 1, col = rgb(255/255,127/255,0/255,0.4)) # M2 NJ
 arrows(16,9.9,3.6,7.3, length = 0.1, lwd = 5, col = rgb(255/255,127/255,0/255,0.4)) # M2 NC
 
 box()
@@ -129,8 +129,8 @@ arrows(16,8.1,3.6,10.4, length = 0.1, lwd = 3, col = rgb(251/255,154/255,153/255
 arrows(16,8.1,3.6,12.5, length = 0.1, lwd = 2, col = rgb(251/255,154/255,153/255,0.4)) # L3 DE
 arrows(16,8.1,3.6,14.1, length = 0.1, lwd = 1, col = rgb(251/255,154/255,153/255,0.4)) # L3 NJ
 
-arrows(16,7.9,3.6,12.4, length = 0.1, lwd = 6, col = rgb(166/255,206/255,227/255,0.4)) # L1 DE
-arrows(16,7.9,3.6,7.2, length = 0.1, lwd = 1, col = rgb(166/255,206/255,227/255,0.4)) # L1 NC
+arrows(16,7.9,3.6,12.2, length = 0.1, lwd = 6, col = rgb(166/255,206/255,227/255,0.4)) # L1 DE
+arrows(16,7.9,3.6,7.1, length = 0.1, lwd = 1, col = rgb(166/255,206/255,227/255,0.4)) # L1 NC
 arrows(16,7.9,3.6,13.9, length = 0.1, lwd = 1, col = rgb(166/255,206/255,227/255,0.4)) # L1 NJ
 
 arrows(16,10,3.6,7.4, length = 0.1, lwd = 2, col = rgb(51/255,160/255,44/255,0.4)) # L2 NC
