@@ -368,9 +368,11 @@ par(
 )
 
 hist(dif, xlab = '', main = '')
-mtext("Difference between two most \nlikely genotypes", 1, 3.7)
+mtext(expression(paste("Difference between two most likely")), 1, 2.5)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.5)
 hist(most.like.geno - least.like.geno, xlab = '', main = "")
-mtext("Difference between highest and \nlowest genotype likelihoods", 1, 3.7)
+mtext(expression(paste("Difference between highest and lowest")), 1, 2.5)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.5)
 
 dev.off()
 
@@ -485,10 +487,36 @@ for (i in 1:nrow(cluster.likes)){
 second.most.like.geno.clusters <- unlist(second.most.like.geno.clusters)
 dif.clusters <- most.like.geno.clusters - second.most.like.geno.clusters
 
+# Plot of individual and cluster log likelihood genotypes
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/indiv_and_cluster_assignments_hists_10GAMpops.png", width=8, height=8, res=300, units="in")
+
+par(
+  mar=c(5, 5, 1, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  xpd=NA,
+  mfrow = c(2,2)
+)
+
+# Individuals
+hist(dif, xlab = '', main = '')
+mtext(expression(paste("Difference between two most likely")), 1, 2.7, cex = 0.9)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.9, cex = 0.9)
+hist(most.like.geno - least.like.geno, xlab = '', main = "")
+mtext(expression(paste("Difference between highest and lowest")), 1, 2.7, cex = 0.9)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.9, cex = 0.9)
+
+# Clusters
 hist(dif.clusters, xlab = '', main = '')
-mtext("Difference between two most \nlikely cluster genotypes", 1, 3.7)
+mtext(expression(paste("Difference between two most likely")), 1, 2.7, cex = 0.9)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.9, cex = 0.9)
 hist(most.like.geno.clusters - least.like.geno.clusters, xlab = '', main = "")
-mtext("Difference between highest and \nlowest cluster genotype likelihoods", 1, 3.7)
+mtext(expression(paste("Difference between highest and lowest")), 1, 2.7, cex = 0.9)
+mtext(expression(paste("log"["10"], "(genotype likelihood)")), 1, 3.9, cex = 0.9)
+
+dev.off()
 
 ###############################################################################
 #### What is the meaning of distance? Can I convert this back to lat/long and plot this on a map? ####
