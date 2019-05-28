@@ -494,7 +494,7 @@ par(
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
-  ps=13, # point size, which is the font size
+  ps=13.5, # point size, which is the font size
   mfrow = c(1,3), 
   oma = c(3,3,0,1) +0.1,
   omi=c(0,0,0,1.5), 
@@ -1696,6 +1696,58 @@ pie(table(clusters.bytime.late[[3]]$Location), col = col.palette, labels = '', m
 mtext('L3\n (n = 28)', 3, -0.5)
 
 dev.off()
+
+# Plot clusters separately for each time period where color represents developmental stage
+# Clusters for early time period
+par(
+  mar=c(1, 2, 2.7, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  mfrow = c(4,3), 
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+pie(table(clusters.bytime.early[[1]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('E1\n (n = 4)', 3, -0.5)
+pie(table(clusters.bytime.early[[2]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('E2\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[3]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('E3\n (n = 4)', 3, -0.5)
+pie(table(clusters.bytime.early[[4]]$Developmental.Stage), col = col.palette, labels = '', main = '') # 4 fish exist, but one is a NA for developmental stage
+mtext('E4\n (n = 3)', 3, -0.5)
+mtext('                                      1989-1993', 2, -0.1)
+pie(table(clusters.bytime.early[[5]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('E5\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[6]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('E6\n (n = 3)', 3, -0.5)
+
+# Clusters for middle time period
+pie(table(clusters.bytime.mid[[1]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('M1\n (n = 21)', 3, -0.5)
+mtext('          1998-2002', 2, -0.1)
+pie(table(clusters.bytime.mid[[2]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('M2\n (n = 26)', 3, -0.5)
+pie(table(clusters.bytime.late[[2]]$Developmental.Stage), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+
+legend(-0.5,0.9,
+       legend=levels(clusters.bytime$Mid$Developmental.Stage),
+       pch=22,
+       col = 'black',
+       pt.bg= col.palette)
+
+# Clusters for latest time period
+pie(table(clusters.bytime.late[[1]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('L1\n (n = 33)', 3, -0.5)
+mtext('          2008-2012', 2, -0.1)
+pie(table(clusters.bytime.late[[2]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('L2\n (n = 22)', 3, -0.5)
+pie(table(clusters.bytime.late[[3]]$Developmental.Stage), col = col.palette, labels = '', main = '')
+mtext('L3\n (n = 28)', 3, -0.5)
+
 
 # Makes nice pie chart figure where each color is an ingress site
 png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster_piecharts.png", width=5, height=4.5, res=300, units="in")
