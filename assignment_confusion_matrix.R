@@ -441,7 +441,7 @@ dev.off()
 #### Simulations to generate a confusion matrix of n individuals ####
 #####################################################################
 # Set n, the number of individuals in the group
-n <- 20
+n <- 10
 
 # Sample one allele per locus N times (depth of array) from each of 10 GAM populations, and repeat this 1000 times
 Pop1.alleles <- array(dim = c(1000,10,n)) # 1//J is southern-most, 10//A is northern-most
@@ -2354,7 +2354,10 @@ rownames(mat) <- c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G'
 
 #### Plot confusion matrix of groups of n individuals ####
 # Nice plot
-# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_groups.png", width=7, height=5, res=300, units="in")
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_5indiv.png", width=7, height=5, res=300, units="in")
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_10indiv.png", width=7, height=5, res=300, units="in")
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_20indiv.png", width=7, height=5, res=300, units="in")
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_30indiv.png", width=7, height=5, res=300, units="in")
 
 par(
   mar=c(5, 4, 4, 2), # panel magin size in "line number" units
@@ -2369,9 +2372,9 @@ mat2 <- data.matrix(mat)
 # max <- max(mat2,na.rm = TRUE)
 
 rbPal <- colorRampPalette(c('blue', 'red'))
-nocol <- 6
+nocol <- 8
 color <- rbPal(nocol)
-ColorLevels <- seq(0, 0.65, length=length(color)) # this makes the color bar nicer later on
+ColorLevels <- seq(0, 0.70, length=length(color)) # this makes the color bar nicer later on
 # ColorLevels <- seq(min, max, length=length(color))
 
 # Set layout.  We are going to include a colorbar next to plot.
@@ -2384,7 +2387,7 @@ par(mar = c(5,5,1.5,1), font = 2)
 # Plot it up!
 image(1:ncol(mat2), 1:nrow(mat2), t(mat2),
       col=color, xlab="Predicted population", ylab="True population",
-      axes=FALSE, zlim = c(0, 0.65),
+      axes=FALSE, zlim = c(0, 0.70),
       main= NA, xlim = c(0.5, 11), ylim = c(0.5, 11))
 # image(1:ncol(mat2), 1:nrow(mat2), t(mat2),
 #       col=color, xlab="Predicted population", ylab="True population",
