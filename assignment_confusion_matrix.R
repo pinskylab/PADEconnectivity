@@ -435,6 +435,8 @@ mtext('% Assignment', side = 3, cex = 0.7, line = 0.5, adj = 1)
 
 dev.off()
 
+################################################################################################################################################################
+
 #####################################################################
 #### Simulations to generate a confusion matrix of n individuals ####
 #####################################################################
@@ -1230,3 +1232,1177 @@ Pop4.ass.df <- data.frame(cbind(Pop4.geno1, Pop4.geno2, Pop4.geno3, Pop4.geno4, 
 colnames(Pop4.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
 Pop4.most.like <- colnames(Pop4.ass.df)[apply(Pop4.ass.df,1, which.max)]
 
+#### Alleles drawn from Pop5, genotype likelihoods calculated for all 10 GAM populations ####
+Pop5.likelihoods1 <- array(dim = c(1000,10,n))
+Pop5.likelihoods2 <- array(dim = c(1000,10,n))
+Pop5.likelihoods3 <- array(dim = c(1000,10,n))
+Pop5.likelihoods4 <- array(dim = c(1000,10,n))
+Pop5.likelihoods5 <- array(dim = c(1000,10,n))
+Pop5.likelihoods6 <- array(dim = c(1000,10,n))
+Pop5.likelihoods7 <- array(dim = c(1000,10,n))
+Pop5.likelihoods8 <- array(dim = c(1000,10,n))
+Pop5.likelihoods9 <- array(dim = c(1000,10,n))
+Pop5.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 5 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 5
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop5.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop5.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop5.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop5.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop5.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop5.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop5.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop5.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop5.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop5.alleles)){
+    
+    for (i in 1:ncol(Pop5.alleles)){
+      if(Pop5.alleles[j,i,h] == 2) {
+        Pop5.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop5.alleles[j,i,h] == 1) {
+        Pop5.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop5.alleles[j,i,h] == 0) {
+        Pop5.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop5.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop5.geno1 <- apply(Pop5.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno2 <- apply(Pop5.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno3 <- apply(Pop5.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno4 <- apply(Pop5.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno5 <- apply(Pop5.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno6 <- apply(Pop5.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno7 <- apply(Pop5.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno8 <- apply(Pop5.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno9 <- apply(Pop5.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop5.geno10 <- apply(Pop5.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop5.ass.df <- data.frame(cbind(Pop5.geno1, Pop5.geno2, Pop5.geno3, Pop5.geno4, Pop5.geno5, Pop5.geno6, Pop5.geno7, Pop5.geno8, Pop5.geno9, Pop5.geno10))
+colnames(Pop5.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop5.most.like <- colnames(Pop5.ass.df)[apply(Pop5.ass.df,1, which.max)]
+
+#### Alleles drawn from Pop6, genotype likelihoods calculated for all 10 GAM populations ####
+Pop6.likelihoods1 <- array(dim = c(1000,10,n))
+Pop6.likelihoods2 <- array(dim = c(1000,10,n))
+Pop6.likelihoods3 <- array(dim = c(1000,10,n))
+Pop6.likelihoods4 <- array(dim = c(1000,10,n))
+Pop6.likelihoods5 <- array(dim = c(1000,10,n))
+Pop6.likelihoods6 <- array(dim = c(1000,10,n))
+Pop6.likelihoods7 <- array(dim = c(1000,10,n))
+Pop6.likelihoods8 <- array(dim = c(1000,10,n))
+Pop6.likelihoods9 <- array(dim = c(1000,10,n))
+Pop6.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 6 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 6
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop6.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop6.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop6.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop6.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop6.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop6.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop6.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop6.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop6.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop6.alleles)){
+    
+    for (i in 1:ncol(Pop6.alleles)){
+      if(Pop6.alleles[j,i,h] == 2) {
+        Pop6.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop6.alleles[j,i,h] == 1) {
+        Pop6.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop6.alleles[j,i,h] == 0) {
+        Pop6.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop6.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop6.geno1 <- apply(Pop6.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno2 <- apply(Pop6.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno3 <- apply(Pop6.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno4 <- apply(Pop6.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno5 <- apply(Pop6.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno6 <- apply(Pop6.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno7 <- apply(Pop6.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno8 <- apply(Pop6.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno9 <- apply(Pop6.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop6.geno10 <- apply(Pop6.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop6.ass.df <- data.frame(cbind(Pop6.geno1, Pop6.geno2, Pop6.geno3, Pop6.geno4, Pop6.geno5, Pop6.geno6, Pop6.geno7, Pop6.geno8, Pop6.geno9, Pop6.geno10))
+colnames(Pop6.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop6.most.like <- colnames(Pop6.ass.df)[apply(Pop6.ass.df,1, which.max)]
+
+#### Alleles drawn from Pop7, genotype likelihoods calculated for all 10 GAM populations ####
+Pop7.likelihoods1 <- array(dim = c(1000,10,n))
+Pop7.likelihoods2 <- array(dim = c(1000,10,n))
+Pop7.likelihoods3 <- array(dim = c(1000,10,n))
+Pop7.likelihoods4 <- array(dim = c(1000,10,n))
+Pop7.likelihoods5 <- array(dim = c(1000,10,n))
+Pop7.likelihoods6 <- array(dim = c(1000,10,n))
+Pop7.likelihoods7 <- array(dim = c(1000,10,n))
+Pop7.likelihoods8 <- array(dim = c(1000,10,n))
+Pop7.likelihoods9 <- array(dim = c(1000,10,n))
+Pop7.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 7 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 7
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop7.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop7.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop7.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop7.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop7.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop7.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop7.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop7.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop7.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop7.alleles)){
+    
+    for (i in 1:ncol(Pop7.alleles)){
+      if(Pop7.alleles[j,i,h] == 2) {
+        Pop7.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop7.alleles[j,i,h] == 1) {
+        Pop7.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop7.alleles[j,i,h] == 0) {
+        Pop7.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop7.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop7.geno1 <- apply(Pop7.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno2 <- apply(Pop7.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno3 <- apply(Pop7.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno4 <- apply(Pop7.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno5 <- apply(Pop7.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno6 <- apply(Pop7.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno7 <- apply(Pop7.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno8 <- apply(Pop7.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno9 <- apply(Pop7.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop7.geno10 <- apply(Pop7.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop7.ass.df <- data.frame(cbind(Pop7.geno1, Pop7.geno2, Pop7.geno3, Pop7.geno4, Pop7.geno5, Pop7.geno6, Pop7.geno7, Pop7.geno8, Pop7.geno9, Pop7.geno10))
+colnames(Pop7.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop7.most.like <- colnames(Pop7.ass.df)[apply(Pop7.ass.df,1, which.max)]
+
+#### Alleles drawn from Pop8, genotype likelihoods calculated for all 10 GAM populations ####
+Pop8.likelihoods1 <- array(dim = c(1000,10,n))
+Pop8.likelihoods2 <- array(dim = c(1000,10,n))
+Pop8.likelihoods3 <- array(dim = c(1000,10,n))
+Pop8.likelihoods4 <- array(dim = c(1000,10,n))
+Pop8.likelihoods5 <- array(dim = c(1000,10,n))
+Pop8.likelihoods6 <- array(dim = c(1000,10,n))
+Pop8.likelihoods7 <- array(dim = c(1000,10,n))
+Pop8.likelihoods8 <- array(dim = c(1000,10,n))
+Pop8.likelihoods9 <- array(dim = c(1000,10,n))
+Pop8.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 8 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 8
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop8.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop8.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop8.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop8.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop8.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop8.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop8.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop8.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop8.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop8.alleles)){
+    
+    for (i in 1:ncol(Pop8.alleles)){
+      if(Pop8.alleles[j,i,h] == 2) {
+        Pop8.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop8.alleles[j,i,h] == 1) {
+        Pop8.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop8.alleles[j,i,h] == 0) {
+        Pop8.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop8.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop8.geno1 <- apply(Pop8.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno2 <- apply(Pop8.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno3 <- apply(Pop8.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno4 <- apply(Pop8.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno5 <- apply(Pop8.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno6 <- apply(Pop8.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno7 <- apply(Pop8.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno8 <- apply(Pop8.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno9 <- apply(Pop8.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop8.geno10 <- apply(Pop8.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop8.ass.df <- data.frame(cbind(Pop8.geno1, Pop8.geno2, Pop8.geno3, Pop8.geno4, Pop8.geno5, Pop8.geno6, Pop8.geno7, Pop8.geno8, Pop8.geno9, Pop8.geno10))
+colnames(Pop8.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop8.most.like <- colnames(Pop8.ass.df)[apply(Pop8.ass.df,1, which.max)]
+
+#### Alleles drawn from Pop9, genotype likelihoods calculated for all 10 GAM populations ####
+Pop9.likelihoods1 <- array(dim = c(1000,10,n))
+Pop9.likelihoods2 <- array(dim = c(1000,10,n))
+Pop9.likelihoods3 <- array(dim = c(1000,10,n))
+Pop9.likelihoods4 <- array(dim = c(1000,10,n))
+Pop9.likelihoods5 <- array(dim = c(1000,10,n))
+Pop9.likelihoods6 <- array(dim = c(1000,10,n))
+Pop9.likelihoods7 <- array(dim = c(1000,10,n))
+Pop9.likelihoods8 <- array(dim = c(1000,10,n))
+Pop9.likelihoods9 <- array(dim = c(1000,10,n))
+Pop9.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 9 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 9
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop9.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop9.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop9.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop9.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop9.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop9.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop9.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop9.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop9.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop9.alleles)){
+    
+    for (i in 1:ncol(Pop9.alleles)){
+      if(Pop9.alleles[j,i,h] == 2) {
+        Pop9.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop9.alleles[j,i,h] == 1) {
+        Pop9.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop9.alleles[j,i,h] == 0) {
+        Pop9.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop9.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop9.geno1 <- apply(Pop9.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno2 <- apply(Pop9.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno3 <- apply(Pop9.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno4 <- apply(Pop9.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno5 <- apply(Pop9.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno6 <- apply(Pop9.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno7 <- apply(Pop9.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno8 <- apply(Pop9.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno9 <- apply(Pop9.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop9.geno10 <- apply(Pop9.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop9.ass.df <- data.frame(cbind(Pop9.geno1, Pop9.geno2, Pop9.geno3, Pop9.geno4, Pop9.geno5, Pop9.geno6, Pop9.geno7, Pop9.geno8, Pop9.geno9, Pop9.geno10))
+colnames(Pop9.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop9.most.like <- colnames(Pop9.ass.df)[apply(Pop9.ass.df,1, which.max)]
+
+#### Alleles drawn from Pop10, genotype likelihoods calculated for all 10 GAM populations ####
+Pop10.likelihoods1 <- array(dim = c(1000,10,n))
+Pop10.likelihoods2 <- array(dim = c(1000,10,n))
+Pop10.likelihoods3 <- array(dim = c(1000,10,n))
+Pop10.likelihoods4 <- array(dim = c(1000,10,n))
+Pop10.likelihoods5 <- array(dim = c(1000,10,n))
+Pop10.likelihoods6 <- array(dim = c(1000,10,n))
+Pop10.likelihoods7 <- array(dim = c(1000,10,n))
+Pop10.likelihoods8 <- array(dim = c(1000,10,n))
+Pop10.likelihoods9 <- array(dim = c(1000,10,n))
+Pop10.likelihoods10 <- array(dim = c(1000,10,n))
+
+# For larvae simulated using GAM pop 10 allele freqs. Then geno likelihoods calculated for all 10 GAM pops
+# Calculations for genotype likelihoods from 10 GAM populations for groups of n individuals sampled from GAM 10
+for (h in 1:n){
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods1[j,i,h] <- adult10.freqs[1,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods1[j,i,h] <- 2*(adult10.freqs[1,i] * (1-adult10.freqs[1,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods1[j,i,h] <- ( 1-adult10.freqs[1,i])^2 
+      } else {
+        Pop10.likelihoods1[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods2[j,i,h] <- adult10.freqs[2,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods2[j,i,h] <- 2*(adult10.freqs[2,i] * (1-adult10.freqs[2,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods2[j,i,h] <- ( 1-adult10.freqs[2,i])^2 
+      } else {
+        Pop10.likelihoods2[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods3[j,i,h] <- adult10.freqs[3,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods3[j,i,h] <- 2*(adult10.freqs[3,i] * (1-adult10.freqs[3,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods3[j,i,h] <- ( 1-adult10.freqs[3,i])^2 
+      } else {
+        Pop10.likelihoods3[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods4[j,i,h] <- adult10.freqs[4,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods4[j,i,h] <- 2*(adult10.freqs[4,i] * (1-adult10.freqs[4,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods4[j,i,h] <- ( 1-adult10.freqs[4,i])^2 
+      } else {
+        Pop10.likelihoods4[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods5[j,i,h] <- adult10.freqs[5,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods5[j,i,h] <- 2*(adult10.freqs[5,i] * (1-adult10.freqs[5,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods5[j,i,h] <- ( 1-adult10.freqs[5,i])^2 
+      } else {
+        Pop10.likelihoods5[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods6[j,i,h] <- adult10.freqs[6,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods6[j,i,h] <- 2*(adult10.freqs[6,i] * (1-adult10.freqs[6,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods6[j,i,h] <- ( 1-adult10.freqs[6,i])^2 
+      } else {
+        Pop10.likelihoods6[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods7[j,i,h] <- adult10.freqs[7,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods7[j,i,h] <- 2*(adult10.freqs[7,i] * (1-adult10.freqs[7,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods7[j,i,h] <- ( 1-adult10.freqs[7,i])^2 
+      } else {
+        Pop10.likelihoods7[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods8[j,i,h] <- adult10.freqs[8,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods8[j,i,h] <- 2*(adult10.freqs[8,i] * (1-adult10.freqs[8,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods8[j,i,h] <- ( 1-adult10.freqs[8,i])^2 
+      } else {
+        Pop10.likelihoods8[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods9[j,i,h] <- adult10.freqs[9,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods9[j,i,h] <- 2*(adult10.freqs[9,i] * (1-adult10.freqs[9,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods9[j,i,h] <- ( 1-adult10.freqs[9,i])^2 
+      } else {
+        Pop10.likelihoods9[j,i,h] <- 1
+      }
+    }
+  }
+  
+  for (j in 1:nrow(Pop10.alleles)){
+    
+    for (i in 1:ncol(Pop10.alleles)){
+      if(Pop10.alleles[j,i,h] == 2) {
+        Pop10.likelihoods10[j,i,h] <- adult10.freqs[10,i]^2
+      } else if (Pop10.alleles[j,i,h] == 1) {
+        Pop10.likelihoods10[j,i,h] <- 2*(adult10.freqs[10,i] * (1-adult10.freqs[10,i]))
+      } else if (Pop10.alleles[j,i,h] == 0) {
+        Pop10.likelihoods10[j,i,h] <- ( 1-adult10.freqs[10,i])^2 
+      } else {
+        Pop10.likelihoods10[j,i,h] <- 1
+      }
+    }
+  }
+}
+
+# Multiply everything together from groups of n individuals originating from GAM 1
+Pop10.geno1 <- apply(Pop10.likelihoods1, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno2 <- apply(Pop10.likelihoods2, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno3 <- apply(Pop10.likelihoods3, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno4 <- apply(Pop10.likelihoods4, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno5 <- apply(Pop10.likelihoods5, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno6 <- apply(Pop10.likelihoods6, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno7 <- apply(Pop10.likelihoods7, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno8 <- apply(Pop10.likelihoods8, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno9 <- apply(Pop10.likelihoods9, FUN = prod, MARGIN = 1, na.rm = TRUE)
+Pop10.geno10 <- apply(Pop10.likelihoods10, FUN = prod, MARGIN = 1, na.rm = TRUE)
+
+# Assign groups of n individuals originating from GAM 1 to most likely pop
+Pop10.ass.df <- data.frame(cbind(Pop10.geno1, Pop10.geno2, Pop10.geno3, Pop10.geno4, Pop10.geno5, Pop10.geno6, Pop10.geno7, Pop10.geno8, Pop10.geno9, Pop10.geno10))
+colnames(Pop10.ass.df) <- c('Pop J', 'Pop I', 'Pop H', 'Pop G', 'Pop F', 'Pop E', 'Pop D', 'Pop C', 'Pop B', 'Pop A')
+Pop10.most.like <- colnames(Pop10.ass.df)[apply(Pop10.ass.df,1, which.max)]
+
+#### Combine all the % assignments into a matrix ####
+# Rbind & organize the assignment results for groups of individuals simulated from each of 10 GAM populations
+# Each row was drawn from a known population. This should be the reference. Columns are predicted.
+mat <- rbind(table(factor(Pop10.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop9.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop8.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop7.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop6.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop5.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop4.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop3.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop2.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000,
+             table(factor(Pop1.most.like, levels = c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')))/1000)
+
+rownames(mat) <- c('Pop A', 'Pop B', 'Pop C', 'Pop D', 'Pop E', 'Pop F', 'Pop G', 'Pop H', 'Pop I', 'Pop J')
+
+#### Plot confusion matrix of groups of n individuals ####
+# Nice plot
+# png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/assignment_confusion_matrix_groups.png", width=7, height=5, res=300, units="in")
+
+par(
+  mar=c(5, 4, 4, 2), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14 # point size, which is the font size
+)
+
+mat2 <- data.matrix(mat)
+# min <- min(mat2, na.rm = TRUE)
+# max <- max(mat2,na.rm = TRUE)
+
+rbPal <- colorRampPalette(c('blue', 'red'))
+nocol <- 6
+color <- rbPal(nocol)
+ColorLevels <- seq(0, 0.65, length=length(color)) # this makes the color bar nicer later on
+# ColorLevels <- seq(min, max, length=length(color))
+
+# Set layout.  We are going to include a colorbar next to plot.
+layout(matrix(data=c(1,2), nrow=1, ncol=2), widths=c(4,1),
+       heights=c(1,1))
+
+#plotting margins.  These seem to work well for me.
+par(mar = c(5,5,1.5,1), font = 2)
+
+# Plot it up!
+image(1:ncol(mat2), 1:nrow(mat2), t(mat2),
+      col=color, xlab="Predicted population", ylab="True population",
+      axes=FALSE, zlim = c(0, 0.65),
+      main= NA, xlim = c(0.5, 11), ylim = c(0.5, 11))
+# image(1:ncol(mat2), 1:nrow(mat2), t(mat2),
+#       col=color, xlab="Predicted population", ylab="True population",
+#       axes=FALSE, zlim = c(min, max),
+#       main= NA, xlim = c(0.5, 11), ylim = c(0.5, 11))
+abline(0,1)
+
+# Now annotate the plot
+axis(side = 1, at=seq(1,10,1), labels=LETTERS[1:10],
+     cex.axis=1.0)
+axis(side = 2, at=seq(1,10,1), labels=LETTERS[1:10], las= 1,
+     cex.axis=1)
+
+# Add colorbar to second plot region
+par(mar = c(3.5,2.5,3.5,2))
+image(1, ColorLevels,
+      matrix(data=ColorLevels, ncol=length(ColorLevels),nrow=1),
+      col=color,xlab="",ylab="",xaxt="n", las = 1)
+mtext('% Assignment', side = 3, cex = 0.7, line = 0.5, adj = 1)
+
+dev.off()
