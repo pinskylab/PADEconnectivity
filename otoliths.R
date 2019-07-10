@@ -68,6 +68,7 @@ library(plyr)
 library(dendextend)
 library(cluster)
 library(purrr)
+library(ecodist)
 
 # Have a look at the genetic data
 gen.counts <- ddply(gen.data, .(gen.data$Place, gen.data$Year), nrow)
@@ -504,11 +505,12 @@ par(
 plot(early.scores[,1], early.scores[,2], col = locations.early, pch = 19, xlab = 'Axis 1', ylab = 'Axis 2', main = 'Early: 1989-1993')
 plot(middle.scores[,1], middle.scores[,2], col = locations.middle, pch = 19, xlab = 'Axis 1', ylab = 'Axis 2', main = 'Middle: 1998-2002')
 plot(late.scores[,1], late.scores[,2], col = locations.late, pch = 19, xlab = 'Axis1', ylab = 'Axis 2', main = 'Late: 2008-2012')
-legend(9,7.5,
+legend(9,5,
        # legend = levels(locations.late),
        legend = c('NJ', 'DE', 'VA', 'NC'),
        pch=19,
-       col = rev(col.palette))
+       col = rev(col.palette),
+       cex = 1.2)
 
 dev.off()
 
@@ -1179,14 +1181,15 @@ par(
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
-legend("bottomright",
+legend('bottomright',
        #legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
        col = 'black',
        pt.bg= rev(col.palette),
-       title = expression(bold('Collection location')), 
-       bty = "n")
+       title = expression(bold('Collection \n  location')), 
+       bty = "n",
+       cex = 1.3)
 
 dev.off()
 
