@@ -32,7 +32,7 @@ text(2, 10.5,"VA")
 text(2, 7.3,"NC")
 
 # Plot adult origin sites
-text(17, 19.5, bquote(underline("Origin pop")), cex = 0.8)
+text(17, 19.5, bquote(underline("Origin location")), cex = 0.8)
 text(17, 18,"A")
 text(17, 16,"B")
 text(17, 14,"C")
@@ -44,10 +44,11 @@ text(17, 4,"H")
 text(17, 2,"I")
 text(17, 0,"J")
 
-segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
+# segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
 text(19,8.7,"*",cex=1.5, col = 'gray80')
 
-arrows(16,8,3.6,7.3, length = 0.1, lwd = 1, col = rgb(253/255,191/255,111/255,0.7)) # E1 NC
+arrows(16,8,3.6,7.3, length = 0.1, lwd = 1, col = rgb(255/255,215/255,0/255,0.7)) # E1 NC
+# arrows(16,8,3.6,7.3, length = 0.1, lwd = 1, col = rgb(253/255,191/255,111/255,0.7)) # E1 NC
 
 arrows(16,10.1,3.6,7.5, length = 0.1, lwd = 1, col = rgb(31/255,120/255,180/255,0.7)) # E2 NC
 
@@ -59,7 +60,7 @@ arrows(16,6.1,3.6,7.2, length = 0.1, lwd = 1, col = rgb(51/255,160/255,44/255,0.
 
 arrows(16,5.9,3.6,7.1, length = 0.1, lwd = 1, col = rgb(177/255,89/255,40/255,0.7)) # E6 NC
 
-legend('bottomleft', legend = c('E1', 'E2', 'E3', 'E4', 'E5', 'E6'), col = c(rgb(253/255,191/255,111/255,0.7), rgb(31/255,120/255,180/255,0.7), rgb(227/255,26/255,28/255,0.7), rgb(251/255,154/255,153/255,0.7), rgb(51/255,160/255,44/255,0.7), rgb(177/255,89/255,40/255,0.7)), pch = 15, cex = 0.8, title = 'Cluster ID', text.font = 1)
+legend('bottomleft', legend = c('E1', 'E2', 'E3', 'E4', 'E5', 'E6'), col = c(rgb(255/255,215/255,0/255,0.7), rgb(31/255,120/255,180/255,0.7), rgb(227/255,26/255,28/255,0.7), rgb(251/255,154/255,153/255,0.7), rgb(51/255,160/255,44/255,0.7), rgb(177/255,89/255,40/255,0.7)), pch = 15, cex = 0.8, title = 'Cluster ID', text.font = 1)
 
 box()
 legend(4.2,5.74, legend = c('1-5', '6-10', '11-15', '16-20', '21-25', '26-30'), col = 'black', lwd = c(1:6), cex = 0.8, title = '# of larvae', text.font = 1)
@@ -80,7 +81,7 @@ text(2, 10.5,"VA")
 text(2, 7.3,"NC")
 
 # Plot adult origin sites
-text(17, 19.5, bquote(underline("Origin pop")), cex = 0.8)
+text(17, 19.5, bquote(underline("Origin location")), cex = 0.8)
 text(17, 18,"A")
 text(17, 16,"B")
 text(17, 14,"C")
@@ -92,7 +93,7 @@ text(17, 4,"H")
 text(17, 2,"I")
 text(17, 0,"J")
 
-segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
+# segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
 text(19,8.7,"*",cex=1.5, col = 'gray80')
 
 # Draw arrows of where each pie chart ingressed to #
@@ -121,7 +122,7 @@ text(2, 10.5,"VA")
 text(2, 7.3,"NC")
 
 # Plot adult origin sites
-text(17, 19.5, bquote(underline("Origin pop")), cex = 0.8)
+text(17, 19.5, bquote(underline("Origin location")), cex = 0.8)
 text(17, 18,"A")
 text(17, 16,"B")
 text(17, 14,"C")
@@ -133,7 +134,7 @@ text(17, 4,"H")
 text(17, 2,"I")
 text(17, 0,"J")
 
-segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
+# segments(1, 8.7, 18, 8.7, lty = 5, col = 'gray80')# plot line for Cape Hatteras
 text(19,8.7,"*",cex=1.5, col = 'gray80')
 
 # Draw arrows of where each pie chart ingressed to 
