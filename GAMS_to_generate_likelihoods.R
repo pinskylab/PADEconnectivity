@@ -707,3 +707,29 @@ larvalsamps <- read.csv("~/Documents/Graduate School/Rutgers/Summer Flounder/Map
 points(larvalsamps$lon[-4], larvalsamps$lat[-4], pch=21, col="black", cex=1.2, bg = 'tomato') #without Chincoteague
 
 dev.off()
+
+#### Calculate great circle distance between 'origin locations' and ingress estuaries ####
+library(geosphere)
+sites <- matrix(c(-67.45, 40.5, #A
+                  -69.7, 40.05, #B
+                  -72.3, 39.5, #C
+                  -73.7, 38.2, #D
+                  -74.7, 36.7, #E
+                  -75.16604, 34.95, #F
+                  -76.5, 33.8, #G
+                  -78.25, 32.65, #H
+                  -79.1, 31.2, #I
+                  -80.2, 29.76001, #J
+                    -74.32394, 39.50938, #NJ
+                    -75.15865, 38.79292, #DE
+                    -76.49952, 37.24831, #VA
+                    -76.67293, 34.71724, #NC
+                    -79.16799, 33.33229), nrow = 15, ncol = 2, byrow = TRUE, dimnames = list(c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'NJ', 'DE', 'VA', 'NC', 'SC')))
+
+geodist <- distm(sites) #matrix is in meters
+rownames(geodist) <- c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'NJ', 'DE', 'VA', 'NC', 'SC')
+colnames(geodist) <- c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'NJ', 'DE', 'VA', 'NC', 'SC')
+hist(geodist[lower.tri(geodist)], nclass = 20)
+
+# Distance matrix in km
+geodistkm <- geodist * 0.001
