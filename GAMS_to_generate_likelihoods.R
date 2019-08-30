@@ -322,7 +322,7 @@ text(seq(0.7, 5.5, by=1.2), 1.03, labels = c("n = 52", "n = 50", "n = 44", "n = 
 
 legend(6.1,1,
        #legend = levels(rev(locations)),
-       legend = c("Pop A", "Pop B", "Pop C", "Pop D", "Pop E", "Pop F", "Pop G", "Pop H", "Pop I", "Pop J"),
+       legend = c("Location A", "Location B", "Location C", "Location D", "Location E", "Location F", "Location G", "Location H", "Location I", "Location J"),
        pch=22,
        col = 'black',
        pt.bg = rev(cols),
