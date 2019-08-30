@@ -83,7 +83,7 @@ lines(pop.allele.freqs10.rev.trans[9,], type = "l", col = cols[2])
 lines(pop.allele.freqs10.rev.trans[10,], type = "l", col = cols[1], lty = 2)
 
 axis(1, at=seq(1,10, by=1), labels=c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), line = 0)
-mtext("Region (north to south)", side = 1, line = 2.5)
+mtext("Location (north to south)", side = 1, line = 2.5)
 axis(2, at=seq(0.4,1, by=0.1), labels=seq(0.4,1, by= 0.1), line = 0, las = 1)
 mtext("Allele frequency", side = 2, line = 3)
 
