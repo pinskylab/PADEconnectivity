@@ -770,6 +770,52 @@ mosaicplot(class.table.hier, color = col.palette)
 
 fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 
+# Hierarchical clustering for each time period separately
+# Early
+fit1 <- hclust(oto.chem.early3, method = "ward.D2")
+plot(fit1, cex = 0.5)
+plot(fit1, cex = 0.5, labels = oto.chem.early$Location)
+rect.hclust(fit1, k=7)
+
+fviz_nbclust(oto.chem.early2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.early2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.early2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.early2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+# Middle
+fit2 <- hclust(oto.chem.middle3, method = "ward.D2")
+plot(fit2, cex = 0.5)
+plot(fit2, cex = 0.5, labels = oto.chem.middle$Location)
+rect.hclust(fit2, k=3)
+
+fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.middle2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.middle2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+# Late
+fit3 <- hclust(oto.chem.late3, method = "ward.D2")
+plot(fit3, cex = 0.5)
+plot(fit3, cex = 0.5, labels = oto.chem.late$Location)
+rect.hclust(fit3, k=2)
+
+fviz_nbclust(oto.chem.late2, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem.late2, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem.late2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem.late2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
 # hierarchical with bootstrapped p-values
 # library(pvclust)
 # fit2 <- pvclust(t(oto.chem), method.hclust = "ward.D2", method.dist = "euclidean")
@@ -959,7 +1005,7 @@ props <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingr
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress estuary based on otolith core microchemistry", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
@@ -1114,7 +1160,7 @@ dfa3 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, d
 dfa4 <- lda(Location.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = otoliths.sub.log.trans2, na.action = "na.omit", CV = FALSE, prior = c(1,1,1,1)/4, subset = train) # necessary for predict step below
 ct1 <- table(train.68$Location.ordered, dfa3$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress estuary based on \notolith core microchemistry", main = "Training set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
@@ -1128,7 +1174,7 @@ legend("bottomright",
 plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
 ct1 <- table(test.68$Location.ordered, plda$class)
 props2 <- prop.table(ct1,1)
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Test set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress estuary based on \notolith core microchemistry", main = "Test set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
@@ -1156,7 +1202,7 @@ props3 <- prop.table(ct1,1) # 'origin' signature/total number of fished that ing
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
-barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training & test sets", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress estuary based on \notolith core microchemistry", main = "Training & test sets", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        #legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
@@ -1178,7 +1224,7 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend('bottomright',
@@ -1258,7 +1304,7 @@ legend("topleft",
 early.dfa1 <- lda(early.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = early.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(early.trans2$early.locs.ordered, early.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1989 - 1993\n(n = 24)", names.arg = c('NC', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "1989 - 1993\n(n = 24)", names.arg = c('NC', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(early.trans2$early.locs.ordered)),
        legend = c('NJ', 'NC'),
@@ -1285,7 +1331,7 @@ legend("topleft",
 middle.dfa1 <- lda(middle.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = middle.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1)/2)
 ct1 <- table(middle.trans2$middle.locs.ordered, middle.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "1998 - 2002\n(n = 57)", names.arg = c('NC', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette[c(1,4)], xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "1998 - 2002\n(n = 57)", names.arg = c('NC', 'NJ'))
 legend("bottomright",
        #legend=rev(levels(middle.trans2$middle.locs.ordered)),
        legend = c('NJ', 'NC'),
@@ -1312,7 +1358,7 @@ legend("topleft",
 late.dfa1 <- lda(late.locs.ordered ~ Sr + Mg + Mn + Fe + Cu + Cd + Ba + Pb + U + Sn, data = late.trans2, na.action = "na.omit", CV = TRUE, prior = c(1,1,1,1)/4)
 ct1 <- table(late.trans2$late.locs.ordered, late.dfa1$class)
 props1 <- prop.table(ct1,1)
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted signature of ingress estuary", main = "2008 - 2012\n(n = 116)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "2008 - 2012\n(n = 116)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(late.trans2$late.locs.ordered)),
        legend = c('NJ', 'DE', 'VA', 'NC'),
