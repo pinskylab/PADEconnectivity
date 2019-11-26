@@ -770,13 +770,65 @@ mosaicplot(class.table.hier, color = col.palette)
 
 fviz_cluster(list(data=oto.chem2, cluster = clusternum))
 
-# Hierarchical clustering for each time period separately
-# Early
-fit1 <- hclust(oto.chem.early3, method = "ward.D2")
-plot(fit1, cex = 0.5)
-plot(fit1, cex = 0.5, labels = oto.chem.early$Location)
-rect.hclust(fit1, k=7)
+#### Hierarchical clustering for all individuals and then each time period separately ####
+library(factoextra)
+library(cluster)
+library(NbClust)
+library(mclust)
+library(wesanderson)
 
+# Read in non-zero otolith data
+otoliths <- read.table("/Users/jenniferhoey/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/otolith_data_nozeros.txt", header = TRUE, sep = '\t')
+oto.chem2 <- otoliths[,c("Fish.ID", "Location","Period", "Mg", "Mn", "Fe", "Sn", "Cu", "Sr", "Cd", "Ba", "Pb", "U")] 
+rownames(oto.chem2) <- oto.chem2[, "Fish.ID"] # Make fish IDs as rownames
+
+oto.chem2.log <- cbind.data.frame(oto.chem2[,c("Fish.ID", "Location", "Period")], log10(oto.chem2[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+oto.chem2.scale <- scale(oto.chem2.log[,-c(1:3)])
+
+# Clustering using all the data
+fviz_nbclust(oto.chem2.scale, FUN = hcut, method = "wss") # data should be scaled/standardized
+fviz_nbclust(oto.chem2.scale, FUN = hcut, method = "silhouette")
+gap_stat <- clusGap(oto.chem2.scale, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+nb <- NbClust(oto.chem2.scale, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+fviz_nbclust(nb)
+dev.off()
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem2.scale, centers = 3, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem2$Location, kmean.cls$cluster)
+class.table.km2 <- rbind(class.table.km[3,], class.table.km[2,], class.table.km[4,], class.table.km[1,])# Reorder rows
+rownames(class.table.km2) <- c("NJ", "DE", "VA", "NC")
+mosaicplot(class.table.km2, color = col.palette, main = '', ylab = 'Cluster', xlab = 'Ingress site')
+
+fviz_cluster(kmean.cls, oto.chem2.scale, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point")
+
+oto.chem2$cluster <- kmean.cls$cluster
+
+# Separate by time period
+oto.chem.early <- oto.chem2[which(oto.chem2$Period == 'Early'),]
+oto.chem.middle <- oto.chem2[which(oto.chem2$Period == 'Mid'),]
+oto.chem.late <- oto.chem2[which(oto.chem2$Period == 'Late'),]
+
+# Log the data & scale
+oto.chem.early.log <- cbind.data.frame(oto.chem.early[,c("Fish.ID", "Location", "Period")], log10(oto.chem.early[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+oto.chem.middle.log <- cbind.data.frame(oto.chem.middle[,c("Fish.ID", "Location", "Period")], log10(oto.chem.middle[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+oto.chem.late.log <- cbind.data.frame(oto.chem.late[,c("Fish.ID", "Location", "Period")], log10(oto.chem.late[, c("Mg", "Mn", "Fe", "Cu", "Sr", "Cd", "Ba", "Pb", "U", "Sn")]))  # all elements 
+
+oto.chem.early2 <- scale(oto.chem.early.log[,-c(1:3)])
+oto.chem.middle2 <- scale(oto.chem.middle.log[,-c(1:3)])
+oto.chem.late2 <- scale(oto.chem.late.log[,-c(1:3)])
+
+# Early
 fviz_nbclust(oto.chem.early2, FUN = hcut, method = "wss") # data should be scaled/standardized
 fviz_nbclust(oto.chem.early2, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem.early2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
@@ -786,12 +838,24 @@ nb <- NbClust(oto.chem.early2, distance = 'euclidean', min.nc = 2, max.nc = 10, 
 fviz_nbclust(nb)
 dev.off()
 
-# Middle
-fit2 <- hclust(oto.chem.middle3, method = "ward.D2")
-plot(fit2, cex = 0.5)
-plot(fit2, cex = 0.5, labels = oto.chem.middle$Location)
-rect.hclust(fit2, k=3)
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.early2, centers = 6, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.early$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
 
+fviz_cluster(kmean.cls, oto.chem.early2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point")
+
+oto.chem.early$cluster <- kmean.cls$cluster
+
+# Middle
 fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "wss") # data should be scaled/standardized
 fviz_nbclust(oto.chem.middle2, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem.middle2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
@@ -801,20 +865,121 @@ nb <- NbClust(oto.chem.middle2, distance = 'euclidean', min.nc = 2, max.nc = 10,
 fviz_nbclust(nb)
 dev.off()
 
-# Late
-fit3 <- hclust(oto.chem.late3, method = "ward.D2")
-plot(fit3, cex = 0.5)
-plot(fit3, cex = 0.5, labels = oto.chem.late$Location)
-rect.hclust(fit3, k=2)
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.middle2, centers = 2, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.middle$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
 
+fviz_cluster(kmean.cls, oto.chem.middle2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point")
+
+oto.chem.middle$cluster <- kmean.cls$cluster
+
+# Late
 fviz_nbclust(oto.chem.late2, FUN = hcut, method = "wss") # data should be scaled/standardized
 fviz_nbclust(oto.chem.late2, FUN = hcut, method = "silhouette")
 gap_stat <- clusGap(oto.chem.late2, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
 
-nb <- NbClust(oto.chem.late2, distance = 'euclidean', min.nc = 2, max.nc = 10, method = 'kmeans')
+nb <- NbClust(oto.chem.late2, distance = 'euclidean', min.nc = 2, max.nc = 6, method = 'kmeans')
 fviz_nbclust(nb)
 dev.off()
+
+# k-means clustering
+col.palette <- wes_palette("Darjeeling1", 5, type = "discrete")
+palette(col.palette)
+kmean.cls <- kmeans(oto.chem.late2, centers = 4, nstart = 50, iter.max = 10)
+class.table.km <- table(oto.chem.late$Location, kmean.cls$cluster)
+mosaicplot(class.table.km, color = col.palette, main = 'Ingress site')
+
+fviz_cluster(kmean.cls, oto.chem.late2, 
+             palette = c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", "#FFD92F"),
+             ellipse.type = "euclid", # Concentration ellipse
+             star.plot = TRUE, # Add segments from centroids to items
+             repel = TRUE, # Avoid label overplotting (slow)
+             ggtheme = theme_minimal(),
+             geom = "point")
+
+oto.chem.late$cluster <- kmean.cls$cluster
+
+# Bind all the data for the time periods with the clustering assignments together
+# Check to make sure all column names are the same before rbind
+clustered_bytime <- rbind(oto.chem.early, oto.chem.middle, oto.chem.late)
+write.table(clustered_bytime, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.197.clusterdbytime.txt", col.names = TRUE, row.names = FALSE)
+
+# Plot pie charts
+clusters <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.197.clusterdbytime.txt", header = TRUE)
+clusters$Location <- factor(clusters$Location, levels = c("NC", "York", "Roosevelt", "RUMFS"))
+
+# Separate data by time period (clustering was done for each time period separately)
+clusters.bytime <- split(clusters, clusters$Period)
+clusters.bytime.early <- split(clusters.bytime$Early, clusters.bytime$Early$cluster)
+clusters.bytime.mid <- split(clusters.bytime$Mid, clusters.bytime$Mid$cluster)
+clusters.bytime.late <- split(clusters.bytime$Late, clusters.bytime$Late$cluster)
+
+library(wesanderson)
+col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
+palette(col.palette)
+
+par(
+  mar=c(1, 4, 4, 0), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14, # point size, which is the font size
+  mfrow = c(4,4), 
+  oma = c(3,3,0,1) +0.1,
+  omi=c(0,0,0,1.5), 
+  xpd=NA
+)
+
+pie(table(clusters.bytime.early[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('E1\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('E2\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[3]]$Location), col = col.palette, labels = '', main = '')
+mtext('E3\n (n = 3)', 3, -0.5)
+pie(table(clusters.bytime.early[[4]]$Location), col = col.palette, labels = '', main = '')
+mtext('E4\n (n = 4)', 3, -0.5)
+pie(table(clusters.bytime.early[[5]]$Location), col = col.palette, labels = '', main = '')
+mtext('E5\n (n = 6)', 3, -0.5)
+pie(table(clusters.bytime.early[[6]]$Location), col = col.palette, labels = '', main = '')
+mtext('E6\n (n = 5)', 3, -0.5)
+pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+
+# Clusters for middle time period
+pie(table(clusters.bytime.mid[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('M1\n (n = 26)', 3, -0.5)
+pie(table(clusters.bytime.mid[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('M2\n (n = 31)', 3, -0.5)
+pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+
+legend(-0.5,0.9,
+       # legend=rev(levels(clusters.bytime$Mid$Location)),
+       legend=c('NJ', 'DE', 'VA', 'NC'),
+       pch=22,
+       col = 'black',
+       pt.bg= rev(col.palette))
+
+# Clusters for latest time period
+pie(table(clusters.bytime.late[[1]]$Location), col = col.palette, labels = '', main = '')
+mtext('L1\n (n = 61)', 3, -0.5)
+pie(table(clusters.bytime.late[[2]]$Location), col = col.palette, labels = '', main = '')
+mtext('L2\n (n = 4)', 3, -0.5)
+pie(table(clusters.bytime.late[[3]]$Location), col = col.palette, labels = '', main = '')
+mtext('L2\n (n = 27)', 3, -0.5)
+pie(table(clusters.bytime.late[[4]]$Location), col = col.palette, labels = '', main = '')
+mtext('L3\n (n = 24)', 3, -0.5)
+
 
 # hierarchical with bootstrapped p-values
 # library(pvclust)
@@ -822,6 +987,7 @@ dev.off()
 # plot(fit2)
 # pvrect(fit2, alpha = 0.95) # something not working
 
+################################################################################
 #### Merge otolith data with genetic data to result in a file with 151 fish ####
 # Read in dataset containing outlier loci
 gen.larvae.outs <- read.table('~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/full_PADE_analysis/data_files/masterPADElarvae.txt', header = TRUE, sep = "\t")
@@ -833,6 +999,7 @@ gen.larvae.outs2 <- gen.larvae.outs[which(is.na(gen.larvae.outs$assignment) == F
 oto.gen.merged <- merge(gen.larvae.outs2, otoliths[,-11], by.x = 'PicID', by.y = 'Fish.ID', all = FALSE) # merged otolith and genetic data set; remove column of NAs in otolith data
 # write.table(oto.gen.merged, "~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", col.names = TRUE, row.names = FALSE)
 
+#########################################################
 #### Cluster only fish with otolith and genetic data ####
 oto.gen.merged <- read.table("~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/oto.gen.merged151.txt", header = TRUE)
 rownames(oto.gen.merged) <- oto.gen.merged[, "PinskyID"] # Make fish IDs as rownames
