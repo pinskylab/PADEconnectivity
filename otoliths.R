@@ -928,42 +928,46 @@ library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
 
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/cluster197_piecharts_bytimeperiod.png", width=7, height=6, res=300, units="in")
+
 par(
-  mar=c(1, 4, 4, 0), # panel magin size in "line number" units
+  mar=c(1, 2, 1.5, 0), # panel magin size in "line number" units
   mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
   tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
   cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
   ps=14, # point size, which is the font size
   mfrow = c(4,4), 
-  oma = c(3,3,0,1) +0.1,
+  oma = c(3,3,1,1) +0.1,
   omi=c(0,0,0,1.5), 
   xpd=NA
 )
 
 pie(table(clusters.bytime.early[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('E1\n (n = 3)', 3, -0.5)
+mtext('(n = 3)', 3, -0.5)
 pie(table(clusters.bytime.early[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('E2\n (n = 3)', 3, -0.5)
+mtext('(n = 3)', 3, -0.5)
 pie(table(clusters.bytime.early[[3]]$Location), col = col.palette, labels = '', main = '')
-mtext('E3\n (n = 3)', 3, -0.5)
+mtext('(n = 3)', 3, -0.5)
 pie(table(clusters.bytime.early[[4]]$Location), col = col.palette, labels = '', main = '')
-mtext('E4\n (n = 4)', 3, -0.5)
+mtext('(n = 4)', 3, -0.5)
 pie(table(clusters.bytime.early[[5]]$Location), col = col.palette, labels = '', main = '')
-mtext('E5\n (n = 6)', 3, -0.5)
+mtext('(n = 6)', 3, -0.5)
 pie(table(clusters.bytime.early[[6]]$Location), col = col.palette, labels = '', main = '')
-mtext('E6\n (n = 5)', 3, -0.5)
+mtext('(n = 5)', 3, -0.5)
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+mtext('                                1989-1993', 2, 31)
 
 # Clusters for middle time period
 pie(table(clusters.bytime.mid[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('M1\n (n = 26)', 3, -0.5)
+mtext('(n = 26)', 3, -0.5)
 pie(table(clusters.bytime.mid[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('M2\n (n = 31)', 3, -0.5)
+mtext('(n = 31)', 3, -0.5)
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
 pie(table(clusters.bytime.late[[2]]$Location), col = 'white', labels = '', main = '', border = 'white') # plots a blank
+mtext('        1998-2002', 2, 31)
 
-legend(-0.5,0.9,
+legend(-0.5,1.2,
        # legend=rev(levels(clusters.bytime$Mid$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
        pch=22,
@@ -972,14 +976,16 @@ legend(-0.5,0.9,
 
 # Clusters for latest time period
 pie(table(clusters.bytime.late[[1]]$Location), col = col.palette, labels = '', main = '')
-mtext('L1\n (n = 61)', 3, -0.5)
+mtext('(n = 61)', 3, -0.5)
 pie(table(clusters.bytime.late[[2]]$Location), col = col.palette, labels = '', main = '')
-mtext('L2\n (n = 4)', 3, -0.5)
+mtext('(n = 4)', 3, -0.5)
 pie(table(clusters.bytime.late[[3]]$Location), col = col.palette, labels = '', main = '')
-mtext('L2\n (n = 27)', 3, -0.5)
+mtext('(n = 27)', 3, -0.5)
 pie(table(clusters.bytime.late[[4]]$Location), col = col.palette, labels = '', main = '')
-mtext('L3\n (n = 24)', 3, -0.5)
+mtext('(n = 24)', 3, -0.5)
+mtext('        2008-2012', 2, 31)
 
+dev.off()
 
 # hierarchical with bootstrapped p-values
 # library(pvclust)
