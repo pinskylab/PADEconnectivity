@@ -15,6 +15,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **GAMS_to_generate_likelihoods.R**: fits GAMS between allele frequencies and distance along coast, calculates observed individual genotype likelihoods across 10 populations, plots **indiv_assignments_10pops.png** and calculates observed cluster genotype likelihoods from individual likelihoods
 * **group assignment GAMS.R**: Given larval clustering data and GAM-determined adult allele frequencies calculated from **GAMS_to_generate_likelihoods.R**, simulates larval genotypes for clusters of size N, then calculates the distribution of genotype likelihoods for each of ten adult populations. Plots observed cluster genotype likelihood on top of emperical distribution and calculates a p-value
 * **otoliths.R**: Using larval otolith microchemistry data for NMDS, ANOVAs, LDAs, clustering, clustering pie charts, etc.
+* **plot allele freqs.R**: Plots allele frequencies of 10 GAM-determined locations to produce **outlierloci_lineplot_GAM_10pops.png**
 * **recentIBD.R**: Fst calculations for larvae captured 2008-2012
 
 ## Results
@@ -26,7 +27,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 ### Genetics
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
-* **outlierloci_lineplot_GAM_10pops.png**: Allele frequencies at 10 loci across space
+* **outlierloci_lineplot_GAM_10pops.png**: Adult allele frequencies at 10 outlier loci across 10 GAM-determined locations
 ### Otoliths & genetics
 * **obs_likelihoods_early_6clusters_10pops.txt**: Likelihoods of larval clusters from the early time period (1989-1993) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **obs_likelihoods_middle_2clusters_10pops.txt**: Likelihoods of larval clusters from the middle time period (1998-2002) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
