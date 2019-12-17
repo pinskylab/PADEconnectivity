@@ -1,9 +1,13 @@
 # PADEconnectivity
-Files for investigating larval summer flounder connectivity
+Files for investigating larval summer flounder connectivity throughout the species range from 1989-2012
 
 ## Data
 * **masterPADElarvae.txt**: Data of 523 larval summer flounder, including date, location, 10 outlier loci, SL and developmental stage
 * **masterPADElarvae_metadata.txt**: Metadata pertaining to masterPADElarve.txt
+* **pop.allele.counts10.txt**: Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
+
+## Methods
+* **Bioinformatics.txt**: Bioinformatic steps taken to produce filtered SNP genotypes
 
 ## Scripts
 * **assignment_confusion_matrix.R**: Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
@@ -17,10 +21,10 @@ Files for investigating larval summer flounder connectivity
 
 ## Results
 ### Otoliths
-* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site
-* **mds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements
-* **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets
-* **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately
+* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (Figure S10)
+* **mds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (Figure 3)
+* **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (Figure 4)
+* **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (Figure S9)
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 ### Genetics
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
