@@ -21,17 +21,18 @@ Files for investigating larval summer flounder connectivity throughout the speci
 
 ## Results
 ### Otoliths
-* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (Figure S10)
-* **mds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (Figure 3)
-* **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (Figure 4)
-* **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (Figure S9)
+* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (_Figure S10_)
+* **mds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (_Figure 3_)
+* **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure 4_)
+* **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (_Figure S9_)
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 ### Genetics
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
 * **outlierloci_lineplot_GAM_10pops.png**: Allele frequencies at 10 loci across space
 ### Otoliths & genetics
-* **conceptual_dispersal_diagram.png**: conceptual diagram depicting where larval clusters originated and where they ingressed to
+* **conceptual_dispersal_diagram.png**: conceptual diagram depicting where larval clusters originated and where they ingressed to (_Figure 5_)
 ### Assignment validation
+_These make up Figure 2A-E_
 * **assignment_confusion_matrix.png**: confusion matrix of individuals
 * **assignment_confusion_matrix_5individuals.png**: confusion matrix of groups of 5 individuals
 * **assignment_confusion_matrix_10individuals.png**: confusion matrix of groups of 10 individuals
