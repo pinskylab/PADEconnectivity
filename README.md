@@ -21,7 +21,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 ## Results
 ### Otoliths
 * **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (_Figure S10_)
-* **mds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (_Figure 3_)
+* **nmds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (_Figure 3_)
 * **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure 4_)
 * **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (_Figure S9_)
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
