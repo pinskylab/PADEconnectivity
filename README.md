@@ -13,10 +13,8 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **assignment_confusion_matrix.R**: Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
 * **conceptual_dispersal_diagram.R**: Script to plot **conceptual_dispersal_diagram.png**
 * **GAMS_to_generate_likelihoods.R**: fits GAMS between allele frequencies and distance along coast, calculates observed individual genotype likelihoods across 10 populations, plots **indiv_assignments_10pops.png** and calculates observed cluster genotype likelihoods from individual likelihoods
-* **group assignment.R**: Given larval clustering data and adult regional allele frequencies, simulates larval genotypes for clusters of size N, then calculates the distribution of genotype likelihoods for each of five adult populations. Plots observed cluster genotype likelihood on top of emperical distribution and calculates a p-value.
-* **group assignment GAMS.R**: same as **group assignment.R** but using 10 populations determined from GAMs in **GAMS_to_generate_likelihoods.R**
-* **population power analysis.R**: Exploring how to best do simulations for obtaining genotype likelihood distribution for each potential population of origin. This results in the **group assignment.R** script.
-* **otoliths.R**: Using larval otolith microchemistry data for MDS, ANOVAs, LDAs, clustering, clustering pie charts, etc.
+* **group assignment GAMS.R**: Given larval clustering data and GAM-determined adult allele frequencies calculated from **GAMS_to_generate_likelihoods.R**, simulates larval genotypes for clusters of size N, then calculates the distribution of genotype likelihoods for each of ten adult populations. Plots observed cluster genotype likelihood on top of emperical distribution and calculates a p-value
+* **otoliths.R**: Using larval otolith microchemistry data for NMDS, ANOVAs, LDAs, clustering, clustering pie charts, etc.
 * **recentIBD.R**: Fst calculations for larvae captured 2008-2012
 
 ## Results
@@ -30,6 +28,9 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
 * **outlierloci_lineplot_GAM_10pops.png**: Allele frequencies at 10 loci across space
 ### Otoliths & genetics
+* **obs_likelihoods_early_6clusters_10pops.txt**: Likelihoods of larval clusters from the early time period (1989-1993) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
+* **obs_likelihoods_middle_2clusters_10pops.txt**: Likelihoods of larval clusters from the middle time period (1998-2002) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
+* **obs_likelihoods_late_3clusters_10pops.txt**: Likelihoods of larval clusters from the late time period (2008-2012) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **conceptual_dispersal_diagram.png**: conceptual diagram depicting where larval clusters originated and where they ingressed to (_Figure 5_)
 ### Assignment validation
 _These make up Figure 2A-E_
