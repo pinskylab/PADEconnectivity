@@ -20,7 +20,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 
 ## Results
 ### Otoliths
-* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (_Figure S10_)
+* **cluster197_piecharts_bytimeperiod.png**: pie charts of larval clusters with otolith-only data for each time period (_Figure S8_)
 * **nmds_byperiod_10elements.png**: nmds plots for each time period using all 10 elements (_Figure 3_)
 * **lda_barplots.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure 4_)
 * **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (_Figure S9_)
@@ -29,6 +29,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
 * **outlierloci_lineplot_GAM_10pops.png**: Adult allele frequencies at 10 outlier loci across 10 GAM-determined locations
 ### Otoliths & genetics
+* **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (_Figure S10_)
 * **obs_likelihoods_early_6clusters_10pops.txt**: Likelihoods of larval clusters from the early time period (1989-1993) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **obs_likelihoods_middle_2clusters_10pops.txt**: Likelihoods of larval clusters from the middle time period (1998-2002) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **obs_likelihoods_late_3clusters_10pops.txt**: Likelihoods of larval clusters from the late time period (2008-2012) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
