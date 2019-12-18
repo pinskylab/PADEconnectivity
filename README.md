@@ -5,7 +5,7 @@ _These data, methods and scripts are provided in the interests of open science. 
 
 Contact:
 Jennifer Hoey
-jahoey13@gmail.com
+(jahoey13@gmail.com)
 
 ## Data
 * [Larvae Sampling Database.csv](https://github.com/pinskylab/PADEconnectivity/blob/master/Larvae%20Sampling%20Database.csv): csv of metadata for all sampled larvae, whether sequenced or not
