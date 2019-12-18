@@ -13,7 +13,7 @@ jahoey13@gmail.com
 * [masterPADElarvae_metadata.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/masterPADElarvae_metadata.txt): Metadata pertaining to masterPADElarve.txt
 * [otolith_data.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_data.txt): raw larval otolith microchemistry data
 * [otolith_data_nozeros.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_data_nozeros.txt): larval otolith microchemistry data where zeros have been randomly replaced by a number between zero and the smallest non-zero number for that element
-* **pop.allele.counts10.txt**: Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
+* [pop.allele.counts10.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/pop.allele.counts10.txt): Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
 * [structure_input_Mar14_2017_528_1904.str](https://github.com/pinskylab/PADEconnectivity/blob/master/structure_input_Mar14_2017_528_1904.str): structure-formatted file of 1904 loci across 293 larvae and 235 adult summer flounder used for many of the genetic analyses
 
 ## Methods
