@@ -8,7 +8,7 @@ Jennifer Hoey
 jahoey13@gmail.com
 
 ## Data
-* **Larvae Sampling Database.csv**: csv of metadata for all sampled larvae, whether sequenced or not
+* [Larvae Sampling Database.csv](https://github.com/pinskylab/PADEconnectivity/blob/master/Larvae%20Sampling%20Database.csv): csv of metadata for all sampled larvae, whether sequenced or not
 * **masterPADElarvae.txt**: Data of 523 larval summer flounder, including date, location, 10 outlier loci, SL and developmental stage
 * **masterPADElarvae_metadata.txt**: Metadata pertaining to masterPADElarve.txt
 * **otolith_data.txt**: raw larval otolith microchemistry data
@@ -20,9 +20,9 @@ jahoey13@gmail.com
 * [Bioinformatics.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt): Bioinformatic steps taken to produce filtered SNP genotypes
 
 ## Scripts
-* **assignment_confusion_matrix.R**: Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
+* [assignment_confusion_matrix.R](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix.R): Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
 * **conceptual_dispersal_diagram.R**: Script to plot **conceptual_dispersal_diagram.png**
-* **GAMS_to_generate_likelihoods.R**: fits GAMS between allele frequencies and distance along coast, calculates observed individual genotype likelihoods across 10 populations, plots **indiv_assignments_10pops.png** and calculates observed cluster genotype likelihoods from individual likelihoods
+* [GAMS_to_generate_likelihoods.R](https://github.com/pinskylab/PADEconnectivity/blob/master/GAMS_to_generate_likelihoods.R): fits GAMS between allele frequencies and distance along coast, calculates observed individual genotype likelihoods across 10 populations, plots **indiv_assignments_10pops.png** and calculates observed cluster genotype likelihoods from individual likelihoods
 * **group assignment GAMS.R**: Given larval clustering data and GAM-determined adult allele frequencies calculated from **GAMS_to_generate_likelihoods.R**, simulates larval genotypes for clusters of size N, then calculates the distribution of genotype likelihoods for each of ten adult populations. Plots observed cluster genotype likelihood on top of emperical distribution and calculates a p-value
 * **otoliths.R**: Using larval otolith microchemistry data for NMDS, ANOVAs, LDAs, clustering, clustering pie charts, etc.
 * **plot allele freqs.R**: Plots allele frequencies of 10 GAM-determined locations to produce **outlierloci_lineplot_GAM_10pops.png**
@@ -52,8 +52,8 @@ jahoey13@gmail.com
 * **cluster_likelihoods_10GAMSgroups.png**: likelihoods of each cluster plotted across 10 GAM-determined locations for each time period
 ### Assignment validation
 _These make up Figure 2A-E_
-* **assignment_confusion_matrix.png**: confusion matrix of individuals
-* **assignment_confusion_matrix_5individuals.png**: confusion matrix of groups of 5 individuals
-* **assignment_confusion_matrix_10individuals.png**: confusion matrix of groups of 10 individuals
-* **assignment_confusion_matrix_20individuals.png**: confusion matrix of groups of 20 individuals
-* **assignment_confusion_matrix_30individuals.png**: confusion matrix of groups of 30 individuals
+* [assignment_confusion_matrix.png](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix.png): confusion matrix of individuals
+* [assignment_confusion_matrix_5individuals.png](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix_5indiv.png): confusion matrix of groups of 5 individuals
+* [assignment_confusion_matrix_10individuals.png](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix_10indiv.png): confusion matrix of groups of 10 individuals
+* [assignment_confusion_matrix_20individuals.png](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix_20indiv.png): confusion matrix of groups of 20 individuals
+* [assignment_confusion_matrix_30individuals.png](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix_30indiv.png): confusion matrix of groups of 30 individuals
