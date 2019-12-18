@@ -17,7 +17,7 @@ jahoey13@gmail.com
 * **structure_input_Mar14_2017_528_1904.str**: structure-formatted file of 1904 loci across 293 larvae and 235 adult summer flounder used for many of the genetic analyses
 
 ## Methods
-* (Bioinformatics.txt)[https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt]: Bioinformatic steps taken to produce filtered SNP genotypes
+* [Bioinformatics.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt): Bioinformatic steps taken to produce filtered SNP genotypes
 
 ## Scripts
 * **assignment_confusion_matrix.R**: Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
