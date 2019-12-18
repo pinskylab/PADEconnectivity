@@ -35,6 +35,7 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **obs_likelihoods_late_3clusters_10pops.txt**: Likelihoods of larval clusters from the late time period (2008-2012) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **conceptual_dispersal_diagram.png**: conceptual diagram depicting where larval clusters originated and where they ingressed to (_Figure 5_)
 * **indiv_and_cluster_assignments_hists_10GAMpops.png**: likelihood differences at the individual versus cluster levels
+* **cluster_likelihoods_10GAMSgroups.png**: likelihoods of each cluster plotted across 10 GAM-determined locations for each time period
 ### Assignment validation
 _These make up Figure 2A-E_
 * **assignment_confusion_matrix.png**: confusion matrix of individuals
