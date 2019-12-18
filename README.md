@@ -2,9 +2,11 @@
 Files for investigating larval summer flounder connectivity throughout the species range from 1989-2012
 
 ## Data
+* **Larvae Sampling Database.csv**: csv of metadata for all sampled larvae, whether sequenced or not
 * **masterPADElarvae.txt**: Data of 523 larval summer flounder, including date, location, 10 outlier loci, SL and developmental stage
 * **masterPADElarvae_metadata.txt**: Metadata pertaining to masterPADElarve.txt
 * **pop.allele.counts10.txt**: Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
+* **structure_input_Mar14_2017_528_1904.str**: structure-formatted file of 1904 loci across 293 larvae and 235 adult summer flounder used for many of the genetic analyses
 
 ## Methods
 * **Bioinformatics.txt**: Bioinformatic steps taken to produce filtered SNP genotypes
@@ -17,6 +19,8 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **otoliths.R**: Using larval otolith microchemistry data for NMDS, ANOVAs, LDAs, clustering, clustering pie charts, etc.
 * **plot allele freqs.R**: Plots allele frequencies of 10 GAM-determined locations to produce **outlierloci_lineplot_GAM_10pops.png**
 * **recentIBD.R**: Fst calculations for larvae captured 2008-2012
+* **structurethrutime.R**: bulk of larval genomic analyses, including Fst, AMOVA
+* **larvalstructure.R**: spatial and temporal PCAs, generating **larval_pca_regionalpops_1904loci.png** and **larval_pca_temppops_1904loci.png**
 
 ## Results
 ### Otoliths
@@ -26,6 +30,8 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (_Figure S9_)
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 ### Genetics
+* **larval_pca_regionalpops_1904loci.png**: regional larval PCA
+* **larval_pca_temppops_1904loci.png**: temporal larval PCA
 * **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
 * **outlierloci_lineplot_GAM_10pops.png**: Adult allele frequencies at 10 outlier loci across 10 GAM-determined locations
 ### Otoliths & genetics
