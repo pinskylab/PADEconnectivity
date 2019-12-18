@@ -1,7 +1,7 @@
 # PADEconnectivity
 Files for investigating larval summer flounder connectivity throughout the species range from 1989-2012
 
-These data, methods and scripts are provided in the interests of open science. If you have questions or find errors, please let me know.
+_These data, methods and scripts are provided in the interests of open science. If you have questions or find errors, please let me know._
 
 Contact:
 Jennifer Hoey
