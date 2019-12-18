@@ -5,6 +5,8 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **Larvae Sampling Database.csv**: csv of metadata for all sampled larvae, whether sequenced or not
 * **masterPADElarvae.txt**: Data of 523 larval summer flounder, including date, location, 10 outlier loci, SL and developmental stage
 * **masterPADElarvae_metadata.txt**: Metadata pertaining to masterPADElarve.txt
+* **otolith_data.txt**: raw larval otolith microchemistry data
+* **otolith_data_nozeros.txt**: larval otolith microchemistry data where zeros have been randomly replaced by a number between zero and the smallest non-zero number for that element
 * **pop.allele.counts10.txt**: Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
 * **structure_input_Mar14_2017_528_1904.str**: structure-formatted file of 1904 loci across 293 larvae and 235 adult summer flounder used for many of the genetic analyses
 
@@ -30,17 +32,17 @@ Files for investigating larval summer flounder connectivity throughout the speci
 * **lda_barplots_3timeperiods.png**: LDA barplots for each time period separately (_Figure S9_)
 * **lda_barplots_late.png**: LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 ### Genetics
-* **larval_pca_regionalpops_1904loci.png**: regional larval PCA
-* **larval_pca_temppops_1904loci.png**: temporal larval PCA
-* **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site
-* **outlierloci_lineplot_GAM_10pops.png**: Adult allele frequencies at 10 outlier loci across 10 GAM-determined locations
+* **larval_pca_regionalpops_1904loci.png**: regional larval PCA (_Figure S2A_)
+* **larval_pca_temppops_1904loci.png**: temporal larval PCA (_Figure S2B_)
+* **indiv_assignments_10pops.png**: barplots of individual assignment by ingress site (_Figure S5_)
+* **outlierloci_lineplot_GAM_10pops.png**: Adult allele frequencies at 10 outlier loci across 10 GAM-determined locations (_Figure S1_)
 ### Otoliths & genetics
 * **cluster_piecharts_bytimeperiod.png**: pie charts of clusters in each time period, colored by ingress site (_Figure S10_)
 * **obs_likelihoods_early_6clusters_10pops.txt**: Likelihoods of larval clusters from the early time period (1989-1993) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **obs_likelihoods_middle_2clusters_10pops.txt**: Likelihoods of larval clusters from the middle time period (1998-2002) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **obs_likelihoods_late_3clusters_10pops.txt**: Likelihoods of larval clusters from the late time period (2008-2012) across all 10 GAM-determined adult spawning locations, with Pop 10 being northern-most and Pop 1 being southern-most
 * **conceptual_dispersal_diagram.png**: conceptual diagram depicting where larval clusters originated and where they ingressed to (_Figure 5_)
-* **indiv_and_cluster_assignments_hists_10GAMpops.png**: likelihood differences at the individual versus cluster levels
+* **indiv_and_cluster_assignments_hists_10GAMpops.png**: likelihood differences at the individual versus cluster levels (_Figure S4_)
 * **cluster_likelihoods_10GAMSgroups.png**: likelihoods of each cluster plotted across 10 GAM-determined locations for each time period
 ### Assignment validation
 _These make up Figure 2A-E_
