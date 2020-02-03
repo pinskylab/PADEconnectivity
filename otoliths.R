@@ -1398,8 +1398,20 @@ par(
 )
 
 barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+text(0.83,1.5, "0.76")
+text(0.78,7.5, "0.70")
+text(0.91,13.5, "0.83")
+text(0.88,19.5, "0.80")
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+text(0.33,1.5, "0.25")
+text(0.58,7.5, "0.50")
+text(0.48,13.5, "0.40")
+text(0.41,19.5, "0.33")
 barplot(props3, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Training & test sets (n = 197)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+text(0.67,1.5, "0.59")
+text(0.72,7.5, "0.64")
+text(0.81,13.5, "0.73")
+text(0.76,19.5, "0.68")
 legend('bottomright',
        #legend=rev(levels(otoliths.sub.log.trans2$Location)),
        legend=c('NJ', 'DE', 'VA', 'NC'),
