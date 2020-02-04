@@ -1424,25 +1424,110 @@ legend('bottomright',
 
 dev.off()
 
-# Posterior group membership probabilities of test individuals
+### Posterior group membership probabilities of training & test individuals
+# Training individuals
 dfa3 # training
 dfa3.post <- cbind.data.frame(dfa3$posterior, classified_to=dfa3$class, ingress_site=train.68$Location.ordered) # make sure rownames are the same
 dfa3.post.split <- split(dfa3.post, list(dfa3.post$classified_to))
+
+# Plot as count frequency
 par(mfrow = c(4,1))
 hist(dfa3.post.split$NC$NC, xlab = 'Posterior probability', main = 'NC training', xlim = c(0,1)) # NC training
 hist(dfa3.post.split$York$York, xlab = 'Posterior probability', main = 'York training', xlim = c(0,1)) # York training
 hist(dfa3.post.split$Roosevelt$Roosevelt, xlab = 'Posterior probability', main = 'Roosevelt training', xlim = c(0,1)) # Roosevelt training
 hist(dfa3.post.split$RUMFS$RUMFS, xlab = 'Posterior probability', main = 'NJ training', xlim = c(0,1)) # RUMFS training
 
+# Plot as % frequency
+nj.train <- hist(dfa3.post.split$RUMFS$RUMFS, plot = FALSE)
+nj.train$density <- nj.train$counts/sum(nj.train$counts)*100
+plot(nj.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'NJ training', font = 2)
+
+de.train <- hist(dfa3.post.split$Roosevelt$Roosevelt, plot = FALSE)
+de.train$density <- de.train$counts/sum(de.train$counts)*100
+plot(de.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'DE training', font = 2)
+
+va.train <- hist(dfa3.post.split$York$York, plot = FALSE)
+va.train$density <- va.train$counts/sum(va.train$counts)*100
+plot(va.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'VA training', font = 2)
+
+nc.train <- hist(dfa3.post.split$NC$NC, plot = FALSE)
+nc.train$density <- nc.train$counts/sum(nc.train$counts)*100
+plot(nc.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'NC training', font = 2)
+
+# Test individuals
 plda # test
 plda.post <- cbind.data.frame(plda$posterior, classified_to=plda$class, ingress_site=test.68$Location.ordered) # make sure rownames are the same
 plda.post.split <- split(plda.post, list(plda.post$classified_to))
-hist(plda.post.split$NC$NC, xlab = 'Posterior probability', main = 'NC test', xlim = c(0,1)) # NC training
-hist(plda.post.split$York$York, xlab = 'Posterior probability', main = 'York test', xlim = c(0,1)) # York training
-hist(plda.post.split$Roosevelt$Roosevelt, xlab = 'Posterior probability', main = 'Roosevelt test', xlim = c(0,1)) # Roosevelt training
-hist(plda.post.split$RUMFS$RUMFS, xlab = 'Posterior probability', main = 'RUMFS test', xlim = c(0,1)) # RUMFS training
 
+# Plot as count frequency
+hist(plda.post.split$RUMFS$RUMFS, xlab = 'Posterior probability', main = 'RUMFS test', xlim = c(0,1)) # RUMFS test
+hist(plda.post.split$Roosevelt$Roosevelt, xlab = 'Posterior probability', main = 'Roosevelt test', xlim = c(0,1)) # Roosevelt test
+hist(plda.post.split$York$York, xlab = 'Posterior probability', main = 'York test', xlim = c(0,1)) # York test
+hist(plda.post.split$NC$NC, xlab = 'Posterior probability', main = 'NC test', xlim = c(0,1)) # NC test
 
+# Plot as % frequency
+nj.test <- hist(plda.post.split$RUMFS$RUMFS, plot = FALSE)
+nj.test$density <- nj.test$counts/sum(nj.test$counts)*100
+plot(nj.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'NJ test', font = 2)
+
+de.test <- hist(plda.post.split$Roosevelt$Roosevelt, plot = FALSE)
+de.test$density <- de.test$counts/sum(de.test$counts)*100
+plot(de.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'DE test', font = 2)
+
+va.test <- hist(plda.post.split$York$York, plot = FALSE)
+va.test$density <- va.test$counts/sum(va.test$counts)*100
+plot(va.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'VA test', font = 2)
+
+nc.test <- hist(plda.post.split$NC$NC, plot = FALSE)
+nc.test$density <- nc.test$counts/sum(nc.test$counts)*100
+plot(nc.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.2, 30, 'NC test', font = 2)
+
+# Plot all training and test posterior probabilities
+png(file="~/Documents/Graduate School/Rutgers/Summer Flounder/Analysis/PADEconnectivity/post_group_membership_prob.png", width=8, height=8, res=300, units="in")
+
+par(
+  mar=c(4, 5, 1, 1), # panel magin size in "line number" units
+  mgp=c(3, 1, 0), # default is c(3,1,0); line number for axis label, tick label, axis
+  tcl=-0.5, # size of tick marks as distance INTO figure (negative means pointing outward)
+  cex=1, # character expansion factor; keep as 1; if you have a many-panel figure, they start changing the default!
+  ps=14,
+  mfrow = c(4,2) # point size, which is the font size
+)
+
+plot(nj.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'NJ training', font = 2)
+mtext('A', side = 2, line = 3, at = 100, las = 2)
+plot(nj.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'NJ test', font = 2)
+mtext('B', side = 2, line = 3, at = 100, las = 2)
+plot(de.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'DE training', font = 2)
+mtext('C', side = 2, line = 3, at = 100, las = 2)
+plot(de.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'DE test', font = 2)
+mtext('D', side = 2, line = 3, at = 100, las = 2)
+plot(va.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'VA training', font = 2)
+mtext('E', side = 2, line = 3, at = 100, las = 2)
+plot(va.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'VA test', font = 2)
+mtext('F', side = 2, line = 3, at = 100, las = 2)
+plot(nc.train, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'NC training', font = 2)
+mtext('G', side = 2, line = 3, at = 100, las = 2)
+plot(nc.test, freq = FALSE, xlab = 'Posterior probability', main = '', xlim = c(0,1), ylab = '% individuals', ylim = c(0,100))
+text(0.15, 10, 'NC test', font = 2)
+mtext('H', side = 2, line = 3, at = 100, las = 2)
+
+dev.off()
 
 ################################################################################
 #### Discriminant Function Analysis by time period ####
