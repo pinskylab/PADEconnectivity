@@ -37,6 +37,8 @@ Jennifer Hoey
 * [lda_barplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots.png): LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure S8_)
 * [lda_barplots_3timeperiods.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots_3timeperiods.png): LDA barplots for each time period separately (_Figure S9_)
 * [lda_barplots_late.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots_late.png): LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
+* [otolith_overtimelogged_boxplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_overtimelogged_boxplots.png): box plots of otolith microchemistry by time period (_Figure S7_)
+* [otolith_sitelogged_boxplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_sitelogged_boxplots.png): box plots of otolith microchemistry by ingress site (_Figure S6_)
 ### Genetics
 * [larvae293_1904loci.pdf](https://github.com/pinskylab/PADEconnectivity/blob/master/larvae293_1904loci.pdf): STRUCTURE plot of 293 larvae using 1904 loci (_Figure S3_)
 * [larval_pca_regionalpops_1904loci.png](https://github.com/pinskylab/PADEconnectivity/blob/master/larval_pca_regionalpops_1904loci.png): regional larval PCA (_Figure S2A_)
