@@ -1345,8 +1345,8 @@ legend("bottomright",
 
 # And now predict everyone
 plda <- predict(dfa4, newdata = otoliths.sub.log.trans2[-train,])
-ct1 <- table(test.68$Location.ordered, plda$class)
-props2 <- prop.table(ct1,1)
+ct2 <- table(test.68$Location.ordered, plda$class)
+props2 <- prop.table(ct2,1)
 barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress estuary based on \notolith core microchemistry", main = "Test set", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 legend("bottomright",
        # legend=rev(levels(otoliths.sub.log.trans2$Location)),
@@ -1364,14 +1364,14 @@ all.locs <- as.factor(c(as.character(test.68$Location.ordered), as.character(tra
 all.locs.ordered <- factor(all.locs, levels = c("NC", "York", "Roosevelt", "RUMFS"))
 all.predicted <- as.factor(c(as.character(plda$class), as.character(dfa3$class)))
 all.predicted.ordered <- factor(all.predicted, levels = c("NC", "York", "Roosevelt", "RUMFS"))
-ct1 <- table(all.locs.ordered, all.predicted.ordered)
-diag(prop.table(ct1,1))
+ct3 <- table(all.locs.ordered, all.predicted.ordered)
+diag(prop.table(ct3,1))
 
 # total percent correct
-sum(diag(prop.table(ct1)))
+sum(diag(prop.table(ct3)))
 
 # barplot of assignments
-props3 <- prop.table(ct1,1) # 'origin' signature/total number of fished that ingressed at a site
+props3 <- prop.table(ct3,1) # 'origin' signature/total number of fished that ingressed at a site
 library(wesanderson)
 col.palette <- wes_palette("FantasticFox1", 5, type = "discrete")[-1]
 palette(col.palette)
@@ -1397,12 +1397,12 @@ par(
   mfrow = c(1,3) # point size, which is the font size
 )
 
-barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "Training set (n = 149)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props1, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "Predicted ingress site based on otolith core microchemistry", main = "Training set (n = 141)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 text(0.83,1.5, "0.76")
 text(0.78,7.5, "0.70")
 text(0.91,13.5, "0.83")
 text(0.88,19.5, "0.80")
-barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 48)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
+barplot(props2, horiz = TRUE, beside = TRUE, xlim = c(0,1), col = col.palette, xlab = "Assignment proportion", ylab = "", main = "Test set (n = 56)", names.arg = c('NC', 'VA', 'DE', 'NJ'))
 text(0.33,1.5, "0.25")
 text(0.58,7.5, "0.50")
 text(0.48,13.5, "0.40")
@@ -1423,6 +1423,26 @@ legend('bottomright',
        cex = 1.3)
 
 dev.off()
+
+# Posterior group membership probabilities of test individuals
+dfa3 # training
+dfa3.post <- cbind.data.frame(dfa3$posterior, classified_to=dfa3$class, ingress_site=train.68$Location.ordered) # make sure rownames are the same
+dfa3.post.split <- split(dfa3.post, list(dfa3.post$classified_to))
+par(mfrow = c(4,1))
+hist(dfa3.post.split$NC$NC, xlab = 'Posterior probability', main = 'NC training', xlim = c(0,1)) # NC training
+hist(dfa3.post.split$York$York, xlab = 'Posterior probability', main = 'York training', xlim = c(0,1)) # York training
+hist(dfa3.post.split$Roosevelt$Roosevelt, xlab = 'Posterior probability', main = 'Roosevelt training', xlim = c(0,1)) # Roosevelt training
+hist(dfa3.post.split$RUMFS$RUMFS, xlab = 'Posterior probability', main = 'NJ training', xlim = c(0,1)) # RUMFS training
+
+plda # test
+plda.post <- cbind.data.frame(plda$posterior, classified_to=plda$class, ingress_site=test.68$Location.ordered) # make sure rownames are the same
+plda.post.split <- split(plda.post, list(plda.post$classified_to))
+hist(plda.post.split$NC$NC, xlab = 'Posterior probability', main = 'NC test', xlim = c(0,1)) # NC training
+hist(plda.post.split$York$York, xlab = 'Posterior probability', main = 'York test', xlim = c(0,1)) # York training
+hist(plda.post.split$Roosevelt$Roosevelt, xlab = 'Posterior probability', main = 'Roosevelt test', xlim = c(0,1)) # Roosevelt training
+hist(plda.post.split$RUMFS$RUMFS, xlab = 'Posterior probability', main = 'RUMFS test', xlim = c(0,1)) # RUMFS training
+
+
 
 ################################################################################
 #### Discriminant Function Analysis by time period ####
