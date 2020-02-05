@@ -1,4 +1,20 @@
-#### Filtering commands used to generate the final genotypes used in “Evidence for extensive larval dispersal in summer flounder across space and through time using multiple natural tags.” The input is a vcf file of unfiltered SNPs resulting from the dDocent v. 2.23 pipeline (TotalRawSNPs.vcf). ####
+#### Steps taken to go from raw sequence reads to filtered SNP genotypes used in “Using multiple natural tags provides evidence for extensive larval dispersal across space and through time in summer flounder.” The first part describes how to get SNP genotypes from sequencing reads using dDocent v. 2.23. Sequencing reads are archived in the NCBI Sequence Read Archive (SRA) database (Acc. No. PRJNA600652). The second part describes the filtering steps used to achieve  the final SNP genotypes (available at https://github.com/pinskylab/PADEconnectivity). ####
+
+# Steps taken to go from raw sequencing reads to SNP genotypes
+
+1. Since I was using sequences from multiple sequencing runs, I trimmed and mapped reads to a reference that had been previously created. When mapping, dDocent will ask if you would like to enter new -A -B and -O parameters. I said no and proceeded with default parameters. Trimming and mapping were done at different points in time for each sequencing run. When all sequencing runs were complete, I wanted to call SNPs across all individuals. To do this, make sure dDocent and all its dependencies are installed. Make sure all fastq and bam files and the reference (here, reference.fasta) are in the same working directory.
+
+2a. Run dDocent by typing:
+
+[jennh@amphiprion 07_PADE_analysis]$ dDocent
+
+2b. dDocent will output the version number and ask you to confirm the number of 	individuals, number of processors and memory you wish to use.
+
+2c. dDocent will then ask you if you want to trim your reads, perform an assembly, map reads and call SNPs. Here, I only called SNPs across all larval and adult individuals. Read trimming, read mapping, and reference generation had already been done.
+
+2d. dDocent will then ask you to input your email, and will email you when your job is complete. When the job successfully runs, TotalRawSNPs.vcf will be one of the output files.
+
+# Filtering commands used to generate the final genotypes  The input is a vcf file of unfiltered SNPs resulting from the dDocent v. 2.23 pipeline (TotalRawSNPs.vcf).
 
 1. Keep SNPs genotyped in 50% of individuals and a minor allele count of 3:
 
