@@ -15,10 +15,11 @@ Jennifer Hoey
 * [otolith_data_nozeros.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_data_nozeros.txt): larval otolith microchemistry data where zeros have been randomly replaced by a number between zero and the smallest non-zero number for that element
 * [pop.allele.counts10.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/pop.allele.counts10.txt): Adult summer flounder allele counts at outlier loci from Hoey & Pinsky (2018)
 * [SNP.DP3g95maf05lm75.FIL.recode.vcf](https://github.com/pinskylab/PADEconnectivity/blob/master/SNP.DP3g95maf05lm75.FIL.recode.vcf): all SNPs output following filtering described in [Bioinformatics.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt)
+* [SNP.DP3g95maf05lm75.FIL.recode.firstsnp.vcf](https://github.com/pinskylab/PADEconnectivity/blob/master/SNP.DP3g95maf05lm75.FIL.recode.firstsnp.vcf): same as [SNP.DP3g95maf05lm75.FIL.recode.vcf](https://github.com/pinskylab/PADEconnectivity/blob/master/SNP.DP3g95maf05lm75.FIL.recode.vcf) but only first SNP per contig containing 1904 loci across 293 larvae and 235 adult summer flounder
 * [structure_input_Mar14_2017_528_1904.str](https://github.com/pinskylab/PADEconnectivity/blob/master/structure_input_Mar14_2017_528_1904.str): structure-formatted file of 1904 loci across 293 larvae and 235 adult summer flounder used for many of the genetic analyses
 
 ## Methods
-* [Bioinformatics.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt): Bioinformatic steps taken to go from sequencing reads to SNP genotypes, as well as steps taken to produce filtered SNP genotypes [SNP.DP3g95maf05lm75.FIL.recode.vcf](https://github.com/pinskylab/PADEconnectivity/blob/master/SNP.DP3g95maf05lm75.FIL.recode.vcf]
+* [Bioinformatics.txt](https://github.com/pinskylab/PADEconnectivity/blob/master/Bioinformatics.txt): Bioinformatic steps taken to go from sequencing reads to SNP genotypes, as well as steps taken to produce filtered SNP genotypes [SNP.DP3g95maf05lm75.FIL.recode.vcf](https://github.com/pinskylab/PADEconnectivity/blob/master/SNP.DP3g95maf05lm75.FIL.recode.vcf)
 
 ## Scripts
 * [assignment_confusion_matrix.R](https://github.com/pinskylab/PADEconnectivity/blob/master/assignment_confusion_matrix.R): Script to sample n individuals from each of 10 spawning regions, calculate genotype likelihoods of multilocus genotypes, determine most likely population and calculate % assignment and plot confusion matrices
