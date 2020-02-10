@@ -3,6 +3,8 @@ Files for investigating larval summer flounder connectivity throughout the speci
 
 _These data, methods and scripts are provided in the interests of open science. If you have questions or find errors, please let me know._
 
+Citable as [![DOI](https://zenodo.org/badge/129143601.svg)](https://zenodo.org/badge/latestdoi/129143601)
+
 Contact:
 Jennifer Hoey
 (jahoey13@gmail.com)
