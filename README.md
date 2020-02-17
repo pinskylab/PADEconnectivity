@@ -36,14 +36,14 @@ Jennifer Hoey
 
 ## Results
 ### Otoliths
-* [cluster197_piecharts_bytimeperiod.png](https://github.com/pinskylab/PADEconnectivity/blob/master/cluster197_piecharts_bytimeperiod.png): pie charts of larval clusters with otolith-only data for each time period (_Figure S11_)
+* [cluster197_piecharts_bytimeperiod.png](https://github.com/pinskylab/PADEconnectivity/blob/master/cluster197_piecharts_bytimeperiod.png): pie charts of larval clusters with otolith-only data for each time period (_Figure S8_)
 * [nmds_byperiod_10elements.png](https://github.com/pinskylab/PADEconnectivity/blob/master/nmds_byperiod_10elements.png): nmds plots for each time period using all 10 elements (_Figure 3_)
-* [lda_barplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots.png): LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure S8_)
-* [lda_barplots_3timeperiods.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots_3timeperiods.png): LDA barplots for each time period separately (_Figure S10_)
+* [lda_barplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots.png): LDA barplots for training (data within 68% confidence ellipses), test & combined datasets (_Figure S9_)
+* [lda_barplots_3timeperiods.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots_3timeperiods.png): LDA barplots for each time period separately (_Figure S11_)
 * [lda_barplots_late.png](https://github.com/pinskylab/PADEconnectivity/blob/master/lda_barplots_late.png): LDA barplots for training (data within 68% confidence ellipses), test & combined datasets for 2008-2012 larvae only
 * [otolith_overtimelogged_boxplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_overtimelogged_boxplots.png): box plots of otolith microchemistry by time period (_Figure S7_)
 * [otolith_sitelogged_boxplots.png](https://github.com/pinskylab/PADEconnectivity/blob/master/otolith_sitelogged_boxplots.png): box plots of otolith microchemistry by ingress site (_Figure S6_)
-* [post_group_membership_prob.png](https://github.com/pinskylab/PADEconnectivity/blob/master/post_group_membership_prob.png): frequency distributions of predicted group membership probabilities from LDA classification results (_Figure S9_)
+* [post_group_membership_prob.png](https://github.com/pinskylab/PADEconnectivity/blob/master/post_group_membership_prob.png): frequency distributions of predicted group membership probabilities from LDA classification results (_Figure S10_)
 ### Genetics
 * [larvae293_1904loci.pdf](https://github.com/pinskylab/PADEconnectivity/blob/master/larvae293_1904loci.pdf): STRUCTURE plot of 293 larvae using 1904 loci (_Figure S3_)
 * [larval_pca_regionalpops_1904loci.png](https://github.com/pinskylab/PADEconnectivity/blob/master/larval_pca_regionalpops_1904loci.png): regional larval PCA (_Figure S2A_)
