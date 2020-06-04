@@ -1,5 +1,5 @@
 # PADEconnectivity
-Files for investigating larval summer flounder connectivity throughout the species range from 1989-2012
+Using genetics and otolith microchemistry to investigate larval summer flounder connectivity throughout the species range from 1989-2012: *Using multiple natural tags provides evidence for extensive larval dispersal across space and through time in summer flounder* by [Hoey et al. (2020)](https://onlinelibrary.wiley.com/doi/full/10.1111/mec.15414).
 
 _These data, methods and scripts are provided in the interests of open science. If you have questions or find errors, please let me know._
 
